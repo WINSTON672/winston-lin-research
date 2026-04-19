@@ -1,0 +1,52 @@
+{
+  "teb_metric": "teb_l2l3_score",
+  "spearman_rho": 0.8,
+  "n_models": 4,
+  "rows": [
+    {
+      "model": "Qwen2.5-7B",
+      "ces": 1.4493643569252745,
+      "teb": 3.4171480106446466,
+      "flops": 7.0,
+      "mmlu": 0.742,
+      "he": 0.884,
+      "source": "Qwen2.5 Technical Report, Sep 2024",
+      "ces_rank": 1,
+      "teb_rank": 1
+    },
+    {
+      "model": "Qwen2.5-72B",
+      "ces": 1.0229015963829156,
+      "teb": 1.5550971007891523,
+      "flops": 72.0,
+      "mmlu": 0.866,
+      "he": 0.905,
+      "source": "Qwen2.5 Technical Report, Sep 2024",
+      "ces_rank": 2,
+      "teb_rank": 3
+    },
+    {
+      "model": "Llama-3.3-70B",
+      "ces": 0.9421668859680712,
+      "teb": 3.0384387342326176,
+      "flops": 70.0,
+      "mmlu": 0.86,
+      "he": 0.884,
+      "source": "Meta Llama 3.3 release blog, Nov 2024",
+      "ces_rank": 3,
+      "teb_rank": 2
+    },
+    {
+      "model": "Llama-3-8B",
+      "ces": 0.28065126131541807,
+      "teb": 1.4762303714509442,
+      "flops": 8.0,
+      "mmlu": 0.684,
+      "he": 0.62,
+      "source": "paper Table 2 (validated)",
+      "ces_rank": 4,
+      "teb_rank": 4
+    }
+  ],
+  "interpretation": "MODERATE correlation: related but distinct. Supports unified framework claim."
+}

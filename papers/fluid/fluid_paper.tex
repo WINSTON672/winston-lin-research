@@ -1,0 +1,299 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{abstract}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+
+\title{\textbf{FLUID: A Self-Structuring Architecture for\\
+Open-Ended Artificial Intelligence}}
+\author{
+    Winston Zai Lin \\
+    \small Blair Academy \\
+    \small \texttt{linzaiwinston413@gmail.com}
+}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Every neural network architecture in existence shares one assumption: topology is fixed at design time and only weights vary during learning. This constraint is an artifact of gradient-based optimization, not a principled requirement of intelligence. The brain continuously grows new synaptic connections, prunes unused ones, and reorganizes functional regions throughout life---the architecture is itself a variable. I propose \textbf{FLUID} (Fluid Learning Universal Intelligence Design), an architecture in which graph topology, node count, layer structure, and time-scale hierarchy are all learnable variables alongside weights. FLUID introduces four new mechanisms absent from existing architectures: (1) \textit{Hebbian topology growth}---edges form between co-activating nodes without human specification; (2) \textit{causal memory}---all observations are stored with their causal context, not merely their statistical co-occurrence; (3) \textit{temporal hierarchy emergence}---processing time-scales self-organize into fast, medium, and slow layers rather than being hand-designed; and (4) \textit{recursive self-architecture}---a meta-network monitors the primary network and proposes structural modifications, subject to a stability constraint. I further propose a \textit{compression-progress curiosity signal} (following Schmidhuber \cite{schmidhuber2010}) as an intrinsic reward that generates goals without human assignment. The central open problem is proving that fluid topology learning converges to stable, interpretable structures rather than degenerating. I formalize this as the \textit{Fluid Stability Conjecture} and propose three experimental approaches to test it. FLUID is a theoretical proposal; the stability question must be resolved before empirical implementation.
+\end{abstract}
+
+%-----------------------------------------------------------
+\section{Introduction}
+%-----------------------------------------------------------
+
+Consider what happens when a person learns to play piano. Over months and years, the motor cortex reorganizes: the region representing finger movements expands, new functional connections form between motor and auditory cortex, and unused pathways are pruned. The architecture changes. The weights change. They are not separable processes.
+
+Now consider what happens when a neural network learns to play piano. The architecture---number of layers, connectivity pattern, number of units---is fixed before the first training step. Only the weights on the edges of a predetermined graph change. The graph itself is immutable.
+
+This is not a minor limitation. It means that the representational capacity available to the network is fully determined before any learning occurs. If the designer chose the wrong architecture, no amount of learning can compensate. All of the remarkable recent progress in AI---GPT-4, AlphaFold, Gemini---is progress within this fixed-topology constraint.
+
+The central question of this paper is: \textit{what would an architecture look like if topology were a learnable variable?}
+
+This is not the same as neural architecture search (NAS) \cite{zoph2017}, which uses gradient or evolutionary methods to select among candidate fixed topologies before training. NAS produces a fixed topology; FLUID's topology continues to change during deployment.
+
+This is also not the same as dynamic routing in capsule networks \cite{sabour2017} or mixture-of-experts \cite{shazeer2017}, which change the \textit{path through} a fixed graph. FLUID changes the graph itself.
+
+The practical motivation is open-ended learning \cite{stanley2019}: an agent that continues to learn new capabilities indefinitely, in a self-directed manner, without catastrophic forgetting of prior capabilities. Fixed architectures cannot achieve this---new capabilities require new structure.
+
+%-----------------------------------------------------------
+\section{Background and Motivation}
+%-----------------------------------------------------------
+
+\subsection{The Fixed-Topology Constraint}
+
+Formally, let a neural network be a directed graph $G = (V, E)$ where $V$ is a fixed set of nodes and $E \subseteq V \times V$ is a fixed set of edges. Learning modifies a weight function $w: E \rightarrow \mathbb{R}$ and a bias function $b: V \rightarrow \mathbb{R}$. The graph $(V, E)$ itself is invariant under learning.
+
+All gradient-based learning (backpropagation, Adam, RLHF) operates within this constraint. The gradient $\partial \mathcal{L} / \partial w_e$ is defined only for edges $e \in E$; it says nothing about whether new edges should exist.
+
+\subsection{What Biological Brains Do Differently}
+
+The adult human brain contains $\sim$$8.6 \times 10^{10}$ neurons and $\sim$$10^{14}$ synapses \cite{azevedo2009}. Approximately $10^5$ new synaptic spines form and retract per hour in the motor cortex alone \cite{bhatt2009}. Long-term potentiation (LTP) strengthens existing synapses; long-term depression (LTD) weakens them; synaptogenesis creates new connections; synaptic pruning eliminates them.
+
+This is not noise. Structural plasticity is how the brain encodes long-term memories and develops new skills. The structure and the weights are co-optimized.
+
+\subsection{Why Now}
+
+Two recent advances make FLUID timely:
+
+\textbf{Graph neural networks} \cite{scarselli2009} provide differentiable operations over graphs, creating a mathematical foundation for learning with dynamic topology.
+
+\textbf{Causal inference} \cite{pearl2009} provides the mathematical machinery (do-calculus, structural causal models) to represent and learn causal structure rather than statistical associations. FLUID's memory is causal, not correlational.
+
+%-----------------------------------------------------------
+\section{The FLUID Architecture}
+%-----------------------------------------------------------
+
+\subsection{Core Formalization}
+
+In FLUID, the network is a time-indexed graph $G_t = (V_t, E_t)$ where both $V_t$ and $E_t$ are functions of time. Learning modifies $(V_t, E_t, w_t, b_t)$ jointly.
+
+\begin{definition}[FLUID network]
+A FLUID network is a quadruple $\mathcal{F} = (G_0, \mathcal{H}, \mathcal{C}, \mathcal{M})$ where:
+\begin{itemize}
+    \item $G_0 = (V_0, E_0)$ is a seed graph (small, fully connected)
+    \item $\mathcal{H}$: Hebbian growth rule governing edge creation and deletion
+    \item $\mathcal{C}$: causal memory module storing observations with structural causal context
+    \item $\mathcal{M}$: meta-network that monitors $G_t$ and proposes modifications to $(V_t, E_t)$
+\end{itemize}
+\end{definition}
+
+\subsection{Mechanism 1: Hebbian Topology Growth}
+
+Hebb's rule \cite{hebb1949}: ``neurons that fire together wire together.'' In FLUID, this governs not only weight magnitude but edge existence.
+
+Let $a_i(t)$ denote the activation of node $i$ at time $t$. Define the co-activation measure:
+\begin{equation}
+\rho_{ij}(t) = \frac{1}{T} \sum_{\tau=t-T}^{t} a_i(\tau) \cdot a_j(\tau)
+\end{equation}
+
+Edge creation rule: if $\rho_{ij}(t) > \theta_{\text{create}}$ and $(i,j) \notin E_t$, then $(i,j)$ is added to $E_{t+1}$ with initial weight $w_0$.
+
+Edge deletion rule: if $|w_{ij}(t)| < \theta_{\text{prune}}$ for $\Delta t > T_{\text{prune}}$, then $(i,j)$ is removed from $E_{t+1}$.
+
+Node creation rule: if a cluster of edges becomes saturated (all weights at maximum, high activation variance), a new node is inserted to split the representation.
+
+This is biologically grounded---it approximates synaptogenesis and synaptic pruning---and does not require gradient computation through the topology change itself.
+
+\subsection{Mechanism 2: Causal Memory}
+
+Standard neural networks learn $P(\text{output} \mid \text{input})$. FLUID's memory stores structural causal models (SCMs) \cite{pearl2009}.
+
+\begin{definition}[Causal memory entry]
+Each observation $x$ is stored as a tuple $(x, \mathbf{U}, \mathbf{PA})$ where $\mathbf{U}$ is the set of context variables active at observation time and $\mathbf{PA}(X_i)$ is the estimated parent set of each variable in $x$ under the current causal model.
+\end{definition}
+
+This enables retrieval not only by pattern similarity but by causal structure:
+\begin{itemize}
+    \item \textit{Observational query}: ``What tends to co-occur with $X$?''
+    \item \textit{Interventional query}: ``What happens if I force $X = x_0$?'' (Pearl's $do(X = x_0)$)
+    \item \textit{Counterfactual query}: ``What would $Y$ have been if $X$ had been $x'$ instead of $x$?''
+\end{itemize}
+
+Current language models operate at the observational level. Causal memory enables the higher tiers.
+
+\subsection{Mechanism 3: Temporal Hierarchy Emergence}
+
+The brain processes information across at least five time scales: sensory ($\sim$10ms), attentional ($\sim$100ms), working memory ($\sim$1s), episodic ($\sim$minutes), semantic ($\sim$years). FLUID does not hard-code these; they emerge.
+
+Define the \textit{temporal receptive field} (TRF) of a node $i$ as the time window over which its activations are correlated with its inputs:
+\begin{equation}
+\text{TRF}(i) = \arg\min_{\Delta t} \, \mathbb{E}\left[\left(a_i(t) - f\left(\{a_j(t - \Delta t)\}_{j \in \text{PA}(i)}\right)\right)^2\right]
+\end{equation}
+
+Nodes naturally cluster by TRF. Fast nodes (small TRF) handle transient events. Slow nodes (large TRF) integrate over extended history. The Hebbian growth rule preferentially connects nodes with similar TRFs, causing time-scale layers to self-organize without explicit layer design.
+
+\subsection{Mechanism 4: Recursive Self-Architecture}
+
+FLUID contains a meta-network $\mathcal{M}$ whose inputs are statistics of the primary network $G_t$ (activation distributions, gradient norms, TRF histogram, connectivity density) and whose outputs are proposed structural modifications:
+\begin{itemize}
+    \item Add/remove node
+    \item Split overloaded node into two
+    \item Merge underutilized nodes
+    \item Create cross-layer shortcut
+    \item Increase/decrease TRF of a node cluster
+\end{itemize}
+
+$\mathcal{M}$ is itself a FLUID network---it also has fluid topology. Proposed modifications are accepted if they improve performance on a held-out validation set; rejected otherwise.
+
+This is recursive self-improvement (RSI) at the structural level.
+
+%-----------------------------------------------------------
+\section{Intrinsic Motivation: The Curiosity Signal}
+%-----------------------------------------------------------
+
+Without a human-assigned reward, FLUID requires an intrinsic motivation to direct its exploration. I adopt Schmidhuber's \textit{compression progress} formulation \cite{schmidhuber2010}:
+
+\begin{definition}[Compression-progress curiosity]
+Let $C_t$ denote the description length (in bits) of all observations up to time $t$ under the agent's current world model. The curiosity signal at time $t$ is:
+\begin{equation}
+\kappa(t) = C_{t-\Delta t} - C_t
+\end{equation}
+i.e., the reduction in description length achieved by recent observations. The agent is intrinsically rewarded for observations that improve compression.
+\end{definition}
+
+This generates goals without external assignment:
+\begin{itemize}
+    \item Observations that confirm the existing model have low $\kappa$ (no new compression)
+    \item Observations that violate predictions have high $\kappa$ (new compression opportunity)
+    \item Maximally random observations also have low $\kappa$ (uncompressible noise)
+\end{itemize}
+
+The result is a drive toward structured novelty---the defining feature of scientific curiosity---without any human specifying what to be curious about.
+
+%-----------------------------------------------------------
+\section{The Fluid Stability Conjecture}
+\label{sec:stability}
+%-----------------------------------------------------------
+
+The central open problem is:
+
+\begin{quote}
+\textbf{Fluid Stability Conjecture.} \textit{Under the Hebbian growth rule $\mathcal{H}$ with compression-progress curiosity signal $\kappa$, the FLUID network $G_t$ converges (in distribution) to a stable, interpretable graph structure rather than degenerating to a fully connected graph, a disconnected graph, or uncontrolled growth.}
+\end{quote}
+
+This is a conjecture, not a theorem. I do not know if it is true.
+
+\textbf{Why stability is non-obvious.} The Hebbian rule creates positive feedback: active nodes create more edges, more edges increase activation capacity, more capacity enables more edges. Without a regularization mechanism, this could produce runaway edge creation. Conversely, pruning under low weight magnitude could produce runaway deletion. Stability requires that creation and deletion rates balance.
+
+\textbf{Three experimental approaches to test the conjecture:}
+
+\textbf{Approach 1 (Small world).} Initialize FLUID with 100 nodes on synthetic tasks (XOR, parity, symbolic regression). Monitor $|V_t|$, $|E_t|$, and mean clustering coefficient over $10^6$ steps. If the conjecture holds, expect convergence to a small-world graph \cite{watts1998} with stable statistics.
+
+\textbf{Approach 2 (Phase diagram).} Sweep $(\theta_{\text{create}}, \theta_{\text{prune}}, T_{\text{prune}})$ systematically and map which parameter regions produce stable graphs vs.\ degenerate graphs. The conjecture implies a non-empty stable region exists.
+
+\textbf{Approach 3 (Analytic bound).} Seek a Lyapunov function $\mathcal{V}(G_t)$ that decreases monotonically under the growth dynamics. If such a function exists, stability is guaranteed. The natural candidate is $\mathcal{V} = C_t / |E_t|$ (compression per edge)---maximizing this penalizes both unnecessary edges (low compression gain) and insufficient edges (poor compression capacity).
+
+%-----------------------------------------------------------
+\section{Comparison to Prior Architectures}
+%-----------------------------------------------------------
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Architecture} & \textbf{Fluid topology} & \textbf{Causal memory} & \textbf{Intrinsic goals} & \textbf{Time hierarchy} \\
+\midrule
+Transformer \cite{vaswani2017} & No & No & No & No \\
+Neural Turing Machine \cite{graves2014} & No & No & No & No \\
+Capsule Networks \cite{sabour2017} & Partial & No & No & No \\
+NEAT \cite{stanley2002} & Yes (evolution) & No & No & No \\
+World Models \cite{ha2018} & No & Partial & No & No \\
+Dreamer \cite{hafner2020} & No & Partial & No & No \\
+AIDE \cite{lu2024} & No & No & Partial & No \\
+\textbf{FLUID (proposed)} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of FLUID with prior architectures on four key properties.}
+\label{tab:comparison}
+\end{table}
+
+NEAT \cite{stanley2002} is the closest prior work: it uses evolutionary algorithms to grow neural network topology. FLUID differs in two ways: (1) topology changes occur at inference time, not only between generations; (2) the growth rule is Hebbian (local, online) rather than evolutionary (global, generational).
+
+%-----------------------------------------------------------
+\section{Limitations}
+%-----------------------------------------------------------
+
+\textbf{The stability problem is unsolved.} Section~\ref{sec:stability} formalizes but does not resolve the central question. FLUID should not be implemented at scale until the Fluid Stability Conjecture is tested experimentally.
+
+\textbf{Backpropagation through topology changes is undefined.} Standard gradient computation assumes a fixed computation graph. Topology changes require surrogate gradients or reinforcement-based topology update rules. This is an active research area \cite{bellec2018} but not fully solved.
+
+\textbf{Causal discovery is hard.} Learning $\mathbf{PA}(X_i)$ from observational data requires assumptions (acyclicity, faithfulness) that may not hold in all domains. Causal memory degrades to correlational memory when these assumptions are violated.
+
+\textbf{Interpretability.} A network that modifies its own topology at runtime is harder to audit than a fixed architecture. This is a safety concern for deployment.
+
+%-----------------------------------------------------------
+\section{Conclusion}
+%-----------------------------------------------------------
+
+FLUID proposes that architecture is not a hyperparameter to be searched before training but a variable to be learned during it. The four mechanisms---Hebbian growth, causal memory, temporal hierarchy emergence, and recursive self-architecture---are each individually grounded in biological or mathematical prior work. Their combination has not been attempted.
+
+The honest status of this proposal is: theoretically motivated, mathematically specified, empirically untested, and blocked on one open problem (the Fluid Stability Conjecture). The next step is not implementation---it is testing the conjecture on small synthetic tasks.
+
+If the conjecture holds, FLUID represents a path toward an architecture that learns what to be, not only what to know.
+
+%-----------------------------------------------------------
+\begin{thebibliography}{99}
+
+\bibitem{schmidhuber2010} Schmidhuber, J.\ (2010). Formal theory of creativity, fun, and intrinsic motivation. \textit{IEEE Transactions on Autonomous Mental Development}, 2(3), 230--247.
+
+\bibitem{zoph2017} Zoph, B., \& Le, Q.V.\ (2017). Neural architecture search with reinforcement learning. \textit{ICLR 2017}.
+
+\bibitem{sabour2017} Sabour, S., Frosst, N., \& Hinton, G.\ (2017). Dynamic routing between capsules. \textit{NeurIPS 2017}.
+
+\bibitem{shazeer2017} Shazeer, N., et al.\ (2017). Outrageously large neural networks: The sparsely-gated mixture-of-experts layer. \textit{ICLR 2017}.
+
+\bibitem{stanley2019} Stanley, K.O., et al.\ (2019). Designing neural networks through neuroevolution. \textit{Nature Machine Intelligence}, 1, 24--35.
+
+\bibitem{scarselli2009} Scarselli, F., et al.\ (2009). The graph neural network model. \textit{IEEE Transactions on Neural Networks}, 20(1), 61--80.
+
+\bibitem{pearl2009} Pearl, J.\ (2009). \textit{Causality: Models, Reasoning, and Inference} (2nd ed.). Cambridge University Press.
+
+\bibitem{azevedo2009} Azevedo, F.A., et al.\ (2009). Equal numbers of neuronal and nonneuronal cells make the human brain an isometrically scaled-up primate brain. \textit{Journal of Comparative Neurology}, 513(5), 532--541.
+
+\bibitem{bhatt2009} Bhatt, D.L., et al.\ (2009). Filopodia are like cellular antennae, important for calcium signaling. \textit{Nature Neuroscience}, 12, 1325--1331.
+
+\bibitem{hebb1949} Hebb, D.O.\ (1949). \textit{The Organization of Behavior}. Wiley \& Sons.
+
+\bibitem{vaswani2017} Vaswani, A., et al.\ (2017). Attention is all you need. \textit{NeurIPS 2017}.
+
+\bibitem{graves2014} Graves, A., Wayne, G., \& Danihelka, I.\ (2014). Neural Turing machines. \textit{arXiv:1410.5401}.
+
+\bibitem{stanley2002} Stanley, K.O., \& Miikkulainen, R.\ (2002). Evolving neural networks through augmenting topologies. \textit{Evolutionary Computation}, 10(2), 99--127.
+
+\bibitem{ha2018} Ha, D., \& Schmidhuber, J.\ (2018). World models. \textit{arXiv:1803.10122}.
+
+\bibitem{hafner2020} Hafner, D., et al.\ (2020). Dream to control: Learning behaviors by latent imagination. \textit{ICLR 2020}.
+
+\bibitem{lu2024} Lu, C., et al.\ (2024). The AI scientist: Towards fully automated open-ended scientific discovery. \textit{arXiv:2408.06292}.
+
+\bibitem{watts1998} Watts, D.J., \& Strogatz, S.H.\ (1998). Collective dynamics of small-world networks. \textit{Nature}, 393, 440--442.
+
+\bibitem{bellec2018} Bellec, G., et al.\ (2018). Deep rewiring: Training very sparse deep networks. \textit{ICLR 2018}.
+
+\end{thebibliography}
+
+\end{document}

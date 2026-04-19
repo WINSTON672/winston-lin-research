@@ -1,0 +1,356 @@
+{
+  "version": "1.0",
+  "description": "Task Efficiency Benchmark (TEB) — measures AI efficiency gain over human baseline on real tasks",
+  "scoring_note": "Quality ratio = task_score / max_score. TEB(M) = mean_quality_ratio / log2(FLOPs). Higher is better. Human baseline in minutes.",
+  "tasks": [
+
+    {
+      "id": "T1-01",
+      "tier": 1,
+      "category": "data_transformation",
+      "title": "Batch Format Conversion",
+      "human_baseline_minutes": 10,
+      "human_baseline_notes": "Intermediate user manually reformatting 15 records in a text editor",
+      "expected_7B": "near_perfect",
+      "expected_70B": "near_perfect",
+      "differentiates_model_size": false,
+      "differentiates_ai_vs_human": true,
+      "prompt": "Convert the following 15 customer records to a JSON array. Each object must have exactly these fields:\n- \"id\": integer\n- \"name\": object with \"first\" and \"last\" (both title-cased)\n- \"email\": lowercase string\n- \"joined\": ISO 8601 date string (YYYY-MM-DD)\n\nReturn only the JSON array with no explanation or markdown fences.",
+      "input": "1 | MARY JOHNSON | mary.j@gmail.com | March 5 2022\n2 | Bob Williams | bob.williams@hotmail.com | 12/25/21\n3 | alice Chen | ALICE.CHEN@OUTLOOK.COM | 2023-07-14\n4 | DAVID RODRIGUEZ | david.r@yahoo.com | February 2, 2020\n5 | Emma Thompson | emma.t@gmail.com | 09/30/2023\n6 | frank MILLER | f.miller@company.org | January 17 2021\n7 | Grace Lee | grace.lee@email.net | 11/11/2022\n8 | HENRY WILSON | henry.wilson@example.com | 2024-03-08\n9 | Isabel Martinez | isabel.m@protonmail.com | May 30 2019\n10 | james BROWN | james.b@gmail.com | 06/14/2023\n11 | Kate Davis | kate.d@icloud.com | October 3, 2022\n12 | LIAM GARCIA | liam.garcia@company.io | 2021-08-19\n13 | mia ANDERSON | mia.a@outlook.com | 04/01/2024\n14 | Noah Thomas | noah.t@gmail.com | September 22 2020\n15 | OLIVIA JACKSON | olivia.j@email.com | 2023-01-05",
+      "scoring": {
+        "type": "automated",
+        "max_score": 15,
+        "description": "1 point per record correctly parsed with all 4 fields valid (id integer, name title-cased, email lowercase, date ISO 8601)",
+        "ground_truth": [
+          {"id": 1, "name": {"first": "Mary", "last": "Johnson"}, "email": "mary.j@gmail.com", "joined": "2022-03-05"},
+          {"id": 2, "name": {"first": "Bob", "last": "Williams"}, "email": "bob.williams@hotmail.com", "joined": "2021-12-25"},
+          {"id": 3, "name": {"first": "Alice", "last": "Chen"}, "email": "alice.chen@outlook.com", "joined": "2023-07-14"},
+          {"id": 4, "name": {"first": "David", "last": "Rodriguez"}, "email": "david.r@yahoo.com", "joined": "2020-02-02"},
+          {"id": 5, "name": {"first": "Emma", "last": "Thompson"}, "email": "emma.t@gmail.com", "joined": "2023-09-30"},
+          {"id": 6, "name": {"first": "Frank", "last": "Miller"}, "email": "f.miller@company.org", "joined": "2021-01-17"},
+          {"id": 7, "name": {"first": "Grace", "last": "Lee"}, "email": "grace.lee@email.net", "joined": "2022-11-11"},
+          {"id": 8, "name": {"first": "Henry", "last": "Wilson"}, "email": "henry.wilson@example.com", "joined": "2024-03-08"},
+          {"id": 9, "name": {"first": "Isabel", "last": "Martinez"}, "email": "isabel.m@protonmail.com", "joined": "2019-05-30"},
+          {"id": 10, "name": {"first": "James", "last": "Brown"}, "email": "james.b@gmail.com", "joined": "2023-06-14"},
+          {"id": 11, "name": {"first": "Kate", "last": "Davis"}, "email": "kate.d@icloud.com", "joined": "2022-10-03"},
+          {"id": 12, "name": {"first": "Liam", "last": "Garcia"}, "email": "liam.garcia@company.io", "joined": "2021-08-19"},
+          {"id": 13, "name": {"first": "Mia", "last": "Anderson"}, "email": "mia.a@outlook.com", "joined": "2024-04-01"},
+          {"id": 14, "name": {"first": "Noah", "last": "Thomas"}, "email": "noah.t@gmail.com", "joined": "2020-09-22"},
+          {"id": 15, "name": {"first": "Olivia", "last": "Jackson"}, "email": "olivia.j@email.com", "joined": "2023-01-05"}
+        ]
+      }
+    },
+
+    {
+      "id": "T1-02",
+      "tier": 1,
+      "category": "writing",
+      "title": "Professional Tone Rewrite",
+      "human_baseline_minutes": 6,
+      "human_baseline_notes": "College-educated adult rewriting an email while preserving all facts",
+      "expected_7B": "near_perfect",
+      "expected_70B": "near_perfect",
+      "differentiates_model_size": false,
+      "differentiates_ai_vs_human": true,
+      "prompt": "Rewrite the following customer email in a professional and courteous tone. Requirements:\n1. Preserve ALL 5 factual claims exactly (product ID, order date, amount, service call date, promised timeframe)\n2. Remove aggressive language without softening the urgency\n3. Maximum 120 words\n4. Do not add new claims or information not in the original\n\nReturn only the rewritten email body.",
+      "input": "Subject: YOUR SERVICE IS ABSOLUTELY TERRIBLE\n\nI ordered 3 units of product #SKU-4421 on November 12th. The order total was $247.50. It is now 18 days later and I STILL have not received my order. Your tracking page shows 'label created' since day 1 — it has NEVER MOVED. I called customer service on November 22nd and was told it would ship within 48 hours. That was 8 days ago. I want a full refund of $247.50 immediately and I am going to dispute the charge with my credit card company if I don't hear back TODAY. This is completely unacceptable and I will be leaving reviews everywhere.",
+      "scoring": {
+        "type": "rubric",
+        "max_score": 10,
+        "criteria": [
+          {"id": "facts", "points": 5, "description": "All 5 facts preserved: SKU-4421, November 12th, $247.50, November 22nd call, 48-hour promise"},
+          {"id": "tone", "points": 2, "description": "Professional and non-aggressive tone (no ALL CAPS, no threats, no insults)"},
+          {"id": "length", "points": 1, "description": "120 words or fewer"},
+          {"id": "urgency", "points": 1, "description": "Urgency and refund request still clearly communicated"},
+          {"id": "no_additions", "points": 1, "description": "No new facts or claims added beyond what was in the original"}
+        ],
+        "facts_to_check": ["SKU-4421", "November 12", "$247.50", "November 22", "48 hours"]
+      }
+    },
+
+    {
+      "id": "T1-03",
+      "tier": 1,
+      "category": "summarization",
+      "title": "Constrained Bullet Summarization",
+      "human_baseline_minutes": 4,
+      "human_baseline_notes": "Educated adult reading and writing 3 bullet points from an article",
+      "expected_7B": "near_perfect",
+      "expected_70B": "near_perfect",
+      "differentiates_model_size": false,
+      "differentiates_ai_vs_human": true,
+      "prompt": "Summarize the following article in exactly 3 bullet points. Rules:\n1. Each bullet must be exactly one sentence\n2. Each bullet must start with a verb (action word)\n3. Together the 3 bullets must cover the article's main finding, a supporting detail, and a controversy or challenge mentioned\n\nReturn only the 3 bullet points, each on its own line starting with '-'.",
+      "input": "Scientists at the Pacific Energy Institute reported Monday that distributed solar installations in urban areas have reached a combined capacity milestone, producing enough electricity to power approximately 2.3 million homes during peak generation hours. The study, published in the journal Energy Systems Review, tracked 14,000 rooftop and community solar installations across 23 cities over a three-year period from 2021 to 2024.\n\nLead researcher Dr. Sarah Chen noted that the rate of urban solar adoption has accelerated significantly, with new capacity added in 2024 exceeding the combined totals from 2021 and 2022. 'What we're seeing is not just growth but compounding,' Chen said. 'Each installation makes the next one cheaper through shared infrastructure and grid balancing benefits.'\n\nThe study also found that buildings with south-facing roofs in cities with more than 200 sunny days per year showed 34% higher energy yield compared to the study average. Researchers identified zoning restrictions and upfront costs as the two primary barriers preventing broader adoption among lower-income neighborhoods, where adoption rates remain 40% below the citywide average.\n\nCity officials in Phoenix and Denver have cited the findings in support of proposed legislation that would require solar-ready construction in all new commercial buildings above 5,000 square feet. Critics of the legislation argue that mandates could increase construction costs by 3-7%, potentially worsening housing affordability. The researchers did not take a position on the proposed policies but noted that their data showed no significant correlation between city-level solar mandates and overall construction cost increases in the cities studied.",
+      "scoring": {
+        "type": "rubric",
+        "max_score": 8,
+        "criteria": [
+          {"id": "format", "points": 2, "description": "Exactly 3 bullets, each starting with '-', each exactly one sentence"},
+          {"id": "verbs", "points": 2, "description": "Each bullet begins with a verb (conjugated action word)"},
+          {"id": "coverage", "points": 3, "description": "Bullets cover: (a) main finding [2.3M homes capacity milestone], (b) a supporting detail [34% yield difference OR compounding growth], (c) controversy/challenge [cost increase concern OR low-income adoption gap]"},
+          {"id": "accuracy", "points": 1, "description": "No factual distortions or invented claims"}
+        ]
+      }
+    },
+
+    {
+      "id": "T2-01",
+      "tier": 2,
+      "category": "code_debug",
+      "title": "Multi-Bug Python Fix",
+      "human_baseline_minutes": 15,
+      "human_baseline_notes": "Intermediate developer with Python experience reading and debugging the function",
+      "expected_7B": "finds 1-2 bugs, misses subtle logic error",
+      "expected_70B": "finds all 3 bugs with correct explanations",
+      "differentiates_model_size": true,
+      "differentiates_ai_vs_human": true,
+      "prompt": "The following Python function has exactly 3 bugs. Find and fix all of them.\n\nFor each bug provide:\n1. Line number (approximate)\n2. What the bug is\n3. The corrected code\n\nThen provide the complete corrected function at the end.",
+      "input": "def process_orders(orders, premium_surcharge=0.15, bulk_threshold=10):\n    \"\"\"\n    Calculate total revenue from a list of orders.\n\n    Args:\n        orders: list of dicts with keys 'product', 'quantity', 'unit_price', 'is_premium'\n        premium_surcharge: fraction to ADD for premium orders (default 15%)\n        bulk_threshold: minimum order count to trigger 5% bulk discount\n\n    Returns:\n        Total revenue after all adjustments\n    \"\"\"\n    if not orders:\n        return 0.0\n\n    subtotals = []\n    for order in orders:\n        if order['quantity'] <= 0:\n            continue\n\n        line_total = order['unit_price'] * order['quantity']\n\n        # Premium customers pay a surcharge\n        if order.get('is_premium', False):\n            line_total = line_total * (1 - premium_surcharge)  # line 23\n\n        subtotals.append(line_total)\n\n    total = sum(subtotals)\n\n    # Apply bulk discount when order count meets threshold\n    if len(orders) > bulk_threshold:  # line 30\n        total *= 0.95\n\n    # Return total revenue\n    return total / len(subtotals)  # line 33",
+      "scoring": {
+        "type": "automated_plus_rubric",
+        "max_score": 9,
+        "bugs": [
+          {
+            "id": "bug1",
+            "line": 23,
+            "description": "Logic error: premium customers should get a surcharge (+15%), not a discount. '(1 - premium_surcharge)' should be '(1 + premium_surcharge)'",
+            "test": "process_orders([{'product':'A','quantity':10,'unit_price':100,'is_premium':True}]) should return 1150.0 not 850.0",
+            "points": 3
+          },
+          {
+            "id": "bug2",
+            "line": 30,
+            "description": "Off-by-one error: '> bulk_threshold' should be '>= bulk_threshold'. With exactly 10 orders, the bulk discount never applies.",
+            "test": "process_orders([{'product':'A','quantity':1,'unit_price':100,'is_premium':False}]*10) should apply 0.95 multiplier",
+            "points": 3
+          },
+          {
+            "id": "bug3",
+            "line": 33,
+            "description": "Wrong return value: divides total by len(subtotals), returning average instead of total. Should be 'return total'.",
+            "test": "process_orders([{'product':'A','quantity':2,'unit_price':50,'is_premium':False},{'product':'B','quantity':3,'unit_price':30,'is_premium':False}]) should return 190.0 not 95.0",
+            "points": 3
+          }
+        ],
+        "automated_test_code": "def test_bug1():\n    orders = [{'product':'A','quantity':10,'unit_price':100,'is_premium':True}]\n    return abs(process_orders(orders) - 1150.0) < 0.01\n\ndef test_bug2():\n    orders = [{'product':'A','quantity':1,'unit_price':100,'is_premium':False}]*10\n    return abs(process_orders(orders) - 950.0) < 0.01\n\ndef test_bug3():\n    orders = [{'product':'A','quantity':2,'unit_price':50,'is_premium':False},\n              {'product':'B','quantity':3,'unit_price':30,'is_premium':False}]\n    return abs(process_orders(orders) - 190.0) < 0.01"
+      }
+    },
+
+    {
+      "id": "T2-02",
+      "tier": 2,
+      "category": "writing",
+      "title": "Academic-to-Plain Rewrite",
+      "human_baseline_minutes": 12,
+      "human_baseline_notes": "College student with general science background rewriting an abstract for a high schooler",
+      "expected_7B": "loses key numbers or misrepresents main finding, may keep jargon",
+      "expected_70B": "preserves main finding, mostly jargon-free, within word count",
+      "differentiates_model_size": true,
+      "differentiates_ai_vs_human": true,
+      "prompt": "Rewrite the following scientific abstract for a curious 16-year-old with no science background.\n\nRequirements:\n1. 75-100 words\n2. Zero technical jargon (no chemical formulas, no scientific method names, no measurement units without explanation)\n3. The main finding (2.8x improvement) must be clearly stated\n4. Do not distort or overstate the results\n\nReturn only the rewritten text.",
+      "input": "We report the synthesis of hierarchically structured ZnO-TiO2 composite photocatalysts via a hydrothermal co-precipitation route with subsequent calcination at 450°C. X-ray diffraction analysis confirmed the presence of both wurtzite ZnO and anatase TiO2 phases with mean crystallite sizes of 18.3 ± 2.1 nm and 12.7 ± 1.4 nm, respectively. Diffuse reflectance spectroscopy measurements revealed a red-shifted optical absorption edge at 3.05 eV compared to pure ZnO (3.37 eV), attributable to interfacial charge transfer between the heterojunction components. Photocatalytic degradation experiments under simulated solar irradiation demonstrated 94.3% removal of methylene blue dye within 90 minutes, representing a 2.8-fold enhancement over single-component ZnO under identical conditions. The observed synergistic enhancement is attributed to efficient electron-hole pair separation at the ZnO/TiO2 interface, reducing recombination rates and extending charge carrier lifetime for surface oxidation reactions.",
+      "scoring": {
+        "type": "rubric",
+        "max_score": 10,
+        "criteria": [
+          {"id": "main_finding", "points": 3, "description": "2.8x improvement (or 'almost 3 times better') clearly stated and attributed to the combined material"},
+          {"id": "jargon_free", "points": 3, "description": "No unexplained jargon: ZnO/TiO2 explained as 'two materials combined', photocatalytic explained as 'breaks down using light', no raw units without context"},
+          {"id": "word_count", "points": 1, "description": "75-100 words"},
+          {"id": "accuracy", "points": 2, "description": "No factual distortions: does not claim 'cures cancer', 'purifies drinking water', or overstate scope beyond dye removal"},
+          {"id": "clarity", "points": 1, "description": "A 16-year-old could reasonably understand what was done and why it matters"}
+        ],
+        "key_facts": {
+          "main_finding": "2.8x (or 2.8-fold) improvement in dye degradation",
+          "mechanism_simplified": "two materials work better together than either alone",
+          "application": "removing dye pollutants using light"
+        }
+      }
+    },
+
+    {
+      "id": "T2-03",
+      "tier": 2,
+      "category": "data_analysis",
+      "title": "Sales Data Anomaly Detection",
+      "human_baseline_minutes": 10,
+      "human_baseline_notes": "Analyst with spreadsheet access checking 25 rows of sales data",
+      "expected_7B": "finds 1-2 anomalies, may miss the calculation error",
+      "expected_70B": "finds all 3 anomalies with correct explanations",
+      "differentiates_model_size": true,
+      "differentiates_ai_vs_human": true,
+      "prompt": "The table below shows monthly sales records. There are exactly 3 data errors. For each error:\n1. State the row identifier (Month + Region + Product)\n2. Describe what is wrong\n3. Give the likely correct value\n\nFormat each finding as:\nERROR [n]: [Row] | [Problem] | [Likely correct value]",
+      "input": "Month,Region,Product,Units_Sold,Unit_Price_USD,Total_Revenue_USD\n2024-01,North,Widget-A,120,23.50,2820.00\n2024-01,South,Widget-A,85,23.50,1997.50\n2024-01,East,Widget-B,200,15.75,3150.00\n2024-01,West,Widget-B,167,15.75,2630.25\n2024-02,North,Widget-A,134,23.50,3149.00\n2024-02,South,Widget-A,91,23.50,2138.50\n2024-02,East,Widget-A,45,23.50,10057.50\n2024-02,West,Widget-B,201,15.75,3165.75\n2024-03,North,Widget-C,88,47.00,4136.00\n2024-03,South,Widget-C,56,47.00,2632.00\n2024-03,East,Widget-B,178,15.75,2803.50\n2024-03,West,Widget-A,112,23.50,2632.00\n2024-04,North,Widget-B,245,15.75,3858.75\n2024-04,South,Widget-B,-120,15.75,1890.00\n2024-04,East,Widget-A,93,23.50,2185.50\n2024-04,West,Widget-C,41,47.00,1927.00\n2024-05,North,Widget-A,156,23.50,3666.00\n2024-05,South,Widget-B,234,15.75,3685.50\n2024-05,East,Widget-C,67,47.00,3149.00\n2024-05,West,Widget-A,88,18500.00,1628000.00\n2024-06,North,Widget-C,95,47.00,4465.00\n2024-06,South,Widget-A,110,23.50,2585.00\n2024-06,East,Widget-B,188,15.75,2961.00\n2024-06,West,Widget-C,62,47.00,2914.00\n2024-06,North,Widget-B,145,15.75,2283.75",
+      "scoring": {
+        "type": "automated",
+        "max_score": 9,
+        "anomalies": [
+          {
+            "id": "anomaly1",
+            "row": "2024-02, East, Widget-A",
+            "error": "Total_Revenue mismatch: 45 × $23.50 = $1,057.50 but recorded as $10,057.50 (extra leading '1' — likely typo)",
+            "correct_value": "1057.50",
+            "points": 3
+          },
+          {
+            "id": "anomaly2",
+            "row": "2024-04, South, Widget-B",
+            "error": "Units_Sold is -120 (negative) but Total_Revenue is +1,890.00 (positive). Either units should be positive (+120) or revenue should be negative (a return/refund).",
+            "correct_value": "Units_Sold = 120 (or flag as return with revenue = -1890.00)",
+            "points": 3
+          },
+          {
+            "id": "anomaly3",
+            "row": "2024-05, West, Widget-A",
+            "error": "Unit_Price_USD is 18,500.00 — Widget-A is priced at $23.50 in all other rows. Price is ~787x higher, likely entered in cents (18500 cents = $185.00, still wrong) or a decimal error (should be $18.50 or $23.50).",
+            "correct_value": "23.50 (matching Widget-A price in all other rows)",
+            "points": 3
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "T2-04",
+      "tier": 2,
+      "category": "requirements_analysis",
+      "title": "Feature Request Decomposition",
+      "human_baseline_minutes": 15,
+      "human_baseline_notes": "Experienced product manager or senior developer breaking down a feature request",
+      "expected_7B": "gives flat task list, misses most ambiguities",
+      "expected_70B": "finds dependencies and 2-3 ambiguities, reasonable task breakdown",
+      "differentiates_model_size": true,
+      "differentiates_ai_vs_human": true,
+      "prompt": "Break down the following feature request for a software team.\n\nYour output must include:\n1. TASKS: A numbered list of implementation tasks. Each task must be independently completable by one developer. Show at least one dependency as 'Task N requires Task M first.'\n2. EFFORT: Mark each task as S (hours), M (half-day), or L (full day+)\n3. AMBIGUITIES: List every unclear requirement that must be answered before development starts. There are at least 3 in this request.\n\nBe specific — 'implement sharing logic' is not a task; 'implement permission model with viewer/editor roles stored in dashboard_shares table' is.",
+      "input": "Feature Request: 'Add the ability for users to share dashboards with their team members and external stakeholders.'\n\nBackground: This should work similarly to how Google Docs sharing works. Users should be able to control who can view or edit. The feature is needed because our enterprise customers have been asking for collaboration features for over a year. It should be available in the next sprint.",
+      "scoring": {
+        "type": "rubric",
+        "max_score": 10,
+        "criteria": [
+          {"id": "task_quality", "points": 3, "description": "Tasks are specific and independently completable (not vague like 'implement sharing'). At least 5 distinct tasks."},
+          {"id": "dependency", "points": 2, "description": "At least one real dependency stated explicitly (e.g., permission model must exist before UI can render it)"},
+          {"id": "effort", "points": 1, "description": "Every task has an S/M/L effort estimate"},
+          {"id": "ambiguities", "points": 4, "description": "Identifies at least 3 of the 4 real ambiguities: (1) what 'share' means technically (link? copy? real-time?), (2) who counts as 'external' (do they need an account?), (3) permission inheritance (can editors reshare?), (4) sharing granularity (whole dashboard or pages/widgets?)"}
+        ],
+        "known_ambiguities": [
+          "What does 'share' mean technically: send a shareable link, email a copy, or real-time collaborative editing?",
+          "Do external stakeholders need an account, or can anyone with a link view?",
+          "Can editors reshare with others, or only the owner can share?",
+          "Is sharing at the dashboard level only, or can individual pages or widgets be shared separately?"
+        ]
+      }
+    },
+
+    {
+      "id": "T3-01",
+      "tier": 3,
+      "category": "research_design",
+      "title": "Controlled Experiment Design",
+      "human_baseline_minutes": 25,
+      "human_baseline_notes": "Graduate student with research methods training designing a study",
+      "expected_7B": "identifies variables but misses confound controls, vague measurement",
+      "expected_70B": "decent design but may miss internal validity threat or justify sample size poorly",
+      "differentiates_model_size": true,
+      "differentiates_ai_vs_human": false,
+      "prompt": "Design a study to test the following hypothesis.\n\nYour design must explicitly address:\n1. MEASUREMENT: How will you operationalize the dependent variable? (Be specific: what instrument, what scale, what timepoint)\n2. CONFOUNDS: Identify and describe how you will control for at least 3 of the confounds listed\n3. SAMPLE SIZE: State a target N and give a brief justification (even if informal)\n4. THREAT: Identify one specific threat to internal validity in your design and explain why it's a concern\n\nHypothesis: Providing first-year engineering students with AI coding assistants during a structured 8-week programming module will improve their performance on a subsequent unassisted coding assessment, compared to students who complete the same module without AI assistance.\n\nAvailable resources: Two sections of CS101 (60 students each), 8-week intervention window, final assessment is a 2-hour unassisted coding exam on novel problems. Students have varying prior programming experience.\n\nKnown potential confounds: (a) prior programming experience, (b) time spent practicing outside class, (c) intrinsic motivation and engagement, (d) problem difficulty differences between sections' exams.",
+      "scoring": {
+        "type": "rubric",
+        "max_score": 12,
+        "criteria": [
+          {"id": "dv_measurement", "points": 3, "description": "DV operationalized specifically: names the exam, specifies scoring method (e.g., automated test cases, rubric), identifies what 'performance' means numerically. Vague answers like 'measure exam score' get 1 point."},
+          {"id": "confound_control", "points": 4, "description": "Controls at least 3 confounds with specific mechanisms: (a) prior experience → pre-test or stratified randomization, (b) study time → controlled lab sessions or time-logging, (c) motivation → randomization, (d) exam difficulty → same exam for both sections or parallel-form equating. 1 point per confound with specific control method."},
+          {"id": "sample_size", "points": 2, "description": "States N (ideally 60 per group = 120 total) with some reasoning: power analysis reference, comparable study citation, or practical argument. Not just picking a number with no reasoning."},
+          {"id": "internal_validity", "points": 3, "description": "Identifies a real, specific threat: demand characteristics (students know they're being studied), contamination (AI group shares tips with control group), regression to mean, or attrition bias. Must explain why it threatens the causal inference, not just name it."}
+        ]
+      }
+    },
+
+    {
+      "id": "T3-02",
+      "tier": 3,
+      "category": "code_review",
+      "title": "Architecture and Design Review",
+      "human_baseline_minutes": 20,
+      "human_baseline_notes": "Senior software engineer reviewing 3 files for design problems",
+      "expected_7B": "finds 1-2 issues, surface-level observations, vague recommendations",
+      "expected_70B": "finds 3-4 issues, more specific recommendations, may miss severity ranking logic",
+      "differentiates_model_size": true,
+      "differentiates_ai_vs_human": false,
+      "prompt": "Review the following three Python files for design and implementation problems.\n\nFor each problem you find:\n1. Name the issue\n2. Explain why it matters (what goes wrong in production)\n3. Give a specific, actionable fix (not 'refactor this' — show what the fix looks like)\n\nAfter listing all problems, rank them by severity: CRITICAL / HIGH / MEDIUM\n\nThere are exactly 4 distinct problems across the 3 files.",
+      "input_files": {
+        "config.py": "# Application configuration\nDATABASE_URL = \"postgresql://admin:secret123@prod-db.internal:5432/analytics\"\nAPI_KEY = \"sk-prod-a8f3k2m9p1q4r7s0t6u2v5w8\"\nSMTP_HOST = \"smtp.company.com\"\nSMTP_PORT = 587\nSMTP_USER = \"noreply@company.com\"\nSMTP_PASS = \"EmailPass2024!\"\nS3_BUCKET = \"company-analytics-prod\"\nAWS_ACCESS_KEY = \"AKIAIOSFODNN7EXAMPLE\"\nAWS_SECRET_KEY = \"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY\"\nDEBUG = True\nMAX_RECORDS = 10000\n",
+        "database.py": "import psycopg2\nfrom config import DATABASE_URL\n\ndef get_user(user_id):\n    conn = psycopg2.connect(DATABASE_URL)\n    cursor = conn.cursor()\n    cursor.execute(f\"SELECT * FROM users WHERE id = {user_id}\")\n    result = cursor.fetchone()\n    conn.close()\n    return result\n\ndef get_dashboard(dashboard_id):\n    conn = psycopg2.connect(DATABASE_URL)\n    cursor = conn.cursor()\n    cursor.execute(f\"SELECT * FROM dashboards WHERE id = {dashboard_id}\")\n    result = cursor.fetchone()\n    conn.close()\n    return result\n\ndef update_dashboard(dashboard_id, data):\n    conn = psycopg2.connect(DATABASE_URL)\n    cursor = conn.cursor()\n    cursor.execute(\n        f\"UPDATE dashboards SET data = '{data}' WHERE id = {dashboard_id}\"\n    )\n    conn.commit()\n    conn.close()\n\ndef get_all_dashboards(user_id):\n    conn = psycopg2.connect(DATABASE_URL)\n    cursor = conn.cursor()\n    cursor.execute(f\"SELECT * FROM dashboards WHERE owner_id = {user_id}\")\n    results = cursor.fetchall()\n    conn.close()\n    return results\n",
+        "app.py": "from flask import Flask, request, jsonify\nfrom database import get_user, get_dashboard, update_dashboard, get_all_dashboards\nimport json, smtplib, hashlib\nfrom config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS\n\napp = Flask(__name__)\n\ndef _authenticate(request):\n    token = request.headers.get('Authorization', '').replace('Bearer ', '')\n    if not token:\n        return None\n    token_hash = hashlib.sha256(token.encode()).hexdigest()\n    return get_user(token_hash)\n\n@app.route('/dashboard/<int:dashboard_id>', methods=['GET'])\ndef get_dashboard_route(dashboard_id):\n    user = _authenticate(request)\n    if not user:\n        return jsonify({'error': 'Unauthorized'}), 401\n    dashboard = get_dashboard(dashboard_id)\n    if not dashboard:\n        return jsonify({'error': 'Not found'}), 404\n    if dashboard[3] != user[0]:  # index-based column access\n        return jsonify({'error': 'Forbidden'}), 403\n    return jsonify({'id': dashboard[0], 'data': dashboard[1]})\n\n@app.route('/dashboard/<int:dashboard_id>/share', methods=['POST'])\ndef share_dashboard(dashboard_id):\n    user = _authenticate(request)\n    if not user:\n        return jsonify({'error': 'Unauthorized'}), 401\n    dashboard = get_dashboard(dashboard_id)\n    if not dashboard:\n        return jsonify({'error': 'Not found'}), 404\n    if dashboard[3] != user[0]:\n        return jsonify({'error': 'Forbidden'}), 403\n    data = request.get_json()\n    recipient_email = data['email']  # no validation\n    permission = data['permission']  # no validation\n    sharing_data = json.loads(dashboard[2]) if dashboard[2] else {}\n    sharing_data[recipient_email] = permission\n    update_dashboard(dashboard_id, json.dumps(sharing_data))\n    server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)\n    server.starttls()\n    server.login(SMTP_USER, SMTP_PASS)\n    message = f\"Subject: Dashboard shared\\n\\nA dashboard has been shared with you.\"\n    server.sendmail(SMTP_USER, recipient_email, message)\n    server.quit()\n    return jsonify({'success': True})\n\nif __name__ == '__main__':\n    app.run(debug=True)\n"
+      },
+      "scoring": {
+        "type": "rubric",
+        "max_score": 12,
+        "problems": [
+          {
+            "id": "problem1",
+            "severity": "CRITICAL",
+            "issue": "Hardcoded secrets in config.py",
+            "explanation": "Database password, API key, SMTP credentials, and AWS keys are plaintext in source code. If the repo is ever pushed to GitHub (even privately), credentials are compromised. Rotation requires code changes.",
+            "fix": "Use environment variables: `DATABASE_URL = os.environ['DATABASE_URL']`. Use python-dotenv for local dev."
+          },
+          {
+            "id": "problem2",
+            "severity": "CRITICAL",
+            "issue": "SQL injection in all database.py queries",
+            "explanation": "All four functions use f-strings to interpolate user-controlled values directly into SQL. An attacker can pass `user_id = '1; DROP TABLE users; --'` to execute arbitrary SQL.",
+            "fix": "Use parameterized queries: `cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))` — the DB driver escapes the value safely."
+          },
+          {
+            "id": "problem3",
+            "severity": "HIGH",
+            "issue": "New database connection per query (no connection pooling)",
+            "explanation": "Each of the 4 database functions opens and closes a new psycopg2 connection. Under load, this exhausts the PostgreSQL max_connections limit and adds ~50-100ms overhead per request.",
+            "fix": "Use a connection pool: `pool = psycopg2.pool.SimpleConnectionPool(1, 20, DATABASE_URL)` and acquire/release connections per request."
+          },
+          {
+            "id": "problem4",
+            "severity": "MEDIUM",
+            "issue": "No input validation before use in share_dashboard",
+            "explanation": "`data['email']` and `data['permission']` are used directly with no validation. Missing keys cause a 500 error (KeyError). Invalid email addresses will cause SMTP errors mid-request after the database has already been written. Permission can be set to any arbitrary string.",
+            "fix": "Validate before use: check `data.get('email')` exists and matches an email regex; validate `permission in ('viewer', 'editor')` before touching the database."
+          }
+        ],
+        "criteria": [
+          {"id": "problems_found", "points": 8, "description": "2 points per correctly identified problem with accurate explanation of production impact"},
+          {"id": "actionable_fixes", "points": 2, "description": "Fixes are specific (show the actual code/pattern), not vague ('use environment variables' = vague; 'DATABASE_URL = os.environ[\"DATABASE_URL\"]' = actionable)"},
+          {"id": "severity_ranking", "points": 2, "description": "CRITICAL problems (secrets, SQL injection) ranked above HIGH/MEDIUM. Reasonable justification given."}
+        ]
+      }
+    },
+
+    {
+      "id": "T3-03",
+      "tier": 3,
+      "category": "project_planning",
+      "title": "Multi-Constraint Project Plan",
+      "human_baseline_minutes": 25,
+      "human_baseline_notes": "Experienced project manager creating a sprint plan with dependencies and risks",
+      "expected_7B": "flat task list with no real dependencies, superficial risks",
+      "expected_70B": "dependencies present but critical path may be wrong, risks somewhat generic",
+      "differentiates_model_size": true,
+      "differentiates_ai_vs_human": false,
+      "prompt": "Create a 6-week project plan for the scenario below.\n\nRequired sections:\n1. TASKS: Numbered list with dependencies shown as arrows (e.g., Task 3 → Task 5 means Task 5 requires Task 3). At least 8 tasks.\n2. CRITICAL PATH: List the sequence of tasks that, if delayed, delays the final delivery. Explain why this is the critical path.\n3. RISKS: Exactly 3 risks. For each: describe the risk, likelihood (High/Medium/Low), impact (High/Medium/Low), and a specific mitigation (not 'monitor closely' — what do you actually do?).\n\nScenario: Build a data ingestion pipeline for a 3-person team (1 senior engineer, 2 junior engineers). The pipeline must: read daily CSV files from an S3 bucket, validate and transform the data, load into a PostgreSQL database, and send a daily summary email report. Constraint: the PostgreSQL schema must remain backward-compatible with the existing reporting system currently in production.",
+      "scoring": {
+        "type": "rubric",
+        "max_score": 12,
+        "criteria": [
+          {"id": "task_breakdown", "points": 3, "description": "At least 8 tasks covering all four pipeline stages (S3 read, validation/transform, DB load, email report). Tasks are specific enough for a developer to start work. Generic tasks like 'implement pipeline' get 0 points."},
+          {"id": "dependencies", "points": 3, "description": "Dependencies are logically correct: schema design before DB load code, validation logic before transform logic, all pipeline stages before email report, testing after implementation. At least 4 real dependency arrows present."},
+          {"id": "critical_path", "points": 3, "description": "Critical path is correctly identified (likely: schema design → DB connection setup → validation → transform → load → integration test → deploy → email). Explanation demonstrates understanding that these tasks cannot be parallelized."},
+          {"id": "risks", "points": 3, "description": "3 risks that are non-trivial and specific to this scenario: e.g., (1) CSV format changes from source breaking ingestion — mitigation: schema versioning + alerting; (2) backward-compat schema migration breaking existing reports — mitigation: read-only replica for existing system + migration tested against production schema; (3) S3 access permissions in prod differ from dev — mitigation: test IAM role in staging environment before deploy. Each risk has specific mitigation (not just 'monitor')."}
+        ],
+        "expected_critical_path": "Schema design → DB migration (backward-compat) → S3 reader → Validation logic → Transform logic → DB loader → Integration test → Deploy → Email report",
+        "expected_risks": [
+          "CSV format changes from source (Medium likelihood, High impact) — mitigation: schema validation with alerting on unexpected columns",
+          "Schema migration breaks existing reporting queries (Low likelihood, Critical impact) — mitigation: test migration against production schema copy before applying",
+          "Email delivery failure silently skips reports (Medium likelihood, Medium impact) — mitigation: implement dead letter queue or retry + alert on failure"
+        ]
+      }
+    }
+
+  ]
+}

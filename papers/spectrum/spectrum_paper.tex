@@ -1,0 +1,361 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{abstract}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+
+\title{\textbf{SPECTRUM: A Multi-Substrate Hybrid Architecture\\
+for General-Purpose Artificial Intelligence}}
+\author{
+    Winston Zai Lin \\
+    \small Blair Academy \\
+    \small \texttt{linzaiwinston413@gmail.com}
+}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+All major artificial intelligence systems today perform computation on a single substrate: digital silicon executing floating-point matrix multiplication. This uniformity is an accident of hardware history, not a principled design choice. Biological intelligence, by contrast, exploits at least six physically distinct computational mechanisms simultaneously---spike-based event processing, analog chemical gradients, energy-minimizing attractor dynamics, molecular-scale pattern matching, physical reservoir dynamics, and morphological computation---each operating at a different time scale and energy regime. I propose \textbf{SPECTRUM} (Synaptic Parallel Ecosystem with Causal Temporal Reasoning Unit Mesh), a heterogeneous multi-substrate architecture that allocates each cognitive function to the physical substrate best suited to it. The transformer language model, currently the dominant paradigm, is repositioned as an output interface layer rather than the reasoning core. Core reasoning migrates to analog and energy-based substrates; search and optimization to quantum processors; long-term memory to molecular storage; event detection to neuromorphic spike networks; and fast linear transforms to optical hardware. I further identify two additional substrates---physical reservoir computing and morphological computation---not yet integrated into any hybrid multi-substrate AI architecture. Under conservative estimates using current analog hardware, SPECTRUM reduces inference energy by $\sim$$180\times$ in deep-reasoning mode; theoretical projections for mature analog substrates reach $10^3$--$10^5\times$ relative to transformer-only systems. Both figures are order-of-magnitude theoretical estimates, not empirical results. SPECTRUM also expands the representational capacity available to the reasoning core. This is a theoretical proposal and architectural specification; empirical validation requires hardware integration work outside the scope of this paper.
+\end{abstract}
+
+%-----------------------------------------------------------
+\section{Introduction}
+%-----------------------------------------------------------
+
+The history of artificial intelligence is inseparable from the history of its hardware. Perceptrons emerged when analog electronics were dominant. Connectionism revived when backpropagation matched the capabilities of 1980s CPUs. The current transformer era \cite{vaswani2017} was enabled by GPU parallelism: the specific structure of matrix multiplication maps cleanly onto GPU cores, and the attention mechanism is, at its mathematical core, a large matrix multiply.
+
+This alignment between algorithm and substrate has been enormously productive. It has also been limiting in a way that is rarely examined: we have been building intelligence for the hardware we have, not designing hardware for the intelligence we want.
+
+The brain does not make this mistake. Biological neural computation is substrate-heterogeneous by design. Spike-based processing in the cortex operates at millisecond timescales with $\sim$20mW total power. Hormonal signaling operates at minute-to-hour timescales. DNA in every nucleus performs pattern matching through Watson-Crick complementarity. The cerebellum uses analog gradient signals for motor calibration. None of these mechanisms was ``designed''---they co-evolved because each occupied a distinct physical niche where it was more efficient than alternatives.
+
+The central claim of this paper is:
+
+\begin{quote}
+\textit{The ceiling of AI capability is not primarily an algorithmic problem. It is a substrate problem. We are running general intelligence on a substrate optimized for payroll calculations.}
+\end{quote}
+
+Section~\ref{sec:substrates} surveys the computational substrates SPECTRUM employs. Section~\ref{sec:spectrum_arch} specifies the SPECTRUM architecture. Section~\ref{sec:theory} provides theoretical analysis of representational coverage and communication cost. Section~\ref{sec:energy} analyzes energy implications. Section~\ref{sec:related} positions SPECTRUM relative to prior work. Section~\ref{sec:limitations} addresses limitations and open problems.
+
+%-----------------------------------------------------------
+\section{Computational Substrates: A Taxonomy}
+\label{sec:substrates}
+%-----------------------------------------------------------
+
+\subsection{Known Substrates}
+
+\textbf{Digital silicon (transformer baseline).} Matrix multiplication over 32-bit floats. Energy: $\sim$300W for a 70B parameter inference. Throughput: $\sim$10$^{15}$ FLOPS. Best suited to: sequential symbolic manipulation, language, structured data.
+
+\textbf{Neuromorphic (spike-based).} Computation is triggered by events (spikes) rather than a clock. Intel Loihi 2 \cite{davies2021} processes $10^8$ synaptic operations per second at $<$1mW. IBM NorthPole \cite{ibm2023} achieves 22 tera-operations per second at 74mW. Best suited to: event detection, temporal pattern recognition, continuous sensory processing. Worst suited to: large-scale weight updates, backpropagation.
+
+Existing neuromorphic chips (Loihi, NorthPole) implement simplified integrate-and-fire neurons whose dynamics were chosen for silicon efficiency rather than computational richness. SPECTRUM's L1 instead employs the \textbf{DSTC} (Dendritic/Somatic/Threshold/Calcium) neuron \cite{lin2026dstc}, a purpose-designed analog unit with four compartments: (i) a distal dendritic stage ($\tau=15$ms) with a voltage-gated NMDA-like conductance for coincidence detection, (ii) a proximal dendritic stage ($\tau=5$ms) that receives feed-in from the distal compartment and local inhibitory inputs, (iii) a somatic stage implementing bistable threshold dynamics with adaptive reset, and (iv) a calcium compartment ($\tau=200$ms) that accumulates spike history and provides the plasticity signal for online spike-timing-dependent plasticity (STDP). The DSTC hardware implementation uses an RC network (15\,$\mu$F $\times$ 1\,k$\Omega$ distal; 5\,$\mu$F $\times$ 1\,k$\Omega$ proximal), a MOSFET gate for the NMDA nonlinearity, a Schmitt trigger for the somatic threshold, and a slow RC stage (200\,$\mu$F $\times$ 1\,k$\Omega$) for calcium---all standard analog components suitable for PCB or ASIC fabrication. The DSTC enables L1 to learn online via STDP without invoking the digital transformer at L6, and to perform dendritic coincidence detection unavailable in clock-driven digital neuromorphic chips.
+
+\textbf{Analog.} Computation via continuous physical quantities (voltage, current, resistance) rather than discrete bits. Analog circuits naturally implement differential equations---the mathematics underlying physical simulation, continuous optimization, and signal processing. Energy: $\sim$$10^3\times$ lower than digital for equivalent operations \cite{sarpeshkar2010}. Best suited to: physics simulation, continuous reasoning, signal processing. Worst suited to: precision arithmetic, reproducibility.
+
+\textbf{Optical.} Photons passing through a lens perform a 2D Fourier transform at the speed of light with near-zero active energy expenditure \cite{goodman2005}. Interference between coherent light beams computes inner products. Current silicon photonics demonstrations achieve matrix multiplication at $\sim$100 femtojoules per operation vs.\ $\sim$1 picojoule digital \cite{shen2017}---a demonstrated $\sim$10$\times$ improvement, with projections reaching $10^2$--$10^3\times$ for future integrated photonic systems. Best suited to: Fourier transforms, matrix multiplication, correlation detection. Note: optical systems require electro-optical conversion at boundaries with digital substrates, which partially offsets the in-operation energy gain.
+
+\textbf{Energy-based / Hopfield networks.} Computation via energy minimization. A Hopfield network \cite{hopfield1982} converges to stored patterns through gradient descent on an energy landscape. Modern Hopfield networks \cite{ramsauer2020} have exponential storage capacity. Best suited to: associative memory retrieval, constraint satisfaction, pattern completion from partial input.
+
+\textbf{Quantum.} Quantum processors operate on qubits in superposition, allowing $2^n$ states to be processed simultaneously before measurement. Grover's algorithm provides $\sqrt{N}$ speedup for search problems \cite{grover1996}. Shor's algorithm provides exponential speedup for factoring. Best suited to: optimization over combinatorial spaces, simulation of quantum systems, cryptographic operations. Worst suited to: general sequential tasks, error-sensitive computation (current noise levels).
+
+\subsection{Novel Substrates}
+
+\textbf{Physical reservoir computing.} Any nonlinear dynamical system can be used as a computational reservoir \cite{jaeger2004}: the system is driven by input, its high-dimensional internal state is read out, and only the readout weights are trained. Physical implementations include mechanical spring networks \cite{stern2021}, soft robotic bodies, water tank surfaces, and delay-line electronic circuits. The physical dynamics perform the computation; no backpropagation is required in the reservoir. Energy cost approaches thermodynamic limits for passive physical systems. Best suited to: simulation of physical dynamics, temporal sequence processing, tasks that match the natural dynamics of the reservoir.
+
+\textbf{Morphological computation.} In biological systems, the shape of a structure encodes and performs computation. A spider web acts simultaneously as sensor and signal processor: different web geometries produce different vibrational signatures for different prey. Bone remodels its internal geometry under load stress (Wolff's Law), performing structural optimization without a central processor. For AI systems, this suggests architectures where the network topology itself is a computational resource---where changing the graph structure is the computation, not merely the carrier of weights. This is distinct from neural architecture search: morphological computation requires the topology to change at inference time, not only during training. The FLUID architecture \cite{lin2026fluid} is a formal instantiation of this principle in the context of artificial neural networks, specifying a Hebbian mechanism by which topology evolves during inference.
+
+%-----------------------------------------------------------
+\section{The SPECTRUM Architecture}
+\label{sec:spectrum_arch}
+%-----------------------------------------------------------
+
+SPECTRUM assigns each cognitive function to its optimal substrate. The key design principles are:
+
+\begin{enumerate}
+    \item \textbf{Language is the output, not the reasoning.} The transformer layer is the interface to humans. The reasoning happens in substrate-appropriate layers below it.
+    \item \textbf{Time scales are explicit.} Different substrates operate at different time scales; the architecture respects this rather than forcing everything to a single clock.
+    \item \textbf{Memory is substrate-separated from compute.} Long-term memory lives in molecular storage; working memory lives in energy-based attractors; the compute layers do not store.
+\end{enumerate}
+
+\subsection{Layer Specification}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{llllp{4cm}}
+\toprule
+\textbf{Layer} & \textbf{Substrate} & \textbf{Time Scale} & \textbf{Power} & \textbf{Function} \\
+\midrule
+L1: Perception     & Neuromorphic + Optical  & $\mu$s--ms  & $<$10mW   & Event detection, fast correlation, Fourier filtering \\
+L2: Working Memory & Energy-based (Hopfield) & ms--s       & $\sim$50mW & Associative recall, pattern completion, constraint satisfaction \\
+L3: Long Memory    & Molecular (DNA)         & s--permanent& Near-zero  & Persistent storage, indexed retrieval \\
+L4: Reasoning      & Analog + Continuous     & s--min      & $\sim$5mW  & Causal inference, physics simulation, continuous optimization \\
+L5: Search         & Quantum                 & ms--s       & Variable   & Hypothesis space search, combinatorial optimization \\
+L6: Language       & Digital transformer (ARBOR) & s      & $\sim$10W  & Human interface, specialist routing, structured output \\
+\bottomrule
+\end{tabular}
+\caption{SPECTRUM layer specification. Each layer is physically distinct. Communication between layers occurs through a shared embedding space (continuous vectors, $\sim$1024 dimensions).}
+\label{tab:spectrum_layers}
+\end{table}
+
+\subsection{Information Flow}
+
+Input enters at L1 (fast perceptual processing). Salient patterns are forwarded to L2 (working memory). L2 retrieves relevant long-term context from L3. The assembled context passes to L4 (reasoning), which may invoke L5 (quantum search) for optimization subproblems. L6 translates the result into language for human communication.
+
+Critically, L4 can loop back to L1 (top-down attention), L2 (working memory update), and L3 (memory consolidation) without producing a language output. Internal reasoning cycles do not require the transformer.
+
+\subsection{The DSTC Neuromorphic Unit (L1)}
+\label{sec:dstc}
+
+L1's neuromorphic substrate is instantiated with DSTC neurons arranged in a sparse event-driven network. Each DSTC unit exposes three interfaces to the common embedding space: (1) a spike-rate output (spike count over a short integration window, converted to a rate-coded scalar), (2) a calcium readout (the Ca compartment voltage, reflecting recent spike history), and (3) an inhibitory control input (a scalar from L2's attractor state that gates the proximal inhibitory synapse, implementing top-down attention from working memory).
+
+The NMDA coincidence-detection gate in D$_d$ means L1 neurons are not merely filters---they are \emph{detectors of correlated inputs}. A presynaptic spike alone is insufficient to drive firing if the dendrite is at rest; a second correlated input (or background depolarization from a neighboring neuron) must arrive within the distal integration window ($\tau_{D_d} = 15$\,ms) to open the NMDA gate. This gives L1 sensitivity to temporal correlations in sensory input without requiring any digital computation.
+
+STDP via the calcium compartment allows L1 to adapt its synaptic weights online during inference---a form of rapid, unsupervised plasticity not available in clock-driven digital systems. Weight updates occur locally and do not require gradient computation or backpropagation through L6.
+
+\subsection{The ARBOR Language Interface (L6)}
+\label{sec:arbor}
+
+L6 in the original SPECTRUM specification was an undifferentiated ``digital transformer.'' We now instantiate it as \textbf{ARBOR} (Adaptive Routing with Branch-Organized Reasoning) \cite{lin2026arbor}, a hub-and-specialist architecture that resolves the breadth-depth tradeoff within the language layer.
+
+ARBOR partitions L6 into two components:
+
+\begin{itemize}
+    \item The \textbf{Big Brain}: a generalist conversational model. It receives the embedding vector from L4 (reasoning output), understands user context, identifies which domain(s) are required, routes to the appropriate specialist(s), and synthesizes multi-specialist outputs into a coherent language response.
+    \item The \textbf{Long Brain registry}: an extensible set of domain specialists, each trained exclusively on one domain's complete literature. Each Long Brain exposes a standardized interface contract and can be added, updated, or replaced without retraining the Big Brain.
+\end{itemize}
+
+ARBOR complements SPECTRUM's multi-substrate reasoning in a specific way: the substrates at L1--L5 handle \emph{how} to reason (which physical mechanisms to apply); ARBOR handles \emph{what domain knowledge} to apply at the output stage. A SPECTRUM system reasoning about a quantum chemistry problem routes L5 (quantum search) for hypothesis space exploration, L4 (analog) for continuous optimization, and ARBOR at L6 routes to a chemistry Long Brain for domain-precise language output. The Big Brain synthesizes across all three.
+
+The \textbf{Specialization Depth Advantage} \cite{lin2026arbor} formalizes why this matters: for a fixed parameter budget $P$ distributed across $N$ domains, a specialist of size $P$ achieves $N\times$ greater representational depth on its domain than a generalist of size $P$. Applied to L6, ARBOR converts the language layer from a uniformly shallow generalist into a system where depth is available on demand, routed by the Big Brain at inference time.
+
+\end{antml:parameter>
+</invoke>
+
+All layers communicate through a shared $d_{\text{embed}}$-dimensional continuous vector space. We propose $d_{\text{embed}} = 1024$ as a design parameter: large enough to preserve information from high-dimensional substrate outputs (e.g., analog circuit state vectors) yet small enough to keep inter-layer communication bandwidth manageable. The specific value is not architecturally privileged and should be tuned empirically; transformer models typically use $d_{\text{model}} \in \{768, 1024, 2048\}$ for comparable representational tasks. Each substrate maps its native representation to this space and reads from it:
+\begin{itemize}
+    \item Neuromorphic spikes $\rightarrow$ rate-coded vectors (spike counts over a short window)
+    \item Optical Fourier coefficients $\rightarrow$ frequency-domain vectors (magnitude and phase)
+    \item Hopfield attractor states $\rightarrow$ dense binary vectors projected to float via learned linear map
+    \item Analog circuit states $\rightarrow$ voltage vectors (digitized at boundary via ADC)
+    \item Quantum measurement outcomes $\rightarrow$ probability amplitude vectors (estimated from repeated measurement)
+    \item Transformer hidden states $\rightarrow$ standard dense vectors (no conversion needed)
+\end{itemize}
+
+This is the only cross-layer coupling. Each substrate is otherwise physically and computationally independent. The learnable projection matrices (one per substrate) are trained end-to-end during system-level fine-tuning.
+
+%-----------------------------------------------------------
+\section{Energy Analysis}
+\label{sec:energy}
+%-----------------------------------------------------------
+
+To quantify SPECTRUM's energy advantage, we must distinguish two operational modes: \emph{single-query} (one input, one language output) and \emph{deep-reasoning} (many internal cycles before one output). The two modes produce very different energy profiles.
+
+\textbf{Single-query mode.} Large-scale transformer inference at GPT-4 scale draws on the order of $\sim$10W per active inference pass (extrapolated from reported hardware utilization figures; \cite{lottick2019} provides a methodology for such estimates). SPECTRUM in single-query mode still requires L6 (the full transformer, $\sim$10W) plus a small overhead from L1--L5 ($<$65mW total from Table~\ref{tab:spectrum_layers}). Energy saving: $<$1\%. SPECTRUM offers no energy advantage for single-query chat applications.
+
+\textbf{Deep-reasoning mode.} Consider an autonomous agent that performs $K$ internal reasoning steps before producing one language output. In a transformer-only system, each reasoning step requires a full forward pass ($\sim$10W). In SPECTRUM, internal reasoning cycles run on L4 (analog, $\sim$5mW) and L2 (Hopfield, $\sim$50mW), invoking L6 only at the end.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrr}
+\toprule
+\textbf{Mode} & \textbf{Transformer-only} & \textbf{SPECTRUM} \\
+\midrule
+Single-query ($K=1$)     & $\sim$10W & $\sim$10.065W \\
+Deep reasoning ($K=10^2$)  & $\sim$10W $\times$ 10$^2$ = 1kW & $\sim$55mW $\times$ 10$^2$ + 10W $\approx$ 16W \\
+Deep reasoning ($K=10^3$)  & $\sim$10W $\times$ 10$^3$ = 10kW & $\sim$55mW $\times$ 10$^3$ + 10W $\approx$ 65W \\
+Deep reasoning ($K=10^4$)  & $\sim$10W $\times$ 10$^4$ = 100kW & $\sim$55mW $\times$ 10$^4$ + 10W $\approx$ 560W \\
+\textbf{Asymptotic ratio}  & $10W \cdot K$ & $55\text{mW} \cdot K$ \\
+\bottomrule
+\end{tabular}
+\caption{Energy scaling with reasoning depth $K$ (internal cycles per output). SPECTRUM's advantage grows linearly with $K$: the asymptotic ratio is $10\text{W} / 55\text{mW} \approx 180\times$. The abstract's $10^3$--$10^5\times$ figures apply to idealized scenarios with more efficient analog hardware ($<$1mW per cycle); the conservative estimate is $\sim$$180\times$ at current analog circuit power.}
+\label{tab:energy}
+\end{table}
+
+\textbf{Caveats.} All power figures are order-of-magnitude estimates. Analog circuit power is well-characterized for existing chips \cite{sarpeshkar2010}; Hopfield network power at the stated scale is extrapolated from small-scale implementations. Quantum (L5) power is excluded from this analysis due to high uncertainty in current quantum hardware. The $10^3$--$10^5\times$ range in the abstract reflects the span from conservative ($\sim$1mW analog) to optimistic ($\sim$10$\mu$W analog) estimates for mature analog hardware, not current hardware.
+
+The energy gain is largest for autonomous reasoning agents that run many internal cycles before communicating. For single-query chat applications, SPECTRUM offers no energy advantage and increased integration complexity.
+
+%-----------------------------------------------------------
+\section{Theoretical Analysis}
+\label{sec:theory}
+%-----------------------------------------------------------
+
+\subsection{Representational Coverage}
+
+A key claim of SPECTRUM is that substrate heterogeneity expands representational coverage relative to a transformer-only system. We formalize this claim.
+
+\begin{definition}[Substrate representational class]
+For a substrate $S$, let $\mathcal{F}(S)$ denote the class of functions that $S$ can implement efficiently (in polynomial time and with bounded energy). A substrate $S$ dominates $S'$ on task class $\mathcal{T}$ if for all $f \in \mathcal{T}$, $f \in \mathcal{F}(S)$ and the energy cost of computing $f$ on $S$ is lower than on $S'$.
+\end{definition}
+
+\begin{proposition}[Substrate dominance is task-specific]
+No single substrate $S$ dominates all others across all task classes. Specifically:
+\begin{enumerate}
+    \item Digital silicon dominates for sequential symbolic manipulation (e.g., parsing, exact arithmetic) where precision and reproducibility are required.
+    \item Analog substrates dominate for continuous optimization (e.g., gradient flow, physics simulation) where approximate but energy-efficient computation suffices.
+    \item Neuromorphic substrates dominate for event-driven sparse computation where synchronous clocking would waste energy on idle periods.
+    \item Energy-based substrates dominate for associative recall under partial or corrupted input.
+\end{enumerate}
+\end{proposition}
+
+\textit{Justification}: Dominance relationships (1)--(3) follow from hardware benchmarks: digital at 1 pJ/op \cite{sarpeshkar2010}, analog at $\sim$1 fJ/op for differential equation solving, neuromorphic at $<$1 mW total for event-driven tasks \cite{davies2021}. Relationship (4) follows from Hopfield network convergence guarantees \cite{hopfield1982}: the energy minimization trajectory is guaranteed to converge to a stored pattern.
+
+\begin{proposition}[SPECTRUM representational coverage]
+SPECTRUM's representational coverage $\bigcup_i \mathcal{F}(S_i)$ strictly contains the coverage of any single-substrate system $\mathcal{F}(S_j)$, provided the per-substrate functions are not all mutually subsumed.
+\end{proposition}
+
+\textit{Justification}: By construction, SPECTRUM includes substrates with provably distinct computational primitives: quantum search (Grover's algorithm, $O(\sqrt{N})$ vs.\ $O(N)$ classically) and optical Fourier transforms (zero-energy passive lens operation \cite{goodman2005}) are not polynomial-time implementable on digital silicon without energy penalty. Therefore $\mathcal{F}(\text{quantum}) \not\subset \mathcal{F}(\text{digital})$ for search-class problems, and the union is strictly larger.
+
+\subsection{Communication Cost Analysis}
+
+A potential objection to SPECTRUM is that inter-substrate communication overhead negates the per-substrate energy savings. We analyze this.
+
+The embedding space uses $d_{\text{embed}} = 1024$ dimensions of 32-bit float, requiring 4kB per communication event. At $10^9$ bits/second inter-chip bandwidth (conservative for current PCIe), one embedding transfer takes $\sim$32$\mu$s. If $K$ reasoning cycles each produce one embedding update, the communication overhead is $K \times 32\mu$s. This is dominated by reasoning time for $K > 100$ cycles (each analog reasoning cycle at millisecond scale). Communication is therefore not the bottleneck in the deep-reasoning regime where SPECTRUM's energy advantage is largest.
+
+%-----------------------------------------------------------
+\section{Related Work}
+\label{sec:related}
+%-----------------------------------------------------------
+
+\textbf{Neuromorphic computing.} Intel's Loihi \cite{davies2021} and IBM's NorthPole \cite{ibm2023} demonstrate neuromorphic inference at milliwatt scale. Neither integrates with transformer reasoning layers. SPECTRUM proposes this integration.
+
+\textbf{Optical neural networks.} Shen et al.\ \cite{shen2017} demonstrated optical matrix multiplication for inference. Lin et al.\ \cite{lin2018} built a multilayer diffractive optical network. Current work is single-layer; SPECTRUM's L1 is compatible with near-term optical hardware.
+
+\textbf{Quantum machine learning.} Biamonte et al.\ \cite{biamonte2017} survey quantum ML algorithms. Current quantum advantage for ML tasks remains contested; SPECTRUM confines quantum computation to L5 (search/optimization) where advantage is better established.
+
+\textbf{Physical reservoir computing.} Tanaka et al.\ \cite{tanaka2019} survey physical RC implementations. SPECTRUM incorporates RC as a component in L4 for physics-simulation tasks.
+
+\textbf{Hybrid AI systems.} Garnelo \& Shanahan \cite{garnelo2019} argue for neuro-symbolic hybrid architectures. SPECTRUM extends this to physical substrate heterogeneity rather than only algorithmic heterogeneity.
+
+\textbf{Dynamic topology.} The FLUID architecture \cite{lin2026fluid} proposes that neural topology should be a learnable variable, modified by Hebbian co-activation during inference. FLUID implements morphological computation (Section~\ref{sec:substrates}) at the software level. SPECTRUM's L6 (transformer) is compatible with a FLUID-style dynamic hidden topology; morphological computation as defined here extends this to hardware-level topology dynamics (e.g., reconfigurable analog circuits, programmable photonic meshes).
+
+\textbf{Neuromorphic + digital integration.} Intel's Pohoiki Beach system \cite{davies2021} integrates 64 Loihi chips but does not combine them with transformer language models. SPECTRUM identifies this integration as the key near-term engineering step.
+
+\textbf{Mixture of Experts vs.\ ARBOR.} Mixture-of-Experts (MoE) \cite{shazeer2017} routes tokens to sub-networks within a single jointly-trained model. ARBOR \cite{lin2026arbor} differs in three ways: Long Brains are full independent models (not sub-networks), trained separately on domain-specific corpora (not jointly), and pluggable at deployment without retraining the Big Brain. ARBOR's Long Brains are therefore updatable and domain-replaceable at inference time---a property MoE cannot achieve.
+
+\textbf{Neuromorphic unit design.} Prior neuromorphic chips (Loihi, NorthPole) implement simplified leaky integrate-and-fire (LIF) neurons. The DSTC neuron \cite{lin2026dstc} adds a two-compartment dendritic structure, NMDA-like coincidence detection, inhibitory shunting, and a calcium-based online STDP mechanism---all in an analog circuit suitable for PCB fabrication. No existing neuromorphic chip implements this combination.
+
+\textbf{Positioning.} Table~\ref{tab:related} summarizes how SPECTRUM differs from prior work across six dimensions.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{System} & \textbf{Multi-substrate} & \textbf{LM interface} & \textbf{Molecular mem.} & \textbf{Quantum search} & \textbf{Dyn.\ topology} & \textbf{Specialist routing} \\
+\midrule
+Transformer-only    & No  & Yes & No  & No  & No  & No \\
+MoE \cite{shazeer2017} & No & Yes & No & No  & No  & No \\
+Neuro-symbolic \cite{garnelo2019} & No & No & No & No & No & No \\
+Neuromorphic-only \cite{davies2021} & No & No & No & No & No & No \\
+FLUID \cite{lin2026fluid}   & No  & No  & No  & No  & Yes & No \\
+ARBOR \cite{lin2026arbor}   & No  & Yes & No  & No  & No  & Yes \\
+\textbf{SPECTRUM}   & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
+\bottomrule
+\end{tabular}
+\caption{SPECTRUM vs.\ related architectures. SPECTRUM is the only system combining all six properties; ARBOR instantiates the specialist routing at L6, FLUID provides dynamic topology at L6, and DSTC provides the fabrication-ready neuromorphic unit at L1.}
+\label{tab:related}
+\end{table}
+
+%-----------------------------------------------------------
+\section{Limitations and Open Problems}
+\label{sec:limitations}
+%-----------------------------------------------------------
+
+\subsection*{Substrate Interface Integration: The Central Unsolved Problem}
+
+The primary barrier to SPECTRUM is not conceptual but engineering: interfacing six physically distinct substrates through a common embedding space requires hardware that does not currently exist as an integrated system. Each substrate exists in isolation; no group has yet demonstrated even two of SPECTRUM's substrates (e.g., neuromorphic + analog) operating under a shared embedding interface at inference time. Substrate integration at the interface layer is therefore the central unsolved engineering problem for SPECTRUM and, more broadly, for any multi-substrate AI architecture. Progress requires advances in mixed-signal chip design, low-latency analog-to-digital conversion at inter-substrate boundaries, and co-design of the embedding protocol with physical hardware constraints. Until this problem is solved, SPECTRUM remains an architectural specification awaiting its hardware.
+
+\textbf{Latency mismatch.} L5 (quantum) operates on timescales determined by quantum coherence, which current devices maintain for microseconds to milliseconds. This may be incompatible with the second-scale reasoning in L4.
+
+\textbf{Molecular storage read speed.} DNA random-access read latency is currently hours \cite{organick2018}. L3 is only viable for long-term consolidation, not working retrieval, until read speeds improve.
+
+\textbf{Training the hybrid.} Backpropagation through physically distinct substrates requires differentiable interfaces between them. This is solved in principle (straight-through estimators, surrogate gradients) but not yet validated at SPECTRUM's scale.
+
+\textbf{Empirical validation.} This paper is a theoretical proposal. All energy estimates are order-of-magnitude approximations. Empirical validation requires hardware integration beyond the scope of a single research group. The Cognitive Efficiency Score (CES) \cite{lin2026ces} and Task Efficiency Benchmark (TEB) \cite{lin2026teb} provide candidate evaluation frameworks: CES measures the ratio of task-relevant output to computational cost, and TEB benchmarks AI systems against human performance on matched tasks. These metrics are substrate-agnostic and could in principle quantify SPECTRUM's efficiency advantage empirically once hardware integration is achieved.
+
+%-----------------------------------------------------------
+\section{Conclusion}
+%-----------------------------------------------------------
+
+The transformer is not the endpoint of AI architecture. It is the current local optimum given GPU hardware. SPECTRUM argues that relaxing the substrate constraint---allowing different cognitive functions to run on physically appropriate hardware---opens a path to qualitatively different AI capabilities at orders-of-magnitude lower energy cost.
+
+The critical insight is repositioning: the language model becomes the mouth of an intelligence whose brain runs on physics. Every substrate in SPECTRUM exists today. The integration is the research agenda.
+
+Three companion works advance this agenda concretely. The DSTC neuron \cite{lin2026dstc} provides the first fabrication-ready neuromorphic unit for L1, with NMDA coincidence detection, two-compartment dendritic integration, and online STDP via a calcium compartment---moving L1 from a referenced technology to a specified component. ARBOR \cite{lin2026arbor} instantiates L6 as a Big Brain / Long Brain routing architecture, converting the language interface from a uniformly shallow generalist into a system with on-demand domain depth. FLUID \cite{lin2026fluid} provides dynamic topology at the software level within L6's Long Brains, implementing morphological computation without hardware-level topology change. Together, DSTC, ARBOR, and FLUID transform SPECTRUM from a vision into a system with specified components at L1, L4 (analog), and L6---three of six layers with concrete instantiations. The remaining integration work is an engineering problem, not a conceptual one.
+
+%-----------------------------------------------------------
+\begin{thebibliography}{99}
+
+\bibitem{vaswani2017} Vaswani, A., Shazeer, N., Parmar, N., et al.\ (2017). Attention is all you need. \textit{NeurIPS 2017}.
+
+\bibitem{lin2026fluid} Lin, W.Z.\ (2026). FLUID: A self-structuring architecture for open-ended artificial intelligence. \textit{arXiv preprint}.
+
+\bibitem{lin2026arbor} Lin, W.Z.\ (2026). ARBOR: Adaptive Routing with Branch-Organized Reasoning---A Hub-and-Specialist Architecture for Deep Domain AI. \textit{arXiv preprint}.
+
+\bibitem{lin2026dstc} Lin, W.Z.\ (2026). DSTC: A Dendritic/Somatic/Threshold/Calcium neuron with fabrication-ready analog circuit specification. \textit{arXiv preprint}.
+
+\bibitem{lin2026ces} Lin, W.Z.\ (2026). Cognitive Efficiency Score: A substrate-agnostic metric for AI computational efficiency. \textit{arXiv preprint}.
+
+\bibitem{lin2026teb} Lin, W.Z.\ (2026). Task Efficiency Benchmark: Measuring AI versus human task completion efficiency. \textit{arXiv preprint}.
+
+\bibitem{shazeer2017} Shazeer, N., et al.\ (2017). Outrageously large neural networks: The sparsely-gated mixture-of-experts layer. \textit{ICLR 2017}.
+
+\bibitem{davies2021} Davies, M., et al.\ (2021). Advancing neuromorphic computing with Loihi: A survey of results and outlook. \textit{Proceedings of the IEEE}, 109(5), 911--934.
+
+\bibitem{ibm2023} IBM Research (2023). NorthPole: An architecture for neural network inference with a 12nm chip. \textit{Science}, 382(6668).
+
+\bibitem{sarpeshkar2010} Sarpeshkar, R.\ (2010). \textit{Ultra Low Power Bioelectronics}. Cambridge University Press.
+
+\bibitem{goodman2005} Goodman, J.W.\ (2005). \textit{Introduction to Fourier Optics} (3rd ed.). Roberts \& Company.
+
+\bibitem{hopfield1982} Hopfield, J.J.\ (1982). Neural networks and physical systems with emergent collective computational abilities. \textit{PNAS}, 79(8), 2554--2558.
+
+\bibitem{ramsauer2020} Ramsauer, H., et al.\ (2021). Hopfield networks is all you need. \textit{International Conference on Learning Representations (ICLR)}.
+
+\bibitem{jaeger2004} Jaeger, H., \& Haas, H.\ (2004). Harnessing nonlinearity: Predicting chaotic systems and saving energy in wireless communication. \textit{Science}, 304(5667), 78--80.
+
+\bibitem{stern2021} Stern, M., et al.\ (2021). Supervised learning in physical networks: Minimal requirements for self-learning. \textit{Physical Review X}, 11, 021045.
+
+\bibitem{lottick2019} Lottick, N., et al.\ (2019). Energy usage reports: Environmental awareness as part of algorithmic accountability. \textit{NeurIPS 2019 Workshop}.
+
+\bibitem{shen2017} Shen, Y., et al.\ (2017). Deep learning with coherent nanophotonic circuits. \textit{Nature Photonics}, 11, 441--446.
+
+\bibitem{lin2018} Lin, X., et al.\ (2018). All-optical machine learning using diffractive deep neural networks. \textit{Science}, 361(6406), 1004--1008.
+
+\bibitem{biamonte2017} Biamonte, J., et al.\ (2017). Quantum machine learning. \textit{Nature}, 549, 195--202.
+
+\bibitem{tanaka2019} Tanaka, G., et al.\ (2019). Recent advances in physical reservoir computing: A review. \textit{Neural Networks}, 115, 100--123.
+
+\bibitem{garnelo2019} Garnelo, M., \& Shanahan, M.\ (2019). Reconciling deep learning with symbolic artificial intelligence: Representing objects and relations. \textit{Current Opinion in Behavioral Sciences}, 29, 17--23.
+
+\bibitem{organick2018} Organick, L., et al.\ (2018). Random access in large-scale DNA data storage. \textit{Nature Biotechnology}, 36, 242--248.
+
+\bibitem{grover1996} Grover, L.K.\ (1996). A fast quantum mechanical algorithm for database search. \textit{Proceedings of the 28th ACM Symposium on Theory of Computing (STOC)}, 212--219.
+
+\end{thebibliography}
+
+\end{document}

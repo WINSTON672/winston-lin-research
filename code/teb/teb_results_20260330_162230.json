@@ -1,0 +1,481 @@
+{
+  "run_timestamp": "2026-03-30T16:20:44.916150",
+  "tasks_run": [
+    "T1-01",
+    "T1-02",
+    "T1-03",
+    "T2-01",
+    "T2-02",
+    "T2-03",
+    "T2-04",
+    "T3-01",
+    "T3-02",
+    "T3-03"
+  ],
+  "models": {
+    "Qwen2.5-7B": {
+      "hf_id": "Qwen/Qwen2.5-7B-Instruct",
+      "flops_T": 7.0,
+      "responses": {
+        "T1-01": {
+          "task_id": "T1-01",
+          "tier": 1,
+          "human_baseline_minutes": 10,
+          "input_tokens": 284,
+          "output_tokens": 0,
+          "duration_s": 3.553349733352661,
+          "speedup_vs_human": 168.9,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T1-02": {
+          "task_id": "T1-02",
+          "tier": 1,
+          "human_baseline_minutes": 6,
+          "input_tokens": 244,
+          "output_tokens": 0,
+          "duration_s": 1.4903547763824463,
+          "speedup_vs_human": 241.6,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T1-03": {
+          "task_id": "T1-03",
+          "tier": 1,
+          "human_baseline_minutes": 4,
+          "input_tokens": 525,
+          "output_tokens": 0,
+          "duration_s": 1.242316722869873,
+          "speedup_vs_human": 193.2,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-01": {
+          "task_id": "T2-01",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 326,
+          "output_tokens": 0,
+          "duration_s": 1.5540590286254883,
+          "speedup_vs_human": 579.1,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-02": {
+          "task_id": "T2-02",
+          "tier": 2,
+          "human_baseline_minutes": 12,
+          "input_tokens": 349,
+          "output_tokens": 0,
+          "duration_s": 1.2658100128173828,
+          "speedup_vs_human": 568.8,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-03": {
+          "task_id": "T2-03",
+          "tier": 2,
+          "human_baseline_minutes": 10,
+          "input_tokens": 341,
+          "output_tokens": 0,
+          "duration_s": 2.357274055480957,
+          "speedup_vs_human": 254.5,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-04": {
+          "task_id": "T2-04",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 256,
+          "output_tokens": 0,
+          "duration_s": 1.2600879669189453,
+          "speedup_vs_human": 714.2,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-01": {
+          "task_id": "T3-01",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 298,
+          "output_tokens": 0,
+          "duration_s": 1.3385798931121826,
+          "speedup_vs_human": 1120.6,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-02": {
+          "task_id": "T3-02",
+          "tier": 3,
+          "human_baseline_minutes": 20,
+          "input_tokens": 999,
+          "output_tokens": 0,
+          "duration_s": 1.872298002243042,
+          "speedup_vs_human": 640.9,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-03": {
+          "task_id": "T3-03",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 228,
+          "output_tokens": 0,
+          "duration_s": 1.15358304977417,
+          "speedup_vs_human": 1300.3,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        }
+      }
+    },
+    "Llama-3-8B": {
+      "hf_id": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "flops_T": 8.0,
+      "responses": {
+        "T1-01": {
+          "task_id": "T1-01",
+          "tier": 1,
+          "human_baseline_minutes": 10,
+          "input_tokens": 284,
+          "output_tokens": 0,
+          "duration_s": 1.65273118019104,
+          "speedup_vs_human": 363.0,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T1-02": {
+          "task_id": "T1-02",
+          "tier": 1,
+          "human_baseline_minutes": 6,
+          "input_tokens": 244,
+          "output_tokens": 0,
+          "duration_s": 1.1507105827331543,
+          "speedup_vs_human": 312.9,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T1-03": {
+          "task_id": "T1-03",
+          "tier": 1,
+          "human_baseline_minutes": 4,
+          "input_tokens": 525,
+          "output_tokens": 0,
+          "duration_s": 1.349822998046875,
+          "speedup_vs_human": 177.8,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-01": {
+          "task_id": "T2-01",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 326,
+          "output_tokens": 0,
+          "duration_s": 2.2335708141326904,
+          "speedup_vs_human": 402.9,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-02": {
+          "task_id": "T2-02",
+          "tier": 2,
+          "human_baseline_minutes": 12,
+          "input_tokens": 349,
+          "output_tokens": 0,
+          "duration_s": 1.1542141437530518,
+          "speedup_vs_human": 623.8,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-03": {
+          "task_id": "T2-03",
+          "tier": 2,
+          "human_baseline_minutes": 10,
+          "input_tokens": 341,
+          "output_tokens": 0,
+          "duration_s": 1.200951099395752,
+          "speedup_vs_human": 499.6,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-04": {
+          "task_id": "T2-04",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 256,
+          "output_tokens": 0,
+          "duration_s": 1.4608240127563477,
+          "speedup_vs_human": 616.1,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-01": {
+          "task_id": "T3-01",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 298,
+          "output_tokens": 0,
+          "duration_s": 1.5774569511413574,
+          "speedup_vs_human": 950.9,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-02": {
+          "task_id": "T3-02",
+          "tier": 3,
+          "human_baseline_minutes": 20,
+          "input_tokens": 999,
+          "output_tokens": 0,
+          "duration_s": 1.4503240585327148,
+          "speedup_vs_human": 827.4,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-03": {
+          "task_id": "T3-03",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 228,
+          "output_tokens": 0,
+          "duration_s": 1.2338616847991943,
+          "speedup_vs_human": 1215.7,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        }
+      }
+    },
+    "Llama-3.3-70B": {
+      "hf_id": "meta-llama/Llama-3.3-70B-Instruct",
+      "flops_T": 70.0,
+      "responses": {
+        "T1-01": {
+          "task_id": "T1-01",
+          "tier": 1,
+          "human_baseline_minutes": 10,
+          "input_tokens": 284,
+          "output_tokens": 0,
+          "duration_s": 1.9229519367218018,
+          "speedup_vs_human": 312.0,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T1-02": {
+          "task_id": "T1-02",
+          "tier": 1,
+          "human_baseline_minutes": 6,
+          "input_tokens": 244,
+          "output_tokens": 0,
+          "duration_s": 1.2102761268615723,
+          "speedup_vs_human": 297.5,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T1-03": {
+          "task_id": "T1-03",
+          "tier": 1,
+          "human_baseline_minutes": 4,
+          "input_tokens": 525,
+          "output_tokens": 0,
+          "duration_s": 1.168713092803955,
+          "speedup_vs_human": 205.4,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-01": {
+          "task_id": "T2-01",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 326,
+          "output_tokens": 0,
+          "duration_s": 4.298358201980591,
+          "speedup_vs_human": 209.4,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-02": {
+          "task_id": "T2-02",
+          "tier": 2,
+          "human_baseline_minutes": 12,
+          "input_tokens": 349,
+          "output_tokens": 0,
+          "duration_s": 1.0267090797424316,
+          "speedup_vs_human": 701.3,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-03": {
+          "task_id": "T2-03",
+          "tier": 2,
+          "human_baseline_minutes": 10,
+          "input_tokens": 341,
+          "output_tokens": 0,
+          "duration_s": 1.5649938583374023,
+          "speedup_vs_human": 383.4,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-04": {
+          "task_id": "T2-04",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 256,
+          "output_tokens": 0,
+          "duration_s": 1.525519847869873,
+          "speedup_vs_human": 590.0,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-01": {
+          "task_id": "T3-01",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 298,
+          "output_tokens": 0,
+          "duration_s": 1.348646879196167,
+          "speedup_vs_human": 1112.2,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-02": {
+          "task_id": "T3-02",
+          "tier": 3,
+          "human_baseline_minutes": 20,
+          "input_tokens": 999,
+          "output_tokens": 0,
+          "duration_s": 1.5536820888519287,
+          "speedup_vs_human": 772.4,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-03": {
+          "task_id": "T3-03",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 228,
+          "output_tokens": 0,
+          "duration_s": 2.555245876312256,
+          "speedup_vs_human": 587.0,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        }
+      }
+    },
+    "Qwen2.5-72B": {
+      "hf_id": "Qwen/Qwen2.5-72B-Instruct",
+      "flops_T": 72.0,
+      "responses": {
+        "T1-01": {
+          "task_id": "T1-01",
+          "tier": 1,
+          "human_baseline_minutes": 10,
+          "input_tokens": 284,
+          "output_tokens": 0,
+          "duration_s": 3.77950382232666,
+          "speedup_vs_human": 158.8,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T1-02": {
+          "task_id": "T1-02",
+          "tier": 1,
+          "human_baseline_minutes": 6,
+          "input_tokens": 244,
+          "output_tokens": 0,
+          "duration_s": 1.3736279010772705,
+          "speedup_vs_human": 262.1,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T1-03": {
+          "task_id": "T1-03",
+          "tier": 1,
+          "human_baseline_minutes": 4,
+          "input_tokens": 525,
+          "output_tokens": 0,
+          "duration_s": 1.1887590885162354,
+          "speedup_vs_human": 201.9,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-01": {
+          "task_id": "T2-01",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 326,
+          "output_tokens": 0,
+          "duration_s": 1.2742328643798828,
+          "speedup_vs_human": 706.3,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-02": {
+          "task_id": "T2-02",
+          "tier": 2,
+          "human_baseline_minutes": 12,
+          "input_tokens": 349,
+          "output_tokens": 0,
+          "duration_s": 1.2097420692443848,
+          "speedup_vs_human": 595.2,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-03": {
+          "task_id": "T2-03",
+          "tier": 2,
+          "human_baseline_minutes": 10,
+          "input_tokens": 341,
+          "output_tokens": 0,
+          "duration_s": 1.4443762302398682,
+          "speedup_vs_human": 415.4,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T2-04": {
+          "task_id": "T2-04",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 256,
+          "output_tokens": 0,
+          "duration_s": 1.191164255142212,
+          "speedup_vs_human": 755.6,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-01": {
+          "task_id": "T3-01",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 298,
+          "output_tokens": 0,
+          "duration_s": 1.2388558387756348,
+          "speedup_vs_human": 1210.8,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-02": {
+          "task_id": "T3-02",
+          "tier": 3,
+          "human_baseline_minutes": 20,
+          "input_tokens": 999,
+          "output_tokens": 0,
+          "duration_s": 1.3503696918487549,
+          "speedup_vs_human": 888.6,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        },
+        "T3-03": {
+          "task_id": "T3-03",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 228,
+          "output_tokens": 0,
+          "duration_s": 1.1551742553710938,
+          "speedup_vs_human": 1298.5,
+          "response_text": null,
+          "error": "HTTP 410: {\"error\":\"https://api-inference.huggingface.co is no longer supported. Please use https://router.huggingface.co instead.\"}"
+        }
+      }
+    }
+  }
+}

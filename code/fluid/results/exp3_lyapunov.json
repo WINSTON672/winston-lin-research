@@ -1,0 +1,139 @@
+{
+  "results": [
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.001,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.001,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.001,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.001,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.005,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.005,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.005,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.005,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.01,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.01,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.01,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.01,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "is_lyapunov_decreasing": false,
+      "fraction_decreasing": 0.46210526315789474,
+      "trend_slope": -5.503597820728009e-06,
+      "lyapunov_initial": 0.23135875848078813,
+      "lyapunov_final": 0.00011917510053733448
+    }
+  ],
+  "n_decreasing": 0,
+  "total": 12,
+  "fraction_lyapunov_holds": 0.0
+}

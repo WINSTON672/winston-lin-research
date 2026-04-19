@@ -1,0 +1,1091 @@
+{
+  "results": [
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.001,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.001,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.001,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.001,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.005,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.005,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.005,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.005,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.01,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.01,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.01,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.01,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.05,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20021887272312383
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.05,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20459742847762782
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.05,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20561839713211758
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.05,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20027926926895015
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.1,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20021887272312383
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.1,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20459742847762782
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.1,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20561839713211758
+    },
+    {
+      "theta_create": 0.1,
+      "theta_prune": 0.1,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20027926926895015
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.001,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.001,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.001,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.001,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.005,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.005,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.005,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.005,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.01,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.01,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.01,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.01,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20489790504880684
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.05,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20021887272312383
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.05,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20459742847762782
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.05,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20561839713211758
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.05,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20027926926895015
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.1,
+      "T_prune": 100,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20021887272312383
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.1,
+      "T_prune": 300,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20459742847762782
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.1,
+      "T_prune": 500,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20561839713211758
+    },
+    {
+      "theta_create": 0.2,
+      "theta_prune": 0.1,
+      "T_prune": 1000,
+      "final_n_edges": 9900,
+      "outcome": "fully_connected",
+      "final_clustering": 1.0,
+      "final_loss": 0.20027926926895015
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.001,
+      "T_prune": 100,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.001,
+      "T_prune": 300,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.001,
+      "T_prune": 500,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.001,
+      "T_prune": 1000,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.005,
+      "T_prune": 100,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.005,
+      "T_prune": 300,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.005,
+      "T_prune": 500,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.005,
+      "T_prune": 1000,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.01,
+      "T_prune": 100,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.01,
+      "T_prune": 300,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.01,
+      "T_prune": 500,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.01,
+      "T_prune": 1000,
+      "final_n_edges": 198,
+      "outcome": "stable",
+      "final_clustering": 0.0,
+      "final_loss": 0.2248989849982461
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.05,
+      "T_prune": 100,
+      "final_n_edges": 182,
+      "outcome": "growing",
+      "final_clustering": 0.0,
+      "final_loss": 0.22292327337653223
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.05,
+      "T_prune": 300,
+      "final_n_edges": 180,
+      "outcome": "growing",
+      "final_clustering": 0.0,
+      "final_loss": 0.22496148068093533
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.05,
+      "T_prune": 500,
+      "final_n_edges": 198,
+      "outcome": "growing",
+      "final_clustering": 0.0,
+      "final_loss": 0.22477127094789479
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.05,
+      "T_prune": 1000,
+      "final_n_edges": 198,
+      "outcome": "growing",
+      "final_clustering": 0.0,
+      "final_loss": 0.2246364224797018
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.1,
+      "T_prune": 100,
+      "final_n_edges": 182,
+      "outcome": "growing",
+      "final_clustering": 0.0,
+      "final_loss": 0.22292327337653223
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.1,
+      "T_prune": 300,
+      "final_n_edges": 180,
+      "outcome": "growing",
+      "final_clustering": 0.0,
+      "final_loss": 0.22496148068093533
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.1,
+      "T_prune": 500,
+      "final_n_edges": 198,
+      "outcome": "growing",
+      "final_clustering": 0.0,
+      "final_loss": 0.22477127094789479
+    },
+    {
+      "theta_create": 0.3,
+      "theta_prune": 0.1,
+      "T_prune": 1000,
+      "final_n_edges": 198,
+      "outcome": "growing",
+      "final_clustering": 0.0,
+      "final_loss": 0.2246364224797018
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.001,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.001,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.001,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.001,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.005,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.005,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.005,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.005,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.01,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.01,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.01,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.01,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.05,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.05,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.05,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.05,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.1,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.1,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.1,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.5,
+      "theta_prune": 0.1,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.001,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.001,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.001,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.001,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.005,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.005,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.005,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.005,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.01,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.01,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.01,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.01,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.05,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.05,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.05,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.05,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.1,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.1,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.1,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.7,
+      "theta_prune": 0.1,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.001,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.001,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.001,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.001,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.005,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.005,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.005,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.005,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.01,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.01,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.01,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.01,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.05,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.05,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.05,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.05,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.1,
+      "T_prune": 100,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.1,
+      "T_prune": 300,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.1,
+      "T_prune": 500,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    },
+    {
+      "theta_create": 0.9,
+      "theta_prune": 0.1,
+      "T_prune": 1000,
+      "final_n_edges": 0,
+      "outcome": "disconnected",
+      "final_clustering": 0.0,
+      "final_loss": 0.21532590589969236
+    }
+  ],
+  "counts": {
+    "fully_connected": 40,
+    "stable": 12,
+    "growing": 8,
+    "disconnected": 60
+  },
+  "total": 120
+}

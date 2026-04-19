@@ -1,0 +1,481 @@
+{
+  "run_timestamp": "2026-03-30T16:22:52.888565",
+  "tasks_run": [
+    "T1-01",
+    "T1-02",
+    "T1-03",
+    "T2-01",
+    "T2-02",
+    "T2-03",
+    "T2-04",
+    "T3-01",
+    "T3-02",
+    "T3-03"
+  ],
+  "models": {
+    "Qwen2.5-7B": {
+      "hf_id": "Qwen/Qwen2.5-7B-Instruct",
+      "flops_T": 7.0,
+      "responses": {
+        "T1-01": {
+          "task_id": "T1-01",
+          "tier": 1,
+          "human_baseline_minutes": 10,
+          "input_tokens": 284,
+          "output_tokens": 0,
+          "duration_s": 2.0840530395507812,
+          "speedup_vs_human": 287.9,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T1-02": {
+          "task_id": "T1-02",
+          "tier": 1,
+          "human_baseline_minutes": 6,
+          "input_tokens": 244,
+          "output_tokens": 0,
+          "duration_s": 3.0851829051971436,
+          "speedup_vs_human": 116.7,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T1-03": {
+          "task_id": "T1-03",
+          "tier": 1,
+          "human_baseline_minutes": 4,
+          "input_tokens": 525,
+          "output_tokens": 0,
+          "duration_s": 1.1045310497283936,
+          "speedup_vs_human": 217.3,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-01": {
+          "task_id": "T2-01",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 326,
+          "output_tokens": 0,
+          "duration_s": 1.1465370655059814,
+          "speedup_vs_human": 785.0,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-02": {
+          "task_id": "T2-02",
+          "tier": 2,
+          "human_baseline_minutes": 12,
+          "input_tokens": 349,
+          "output_tokens": 0,
+          "duration_s": 1.5674519538879395,
+          "speedup_vs_human": 459.3,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-03": {
+          "task_id": "T2-03",
+          "tier": 2,
+          "human_baseline_minutes": 10,
+          "input_tokens": 341,
+          "output_tokens": 0,
+          "duration_s": 1.145597219467163,
+          "speedup_vs_human": 523.7,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-04": {
+          "task_id": "T2-04",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 256,
+          "output_tokens": 0,
+          "duration_s": 1.5973999500274658,
+          "speedup_vs_human": 563.4,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-01": {
+          "task_id": "T3-01",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 298,
+          "output_tokens": 0,
+          "duration_s": 1.629060983657837,
+          "speedup_vs_human": 920.8,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-02": {
+          "task_id": "T3-02",
+          "tier": 3,
+          "human_baseline_minutes": 20,
+          "input_tokens": 999,
+          "output_tokens": 0,
+          "duration_s": 1.6291730403900146,
+          "speedup_vs_human": 736.6,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-03": {
+          "task_id": "T3-03",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 228,
+          "output_tokens": 0,
+          "duration_s": 1.315650224685669,
+          "speedup_vs_human": 1140.1,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        }
+      }
+    },
+    "Llama-3-8B": {
+      "hf_id": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "flops_T": 8.0,
+      "responses": {
+        "T1-01": {
+          "task_id": "T1-01",
+          "tier": 1,
+          "human_baseline_minutes": 10,
+          "input_tokens": 284,
+          "output_tokens": 0,
+          "duration_s": 1.794827938079834,
+          "speedup_vs_human": 334.3,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T1-02": {
+          "task_id": "T1-02",
+          "tier": 1,
+          "human_baseline_minutes": 6,
+          "input_tokens": 244,
+          "output_tokens": 0,
+          "duration_s": 1.7446560859680176,
+          "speedup_vs_human": 206.3,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T1-03": {
+          "task_id": "T1-03",
+          "tier": 1,
+          "human_baseline_minutes": 4,
+          "input_tokens": 525,
+          "output_tokens": 0,
+          "duration_s": 1.3452200889587402,
+          "speedup_vs_human": 178.4,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-01": {
+          "task_id": "T2-01",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 326,
+          "output_tokens": 0,
+          "duration_s": 1.5590639114379883,
+          "speedup_vs_human": 577.3,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-02": {
+          "task_id": "T2-02",
+          "tier": 2,
+          "human_baseline_minutes": 12,
+          "input_tokens": 349,
+          "output_tokens": 0,
+          "duration_s": 2.9089152812957764,
+          "speedup_vs_human": 247.5,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-03": {
+          "task_id": "T2-03",
+          "tier": 2,
+          "human_baseline_minutes": 10,
+          "input_tokens": 341,
+          "output_tokens": 0,
+          "duration_s": 1.2505128383636475,
+          "speedup_vs_human": 479.8,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-04": {
+          "task_id": "T2-04",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 256,
+          "output_tokens": 0,
+          "duration_s": 1.6818161010742188,
+          "speedup_vs_human": 535.1,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-01": {
+          "task_id": "T3-01",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 298,
+          "output_tokens": 0,
+          "duration_s": 1.4757261276245117,
+          "speedup_vs_human": 1016.4,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-02": {
+          "task_id": "T3-02",
+          "tier": 3,
+          "human_baseline_minutes": 20,
+          "input_tokens": 999,
+          "output_tokens": 0,
+          "duration_s": 1.175469160079956,
+          "speedup_vs_human": 1020.9,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-03": {
+          "task_id": "T3-03",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 228,
+          "output_tokens": 0,
+          "duration_s": 1.3715193271636963,
+          "speedup_vs_human": 1093.7,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        }
+      }
+    },
+    "Llama-3.3-70B": {
+      "hf_id": "meta-llama/Llama-3.3-70B-Instruct",
+      "flops_T": 70.0,
+      "responses": {
+        "T1-01": {
+          "task_id": "T1-01",
+          "tier": 1,
+          "human_baseline_minutes": 10,
+          "input_tokens": 284,
+          "output_tokens": 0,
+          "duration_s": 1.9209778308868408,
+          "speedup_vs_human": 312.3,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T1-02": {
+          "task_id": "T1-02",
+          "tier": 1,
+          "human_baseline_minutes": 6,
+          "input_tokens": 244,
+          "output_tokens": 0,
+          "duration_s": 1.232802152633667,
+          "speedup_vs_human": 292.0,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T1-03": {
+          "task_id": "T1-03",
+          "tier": 1,
+          "human_baseline_minutes": 4,
+          "input_tokens": 525,
+          "output_tokens": 0,
+          "duration_s": 1.2427752017974854,
+          "speedup_vs_human": 193.1,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-01": {
+          "task_id": "T2-01",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 326,
+          "output_tokens": 0,
+          "duration_s": 2.002664804458618,
+          "speedup_vs_human": 449.4,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-02": {
+          "task_id": "T2-02",
+          "tier": 2,
+          "human_baseline_minutes": 12,
+          "input_tokens": 349,
+          "output_tokens": 0,
+          "duration_s": 1.2110567092895508,
+          "speedup_vs_human": 594.5,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-03": {
+          "task_id": "T2-03",
+          "tier": 2,
+          "human_baseline_minutes": 10,
+          "input_tokens": 341,
+          "output_tokens": 0,
+          "duration_s": 2.444636821746826,
+          "speedup_vs_human": 245.4,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-04": {
+          "task_id": "T2-04",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 256,
+          "output_tokens": 0,
+          "duration_s": 1.6255359649658203,
+          "speedup_vs_human": 553.7,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-01": {
+          "task_id": "T3-01",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 298,
+          "output_tokens": 0,
+          "duration_s": 1.4301178455352783,
+          "speedup_vs_human": 1048.9,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-02": {
+          "task_id": "T3-02",
+          "tier": 3,
+          "human_baseline_minutes": 20,
+          "input_tokens": 999,
+          "output_tokens": 0,
+          "duration_s": 1.3944480419158936,
+          "speedup_vs_human": 860.6,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-03": {
+          "task_id": "T3-03",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 228,
+          "output_tokens": 0,
+          "duration_s": 1.1991920471191406,
+          "speedup_vs_human": 1250.8,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        }
+      }
+    },
+    "Qwen2.5-72B": {
+      "hf_id": "Qwen/Qwen2.5-72B-Instruct",
+      "flops_T": 72.0,
+      "responses": {
+        "T1-01": {
+          "task_id": "T1-01",
+          "tier": 1,
+          "human_baseline_minutes": 10,
+          "input_tokens": 284,
+          "output_tokens": 0,
+          "duration_s": 1.6198508739471436,
+          "speedup_vs_human": 370.4,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T1-02": {
+          "task_id": "T1-02",
+          "tier": 1,
+          "human_baseline_minutes": 6,
+          "input_tokens": 244,
+          "output_tokens": 0,
+          "duration_s": 1.139984130859375,
+          "speedup_vs_human": 315.8,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T1-03": {
+          "task_id": "T1-03",
+          "tier": 1,
+          "human_baseline_minutes": 4,
+          "input_tokens": 525,
+          "output_tokens": 0,
+          "duration_s": 1.1507782936096191,
+          "speedup_vs_human": 208.6,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-01": {
+          "task_id": "T2-01",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 326,
+          "output_tokens": 0,
+          "duration_s": 1.1680293083190918,
+          "speedup_vs_human": 770.5,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-02": {
+          "task_id": "T2-02",
+          "tier": 2,
+          "human_baseline_minutes": 12,
+          "input_tokens": 349,
+          "output_tokens": 0,
+          "duration_s": 1.0842046737670898,
+          "speedup_vs_human": 664.1,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-03": {
+          "task_id": "T2-03",
+          "tier": 2,
+          "human_baseline_minutes": 10,
+          "input_tokens": 341,
+          "output_tokens": 0,
+          "duration_s": 1.240769863128662,
+          "speedup_vs_human": 483.6,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T2-04": {
+          "task_id": "T2-04",
+          "tier": 2,
+          "human_baseline_minutes": 15,
+          "input_tokens": 256,
+          "output_tokens": 0,
+          "duration_s": 2.837562084197998,
+          "speedup_vs_human": 317.2,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-01": {
+          "task_id": "T3-01",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 298,
+          "output_tokens": 0,
+          "duration_s": 1.8033931255340576,
+          "speedup_vs_human": 831.8,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-02": {
+          "task_id": "T3-02",
+          "tier": 3,
+          "human_baseline_minutes": 20,
+          "input_tokens": 999,
+          "output_tokens": 0,
+          "duration_s": 1.400048017501831,
+          "speedup_vs_human": 857.1,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        },
+        "T3-03": {
+          "task_id": "T3-03",
+          "tier": 3,
+          "human_baseline_minutes": 25,
+          "input_tokens": 228,
+          "output_tokens": 0,
+          "duration_s": 1.4940927028656006,
+          "speedup_vs_human": 1004.0,
+          "response_text": null,
+          "error": "HTTP 404: Not Found"
+        }
+      }
+    }
+  }
+}

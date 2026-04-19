@@ -1,0 +1,52 @@
+{
+  "models": {
+    "Qwen2.5-7B": {
+      "flops": 7.0,
+      "mcq_n": 10,
+      "mcq_ok": 9,
+      "p_mmlu": 0.9,
+      "he_pass": 36,
+      "he_tot": 36,
+      "p_he": 1.0,
+      "pilot_ces": 3.3351050311505035
+    },
+    "Llama-3-8B": {
+      "flops": 8.0,
+      "mcq_n": 10,
+      "mcq_ok": 8,
+      "p_mmlu": 0.8,
+      "he_pass": 36,
+      "he_tot": 36,
+      "p_he": 1.0,
+      "pilot_ces": 2.6745295339317807
+    },
+    "Qwen2.5-72B": {
+      "flops": 72.0,
+      "mcq_n": 10,
+      "mcq_ok": 10,
+      "p_mmlu": 1.0,
+      "he_pass": 36,
+      "he_tot": 36,
+      "p_he": 1.0,
+      "pilot_ces": 2.072483596949064
+    },
+    "Llama-3.3-70B": {
+      "flops": 70.0,
+      "mcq_n": 10,
+      "mcq_ok": 10,
+      "p_mmlu": 1.0,
+      "he_pass": 36,
+      "he_tot": 36,
+      "p_he": 1.0,
+      "pilot_ces": 2.0859898166519306
+    }
+  },
+  "pilot_ranking": [
+    "Qwen2.5-7B",
+    "Llama-3-8B",
+    "Llama-3.3-70B",
+    "Qwen2.5-72B"
+  ],
+  "spearman_known_rho": -1.0,
+  "sum_d2": 2
+}
