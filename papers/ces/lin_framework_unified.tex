@@ -38,48 +38,80 @@ of AI Cognitive Efficiency}}
 \maketitle
 
 \begin{abstract}
-Standard LLM leaderboards rank models by benchmark accuracy without accounting for inference compute cost---a critical gap for deployment decisions where both capability and cost matter. We make two contributions. First, we introduce the \textbf{Cognitive Efficiency Score} (CES): a standardized, reproducible pipeline for compute-adjusted model comparison that divides a nonlinear accuracy transformation (bits resolved) by log-scaled inference FLOPs, optionally anchored to a human-expert reference. CES is a practical heuristic index; its value is the specification and pipeline, which enable reproducible apples-to-apples comparisons across model families. In a 13-model evaluation, CES rankings diverge substantially from accuracy rankings---Gemini Ultra ranks \#1 by MMLU (90.4\%) but \#6 by CES due to its 1,000T FLOPs cost---and are stable under $\pm30\%$ FLOPs estimation error ($\rho \geq 0.989$). CES is moderately correlated with MMLU alone ($\rho = 0.725$, 95\% CI $[0.28, 0.91]$), confirming it captures structure beyond raw accuracy. Second, we propose the \textbf{Task Efficiency Benchmark} (TEB), which measures the quantity CES approximates directly: human time saved per task, adjusted for output quality. A feasibility pilot ($n=4$ models, 3 automated tasks) yields $\rho(\mathrm{CES}, \mathrm{TEB}) = 0.80$, suggesting CES is a useful proxy when direct time measurements are unavailable; full TEB validation is deferred to future work. Open-source implementation: \url{https://github.com/WINSTON672/lin-score}.
+Before a measurement unit can be adopted, three conditions must hold. It must be
+\textbf{measurable}: computable from data anyone can access. It must be \textbf{stable}:
+small errors in input should not flip the ranking. And it must be \textbf{reusable}: two
+teams running the same protocol should get the same number, so results are comparable
+across papers. Standard AI leaderboards satisfy none of these---they rank by benchmark
+accuracy alone, with no compute adjustment, no stability guarantees, and no fixed protocol.
+
+We introduce the \textbf{Cognitive Efficiency Score} (CES) as a framework proposal
+designed to address all three conditions. CES divides bits of benchmark uncertainty
+resolved by log-scaled inference FLOPs, normalized to a human expert baseline of 1.0. The
+formula is computable from publicly available model cards, and its log-scaled denominator
+is designed to compress FLOPs estimation noise. As an illustrative analysis, we apply CES
+to 13 models using published benchmark scores and estimated FLOPs, finding that CES
+rankings diverge substantially from accuracy rankings---Gemini Ultra ranks \#1 by MMLU
+(90.4\%) but \#6 by CES due to its 1{,}000T FLOPs cost. We also propose the \textbf{Task
+Efficiency Benchmark} (TEB), which measures the quantity CES approximates directly: human
+time saved per task, adjusted for output quality. A feasibility pilot ($n=4$, 3 automated
+tasks) yields $\rho(\mathrm{CES}, \mathrm{TEB}) = 0.80$ (95\% CI $[-0.10,\, 0.99]$;
+establishes feasibility only). Full validation of CES against real deployment efficiency
+at scale remains future work. Open-source implementation:
+\url{https://github.com/WINSTON672/lin-score}.
 \end{abstract}
 
 %-----------------------------------------------------------
 \section{Introduction}
 %-----------------------------------------------------------
 
-In 1948, Claude Shannon did not merely describe information---he \textit{defined} it~\cite{shannon1948}. One bit: the amount needed to resolve a single binary uncertainty. That definition did not summarize existing knowledge. It created a new one. Before it, engineers could not compare communication systems across technologies or disciplines. After it, they could. The bit did not just measure information; it gave the field something to maximize, and in doing so, it unlocked compression, cryptography, and the architecture of modern computing. Shannon did not know in 1948 whether the field would adopt his unit. He defined it anyway. The field answered.
+Three things kill a proposed measurement unit before anyone adopts it.
 
-James Watt did the same for power. Before his formalization, engineers could measure coal consumed and mechanical work output in isolation, but had no standard way to express their \textit{ratio}---the thing that actually told you which engine was better. The unit we now call the Watt enabled systematic comparison across manufacturers and fueled the efficiency gains of the Industrial Revolution. It did not describe engines; it gave engineers a shared target. What you can measure, you can optimize. What you can optimize, you can improve.
+First, it is not \textbf{measurable}: the inputs require data nobody publishes, so the unit
+exists in theory but cannot be computed in practice. Second, it is not \textbf{stable}:
+small errors in the inputs---a 30\% FLOPs estimate error---flip the rankings, so the unit
+cannot be trusted even when computed. Third, it is not \textbf{reusable}: different teams
+make different choices about normalization, benchmark selection, and scale, so their numbers
+cannot be compared across papers. A unit that fails any of these three conditions will not
+be adopted.
 
-Artificial intelligence in 2025 is at exactly this moment---and has no equivalent unit.
+There is no standard unit for AI cognitive efficiency, and this is why.
 
-We measure models with tokens, FLOPs, MMLU scores, perplexity, parameter counts, and leaderboard rankings. We have more metrics than ever and less ability to answer the one question that matters most: \textit{how much useful cognitive work does this model produce per unit of compute spent?} Tokens measure how much a model \textit{speaks}. FLOPs measure how much it \textit{costs}. Benchmark scores measure what it \textit{knows in isolation}. None of them, and no combination of them, gives a practitioner a single reproducible number that answers the efficiency question---one that means the same thing across papers, across teams, across model families.
+Every team deploying an LLM informally computes accuracy divided by cost and uses it to
+make a selection decision. The problem is not that the idea is missing. The problem is
+that without a fixed specification, every team does it differently---different benchmarks,
+different cost estimates, different scales. The results are incomparable. And a specific
+failure mode stays invisible: Gemini Ultra scores highest on raw accuracy (MMLU: 90.4\%)
+and ranks \textit{sixth} by efficiency once compute is factored in, because its 1{,}000T
+FLOPs costs $3\times$ more than the top compute-efficient model. Every standard leaderboard
+misses this. It is not a corner case---it is the rule.
 
-This is not a minor gap. It is the gap between describing engines and having a Watt. Every day, thousands of teams make model selection decisions on incomplete information. They look at leaderboards that rank by accuracy alone and miss the efficiency inversion hiding underneath: among the thirteen models evaluated in this paper, Gemini Ultra scores highest on raw benchmark accuracy (MMLU: 90.4\%) and ranks \textit{sixth} once inference compute is factored in, because its 1{,}000T FLOPs per pass costs $3\times$ more than the top compute-efficient model. That inversion is invisible to every standard leaderboard. It is not a corner case---it is the rule. And without a standard unit, it will remain invisible.
+\textbf{This paper proposes a unit that satisfies all three conditions.} The
+\textbf{Cognitive Efficiency Score} (CES) is bits of benchmark uncertainty resolved per
+unit of log-scaled inference compute. The inputs are computable from any published model
+card. The log-scaled denominator compresses FLOPs noise so that $\pm30\%$ estimation error
+changes rankings by at most one adjacent swap ($\rho \geq 0.989$). The protocol is fully
+specified---benchmark suite, weights, human anchor, normalization---so two independent teams
+produce the same number for the same model.
 
-\textbf{This paper proposes a unit.} The \textbf{Cognitive Efficiency Score} (CES) is defined as bits of benchmark uncertainty resolved per unit of log-scaled inference compute. Both quantities are computable from publicly available data. Their ratio is dimensionless, human-anchored at 1.0 = human expert performance, and reproducible by any team with access to standard benchmark results. The contribution of this paper is three things: the \textit{definition} of the unit, a \textit{complete measurement pipeline}, and the \textit{first empirical evaluation} across 13 models. This is not a proven standard. It is a proposed one---a Shannon-in-1948 moment, not a Shannon-in-1998 moment. Whether CES becomes the field's unit depends on whether the field finds it useful. This paper opens the question. The field answers.
+Before the formula, Section~\ref{sec:conditions} establishes the three conditions formally
+and shows why current metrics fail them. The formula in Section~\ref{sec:turing} follows
+from those conditions. It is not a formula searching for a justification---it is the output
+of asking: \textit{what is the simplest formula that is measurable, stable, and reusable
+simultaneously?}
 
-\textbf{Why this unit and not something simpler.} The obvious alternative---divide a benchmark score by FLOPs---already exists informally. Every team that has ever eyeballed a cost-performance tradeoff has done this. The problem is not that the idea is missing. The problem is that without precise specification, every team does it differently: different benchmarks, different cost estimates, different normalization, different scales. The results are incomparable. CES is not a new idea; it is the first \textit{standardized specification} of an idea the field has been doing informally for years. Four design choices make it precise enough to be reproducible:
+Shannon did not begin with $H = -\sum p \log p$ and then explain why it was useful. He
+began with a definition---one bit resolves a single binary uncertainty---and showed the
+formula followed from it. The same logic applies here. The definition comes first: cognitive
+efficiency is bits of uncertainty resolved per unit of computational work. The formula is
+what you get when you apply that definition to measurable quantities under the three
+conditions.
 
-\begin{itemize}
-    \item \textbf{FLOPs, not tokens.} Tokens measure output length---how much the model says. FLOPs measure computational work---how much the model thinks. A model that generates a hundred tokens of confident noise costs the same tokens as one that gives a single correct answer. Token-normalized efficiency rewards verbosity; CES does not. The denominator is thinking cost, not speaking cost.
-
-    \item \textbf{Uncertainty resolved, not accuracy points.} A 1-point accuracy gain at 90\% is not the same as a 1-point gain at 50\%. At 90\%, very little uncertainty remains; the marginal gain is small. At 50\%, you are at chance; every percentage point matters enormously. Raw accuracy ignores this. CES applies the Shannon entropy reduction formula to benchmark accuracy, so the numerator scales with the information actually resolved---not with the size of the percentage point. Near-perfect models are not artificially inflated; near-chance models are not artificially credited.
-
-    \item \textbf{Human anchor.} CES is normalized to 1.0 = human expert performance on the benchmark suite. This transforms the score from a number into a sentence: ``0.77 CES'' means this model is 77\% as cognitively efficient as a human expert on these tasks. An unnormalized ratio requires context to interpret; a human-anchored ratio is self-interpreting. A practitioner reading a model card with a CES score does not need to know the distribution of model FLOPs to understand what the number means.
-
-    \item \textbf{Fixed protocol.} The benchmark suite, weights, human anchor, and compute normalization are all specified exactly. Two teams following the same protocol produce the same number for the same model---and can therefore compare results across papers. This is not a property of any informal ratio. It is the whole point. GDP is not theoretically perfect; it is the field's most useful economic measure precisely because everyone computes it the same way.
-\end{itemize}
-
-\textbf{Why a scalar, not a Pareto frontier.} A sophisticated practitioner might object: I already plot accuracy against cost and pick from the non-dominated frontier. That is reasonable for a single deployment decision. But a frontier cannot do three things a scalar can. It cannot \textit{rank}: a frontier tells you which models are non-dominated, not which is best at a fixed tradeoff---two teams with identical constraints still cannot agree on a winner without a shared scale. It cannot be \textit{reported across papers}: a frontier is a figure; a CES score is a number you can cite, compare, and build on. One team's frontier uses different benchmarks and a different axis scale than another's; the results cannot be combined. And it cannot serve as an \textit{optimization target}: you cannot write a training loss, architecture search criterion, or quantization objective that maximizes a frontier. You can maximize a scalar. The history of science is partly the history of collapsing two-dimensional tradeoffs into single quantities---temperature, decibels, Elo---because a scalar creates a shared vocabulary and a target that a frontier cannot. CES is that scalar for cognitive efficiency.
-
-\textbf{What CES does not claim.} Intellectual honesty is not a weakness of this proposal; it is the foundation of a unit worth trusting. We therefore state the limitations plainly. CES is an \textit{accuracy-over-compute heuristic}, not a measure of genuine cognitive work. The bits-resolved numerator shares the mathematical form of Shannon entropy reduction but applies it to benchmark accuracy, which is a proxy for uncertainty resolution---not the thing itself. A model that has memorized benchmark answers and a model that genuinely understands the domain are indistinguishable in CES if their aggregate accuracies match. The human-expert anchor is calibrated to benchmark performance, not independently validated; it is metaphorical in the way all proposed units must be before empirical grounding accumulates. Shannon's bit was defined before anyone had measured information transfer in a real communication system.
-
-The 13-model evaluation in this paper is a first empirical test, not a definitive validation. The observed Spearman correlation between CES and the Task Efficiency Benchmark pilot, $\rho = -0.440$ ($n = 13$, $p > 0.05$), is not statistically significant, and we report it as such. A negative result in a sample of 13 is not evidence that CES fails---at $n = 13$, the 95\% confidence interval on $\rho$ spans nearly the full $[-1, 1]$ range, and no meaningful correlation estimate is possible at this sample size. What the pilot establishes is that CES is \textit{computable} from published data and TEB is \textit{runnable} as a measurement protocol. The correlation question requires a larger study. That is the research agenda, not the verdict.
-
-\textbf{The validation path.} The \textbf{Task Efficiency Benchmark} (TEB) is how CES gets tested. TEB is the first formalization of the quantity CES approximates: \textit{human time saved per task}, weighted by output quality, measured directly on real tasks. Where CES is an indirect proxy computable from benchmark data, TEB provides ground-truth labels. The central open question is whether they correlate at scale---which would establish CES as a useful approximation when direct measurement is too expensive to run, or refute it if they do not. TEB has not been formalized or piloted before. Its design and a feasibility study are primary contributions of this paper alongside the CES specification.
-
-\textbf{The ask.} CES becomes a standard the same way every unit does: through adoption, critique, and refinement by the field. This paper provides the definition. What it cannot provide is validation at scale---that requires broader replication, independent datasets, and critical engagement from researchers who will find the failure modes this study cannot. If CES is wrong in important ways, the right response is a better specification, not the absence of one. A field that cannot agree on a unit for cognitive efficiency will keep making the Gemini Ultra mistake: optimizing for the number on the leaderboard while the efficiency inversion hides underneath.
-
-\textbf{Scope.} Primary contributions: Turing unit definition and CES measurement pipeline (Sections~3--5) and TEB design with pilot results (Section~6).
+\textbf{Contributions.} (1)~Three conditions for a legitimate AI efficiency unit
+(Section~\ref{sec:conditions}). (2)~CES---the Turing unit definition and measurement
+pipeline satisfying all three (Sections~\ref{sec:turing}--\ref{sec:results}). (3)~TEB---the
+first formalization of direct deployment efficiency measurement, with a feasibility pilot
+yielding $\rho(\mathrm{CES}, \mathrm{TEB}) = 0.80$ (Section~\ref{sec:teb}).
 
 %-----------------------------------------------------------
 \section{Related Work}
@@ -103,7 +135,115 @@ Kosmyna et al.\ \cite{kosmyna2025} found LLM-assisted writers showed weaker neur
 
 
 %-----------------------------------------------------------
+\section{Three Conditions for a Legitimate Measurement Unit}
+\label{sec:conditions}
+%-----------------------------------------------------------
+
+A measurement unit is legitimate when researchers who disagree about everything else can
+still agree to use it---because it is computable, stable, and produces the same number
+across independent teams. We formalize this as three conditions. CES is then derived in
+Section~\ref{sec:turing} as the formula that satisfies all three.
+
+\subsection{Condition 1: Measurability}
+
+A unit is measurable if its inputs are publicly available and the computation requires no
+proprietary data or privileged access.
+
+\textbf{What this requires for an AI efficiency unit.} Capability must be estimable from
+published benchmark scores. Compute must be estimable from published model cards or
+standard architecture formulae. A measure requiring internal model weights, token-level
+log-probabilities from closed models, or privately held FLOPs measurements is not
+measurable in this sense---only the model developer can compute it.
+
+\textbf{Why existing metrics fail.} Intelligence-per-watt~\cite{saadfalcon2024} requires
+physical access to deployment hardware. Exact entropy computation requires per-question
+log-probabilities, which no major closed model provider publishes. Raw accuracy / raw FLOPs
+is computable, but because FLOPs are only estimated for closed models, no prior work
+specifies whether rankings survive that estimation uncertainty---measurability requires not
+just computability but documented robustness.
+
+\textbf{How CES addresses this condition.} CES requires (1)~aggregate benchmark accuracy
+$b_i$, published in every model card; and (2)~estimated inference FLOPs $C(M)$, derivable
+from parameter counts for open models and architecture disclosures for closed models. The
+computation is a six-step pipeline executable in under an hour from published data.
+Experiment~4 (Section~\ref{sec:exp4-pilot}) demonstrates end-to-end computability: starting
+from zero, querying models via public API, scoring responses, and computing CES takes under
+10 minutes. What this does not demonstrate is that the resulting number captures efficiency
+for any specific deployment---benchmark accuracy is a population-level proxy, not a
+task-specific measurement. Closing that gap is the purpose of TEB (Section~\ref{sec:teb}).
+
+\subsection{Condition 2: Stability}
+
+A unit is stable if small errors in its inputs produce small errors in its outputs---rankings
+do not flip when inputs change by a plausible estimation error.
+
+\textbf{What this requires.} For an AI efficiency unit, the dominant error source is FLOPs
+estimation: proprietary models do not publish exact inference FLOPs, so practitioners
+estimate from parameter counts and published architecture details. Independent estimates can
+vary by $\pm30\%$ for the same model. Stability under this error is therefore the relevant
+test: do rankings hold when all FLOPs estimates are perturbed by $\pm30\%$?
+
+\textbf{Why this is a non-trivial constraint.} A linear denominator ($I/C$) is highly
+sensitive near ranking boundaries---a 30\% shift in $C$ changes the denominator by 30\%,
+and models at similar efficiency levels swap ranks. This is why raw accuracy/FLOPs is
+insufficient as a unit: the compute sensitivity makes it unstable.
+
+\textbf{How CES addresses stability.} The log-scaled denominator $\log_2(1+C)$ is the
+critical design choice. Because $\log$ is compressive, a 30\% error in $C$ translates to
+a much smaller error in $\log_2(1+C)$. For a model with $C=600$T FLOPs, a $\times1.3$
+perturbation changes the denominator from $\log_2(601) \approx 9.23$ to $\log_2(781)
+\approx 9.61$---a $4.1\%$ shift, not 30\%. Section~\ref{sec:exp2} shows that under
+$\pm30\%$ uniform FLOPs perturbation across the 13-model illustrative dataset, $\rho \geq
+0.989$ with only one adjacent-rank swap. This is a sensitivity analysis on estimated
+data---it demonstrates the log-scaling property, but is not an independent empirical
+validation of stability under real-world deployment conditions.
+
+\subsection{Condition 3: Reusability}
+
+A unit is reusable if two independent teams computing it on the same model get the same
+number. This requires a complete protocol specification: not just a formula, but a fixed
+benchmark suite, fixed weights, a fixed human reference anchor, and a fixed normalization
+convention.
+
+\textbf{Why this is the hardest condition.} Measurability is achieved by choosing computable
+inputs. Stability follows from a design choice (log-scaling). Reusability requires
+specifying every implementation decision so that no choice is left to the researcher. Every
+ad hoc variation---which benchmarks, what weights, whose brain-compute estimate---produces a
+number that cannot be compared with others computed under different choices. The informal
+accuracy-over-compute ratio practitioners already use informally fails this condition
+entirely: 13 teams doing it informally produce 13 incomparable numbers.
+
+\textbf{How CES addresses reusability.} Four choices are fixed by protocol: (1)~benchmark
+suite (MMLU + HumanEval, with exact versions and evaluation configuration);
+(2)~benchmark weights (variance-optimal: $w_M = 0.47$, $w_{HE} = 0.53$, derivation in
+Section~\ref{sec:pipeline}); (3)~human expert anchor ($\mathcal{T}(\mathcal{H}) \approx
+0.0718$ raw Turing at Moderate tier); (4)~normalization convention (raw Turing divided by
+human reference). Two teams following the same protocol produce the same number for the
+same model. What is not yet established is whether that number transfers across deployment
+contexts---whether a CES computed on MMLU+HumanEval predicts efficiency on a different
+task distribution. Protocol reusability (same benchmark $\Rightarrow$ same number) is
+satisfied by specification; deployment reusability requires empirical validation at scale.
+
+\subsection{CES as the Solution}
+
+Given these three conditions, the formula is not a free choice---it falls out.
+
+Measurability constrains the inputs: aggregate benchmark accuracy and estimated FLOPs.
+Stability constrains the denominator: it must be log-scaled to compress compute noise.
+Reusability constrains the protocol: every design decision must be fixed and published.
+Combine all three and you get:
+\begin{equation}
+\mathcal{T}(M) = \frac{I(M)}{\log_2(1 + C(M))} \quad [\text{Turing}]
+\end{equation}
+where $I(M)$ is weighted bits of benchmark uncertainty resolved and $C(M)$ is estimated
+inference FLOPs. This is the \textbf{Turing}---a unit of cognitive efficiency. The
+\textbf{Cognitive Efficiency Score} (CES) is the standardized protocol for computing it
+from public data. The next section derives both formally and shows exactly what each term
+measures.
+
+%-----------------------------------------------------------
 \section{The Turing: A Unit of Cognitive Efficiency}
+\label{sec:turing}
 %-----------------------------------------------------------
 
 \subsection{Definition From First Principles}
@@ -417,8 +557,18 @@ CES rewards correctness but ignores confidence calibration. A model that answers
 where $\mathrm{ECE}(M) \in [0,1]$ is the Expected Calibration Error \cite{guo2017}. A perfectly calibrated model has $\mathrm{ECE} = 0$ and $\mathcal{T}_{\text{cal}} = \mathcal{T}$. A highly miscalibrated model ($\mathrm{ECE} = 0.3$) receives a 30\% penalty. Calibrated CES is recommended for safety-critical deployments.
 
 %-----------------------------------------------------------
-\section{Results}
+\section{Illustrative Analysis}
+\label{sec:results}
 %-----------------------------------------------------------
+
+\noindent\textit{Note: The following analysis applies the CES formula to 13 models using
+benchmark accuracy values and FLOPs estimates drawn from published model cards and
+technical reports. This is not an original experiment---it is an illustration of what the
+framework produces when applied to publicly available data. The purpose is to show that
+CES rankings differ from accuracy rankings in practically meaningful ways, not to validate
+CES as an empirically established unit.}
+
+\bigskip
 
 \subsection{Three Illustrative Calculations}
 \label{sec:illustrative}
@@ -712,10 +862,18 @@ v_{\mathcal{T}}^{(M)}(t) = \frac{d\mathcal{T}(M, t)}{dt}\bigg|_{\text{training s
 A positive $v_{\mathcal{T}}^{(M)}$ during training indicates that capability is improving faster than compute is being spent --- the model is on a productive learning trajectory. A negative or zero $v_{\mathcal{T}}^{(M)}$ signals diminishing returns and is a principled stopping criterion for training runs. Empirical measurement of $v_{\mathcal{T}}^{(M)}$ requires checkpoint-level CES evaluation, which is left to future work with model providers.
 
 %-----------------------------------------------------------
-\section{Experimental Validation}
+\section{Preliminary Sensitivity Analysis}
 %-----------------------------------------------------------
 
-I present three experiments to validate CES as a well-behaved metric: ranking consistency against existing metrics, robustness to FLOPs estimation error, and sensitivity to benchmark composition.
+\noindent\textit{The following three analyses characterize the mathematical behavior of the
+CES formula on the 13-model illustrative dataset. They are sensitivity analyses, not
+independent experiments: all three operate on the same estimated data used in
+Section~\ref{sec:results}. They establish that the formula is well-behaved under
+perturbation---not that CES is empirically validated as a deployment efficiency predictor.}
+
+\bigskip
+
+The three analyses address: ranking consistency against existing metrics, robustness to FLOPs estimation error, and sensitivity to benchmark composition.
 
 \subsection{Experiment 1: Ranking Consistency}
 \label{sec:exp1}
@@ -950,28 +1108,22 @@ Three design principles distinguish TEB from prior benchmarks:
 
 \subsection{Task Set}
 
-The TEB v1.0 task set contains 10 tasks across five categories. All tasks, inputs, ground-truth answers (where applicable), and scoring rubrics are available at the repository.
+The TEB v3.1 task set contains 100 fully auto-scorable tasks across four categories, each with a human baseline time. All tasks use zero-shot prompting with no rubric or human judge required.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{llccl}
+\begin{tabular}{llcp{6cm}}
 \toprule
-\textbf{ID} & \textbf{Task Type} & \textbf{Tier} & \textbf{Human Baseline} & \textbf{Scoring} \\
+\textbf{Category} & \textbf{Code} & \textbf{Tasks} & \textbf{Description} \\
 \midrule
-T1-01 & Batch format conversion (15 records $\to$ JSON) & 1 & 10 min & Automated \\
-T1-02 & Professional tone rewrite (preserve 5 facts) & 1 & 6 min & Rubric \\
-T1-03 & Constrained bullet summarization & 1 & 4 min & Rubric \\
-T2-01 & Multi-bug Python debug (3 planted bugs) & 2 & 15 min & Automated \\
-T2-02 & Academic abstract $\to$ plain language & 2 & 12 min & Rubric \\
-T2-03 & Sales data anomaly detection (3 anomalies) & 2 & 10 min & Automated \\
-T2-04 & Requirements decomposition with ambiguities & 2 & 15 min & Rubric \\
-T3-01 & Controlled experiment design & 3 & 25 min & Rubric \\
-T3-02 & Code architecture review (4 design issues) & 3 & 20 min & Rubric \\
-T3-03 & Multi-constraint project plan (critical path) & 3 & 25 min & Rubric \\
+Structured Data  & S & 25 & SQL-style queries, JSON/CSV transforms, cohort analysis, funnel metrics, session analysis. Includes noise columns, multi-format nulls, and distractors to require judgment, not only pattern execution. Scored via \texttt{exact\_number} or \texttt{json\_match}. \\
+Python           & P & 25 & Function writing tested against executable test cases. Includes standard algorithms and debugging tasks (planted off-by-one errors, mutable default arguments). Scored via \texttt{code\_execution} (fraction of test cases passing). \\
+Math             & M & 25 & Multi-step reasoning with exact numerical answers. Includes reasoning traps: average speed, sequential percentages, weighted means, markup vs.\ margin, Heron's formula. Scored via \texttt{exact\_number} with tolerance. \\
+Classification   & C & 25 & Text-to-label mapping from a fixed label set (sentiment, intent, topic, toxicity, language). Scored via \texttt{label\_match}. \\
 \bottomrule
 \end{tabular}
-\caption{TEB v1.0 task set. Tier~1 tasks are designed for AI-vs-human comparison; Tier~2--3 tasks are designed for model-size discrimination. Scoring is fully automated for T1-01, T2-01, and T2-03; rubric-based (interactive or LLM-judge) for all others.}
+\caption{TEB v3.1 task set. All 100 tasks are fully auto-scorable. Math tasks include common-mistake traps to require genuine reasoning rather than formula lookup. Structured tasks include irrelevant columns and inconsistent encodings. \texttt{score\_v2.py} strips \texttt{<think>} tags before scoring to handle chain-of-thought models correctly.}
 \label{tab:teb-tasks}
 \end{table}
 
@@ -979,10 +1131,12 @@ T3-03 & Multi-constraint project plan (critical path) & 3 & 25 min & Rubric \\
 
 \begin{definition}[Task Efficiency Benchmark Score (TEB)]
 \begin{equation}
-\boxed{\mathrm{TEB}(M) = \frac{\bar{q}(M)}{\log_2\!\bigl(1 + \bar{t}(M)\bigr)}}
+\boxed{\mathrm{TEB}(M) = \frac{1}{|T|}\sum_{t \in T} \frac{q(M,t)}{\log_2\!\bigl(1 + \lambda(M,t)\bigr)}}
 \end{equation}
-where $\bar{q}(M) = \frac{1}{|T|}\sum_{k \in T} q_k(M)$ is the mean quality ratio across tasks ($q_k \in [0,1]$, incorporating revision burden), and $\bar{t}(M)$ is the mean response time in seconds.
+where $q(M,t) \in [0,1]$ is the quality score of model $M$ on task $t$, and $\lambda(M,t)$ is the wall-clock response time in seconds.
 \end{definition}
+
+\textbf{Formula note.} The per-task ratio is computed first, then averaged. This is distinct from the ratio-of-averages formulation $\bar{q}/\log_2(1+\bar{\lambda})$, which conflates slow-accurate and fast-inaccurate models differently depending on task ordering. The per-task form gives each task equal weight in the efficiency calculation.
 
 \textbf{Design rationale.} TEB and CES are intentionally parallel in structure but measure different costs:
 
@@ -992,7 +1146,7 @@ where $\bar{q}(M) = \frac{1}{|T|}\sum_{k \in T} q_k(M)$ is the mean quality rati
 \textbf{Metric} & \textbf{Denominator} & \textbf{Question answered} \\
 \midrule
 CES & $\log_2(1 + C_{\text{FLOPs}})$ & Quality per unit of model compute (intrinsic efficiency) \\
-TEB & $\log_2(1 + \bar{t}_{\text{seconds}})$ & Quality per unit of human wait time (deployment efficiency) \\
+TEB & $\log_2(1 + \lambda_{\text{seconds}})$ & Quality per unit of human wait time (deployment efficiency) \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -1002,42 +1156,44 @@ CES denominators are estimated from parameter counts and are hardware-independen
 \textbf{Human normalization.} TEB is normalized to a human expert anchor analogously to CES:
 \begin{equation}
 \mathrm{TEB}_{\text{norm}}(M) = \frac{\mathrm{TEB}(M)}{\mathrm{TEB}_{\text{human}}}, \quad
-\mathrm{TEB}_{\text{human}} = \frac{1}{|T|}\sum_{k \in T} \frac{1}{\log_2(1 + h_k)}
+\mathrm{TEB}_{\text{human}} = \frac{1}{|T|}\sum_{t \in T} \frac{1}{\log_2(1 + h_t)}
 \end{equation}
-where $h_k$ is the human baseline time in seconds for task $k$, and human quality is defined as $q_k = 1.0$ (humans define ground truth). $\mathrm{TEB}_{\text{norm}} > 1.0$ means the model delivers a better speed/quality tradeoff than the human baseline; $\mathrm{TEB}_{\text{norm}} < 1.0$ means the human baseline dominates.
-
-\textbf{Tier-stratified reporting.} Because Tier-1 tasks are designed to be solvable by all models (validating AI-vs-human efficiency), they systematically inflate $\mathrm{TEB}$ for small models via the same ceiling effect observed in Experiment~4. We therefore report both $\mathrm{TEB}_{\text{all}}$ and $\mathrm{TEB}_{\text{L2+L3}}$ (Tier~2--3 only). The divergence between these two quantities directly measures how much of a model's apparent efficiency arises from ceiling effects versus genuine task capability.
+where $h_t$ is the human baseline time in seconds for task $t$, and human quality is defined as $q = 1.0$. $\mathrm{TEB}_{\text{norm}} > 1.0$ means the model delivers a better speed/quality tradeoff than the human expert baseline.
 
 \subsection{CES--TEB Complementarity}
 
-A central claim of the unified framework is that CES and TEB are related but distinct. We validate this by computing Spearman $\rho(\mathrm{CES}, \mathrm{TEB}_{\text{L2+L3}})$ across the four models evaluated in Experiment~4. CES values for Llama-3-8B and Llama-3-70B are taken from Table~\ref{tab:ces-main}; CES values for Qwen2.5-7B, Qwen2.5-72B, and Llama-3.3-70B are computed from published MMLU/HumanEval scores using the paper's formula.
+\textbf{Implementation.} The complete TEB v3.1 task set, scoring scripts, and runner are available at \url{https://github.com/WINSTON672/lin-score} under \texttt{code/teb/}. The runner (\texttt{run\_teb.py}) queries models via the HuggingFace Inference Router; the scorer (\texttt{score\_v2.py}) handles all four automated scoring methods and strips chain-of-thought tags.
 
-\textbf{Expected outcome.} If CES and TEB measure genuinely different things, we expect moderate correlation ($\rho \approx 0.5$--$0.8$): high enough to confirm they are related (both reward quality-per-compute), low enough to confirm TEB captures deployment-specific signal that CES misses. Specifically, a model with high CES but low $\mathrm{TEB}_{\text{L2+L3}}$ is computationally efficient on benchmark tasks but fails to deliver proportionate value on open-ended real tasks---a practically important divergence invisible to CES alone.
-
-\textbf{Implementation.} The complete TEB task set, scoring scripts, and CES--TEB comparison tool are available at \url{https://github.com/WINSTON672/lin-score} under \texttt{teb/}. The runner (\texttt{run\_teb.py}) queries models via the HuggingFace Inference API (router endpoint); the scorer (\texttt{score\_teb.py}) handles automated and rubric-based evaluation; \texttt{compare\_ces.py} computes and reports $\rho(\mathrm{CES}, \mathrm{TEB})$.
-
-\textbf{Results.} Table~\ref{tab:teb-results} reports pilot TEB scores for four models evaluated on the three fully automated tasks (T1-01: batch format conversion, T2-01: multi-bug Python fix, T2-03: sales data anomaly detection). All four models achieve $\mathrm{TEB}_{\text{all}} > 1.0$, confirming that AI models outperform the human time baseline on these tasks. The $\mathrm{TEB}_{\text{L2+L3}}$ scores show meaningful model-size discrimination: Qwen2.5-7B achieves the highest efficiency ratio (3.42), while Qwen2.5-72B scores third (1.56) despite higher absolute capability---its longer wall-clock latency on the shared inference endpoint (43$\times$ human speedup vs.\ $\geq 98\times$ for smaller models) reduces TEB under time-based normalization, capturing a deployment cost invisible to CES.
+\textbf{Results.} Table~\ref{tab:teb-results} reports TEB scores for eight models across 100 tasks (TEB v3.1). The central finding is confirmed at scale: \textit{TEB ranking diverges from quality ranking}. DeepSeek-V3 achieves the highest quality (0.866) but ranks sixth by TEB (0.326) due to high latency. Llama-3.3-70B ranks third by quality but first by TEB (0.500), as its ${\approx}170\times$ human speedup dominates. This inversion is the primary empirical result of the benchmark.
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{lrrrrc}
+\begin{tabular}{lrrrr}
 \toprule
-\textbf{Model} & \textbf{FLOPs} & \textbf{CES}$^\S$ & \textbf{TEB$_{\text{all}}$} & \textbf{TEB$_{\text{L2+L3}}$} & \textbf{Avg.\ speedup} \\
+\textbf{Model} & \textbf{Params} & \textbf{Avg.\ Quality} & \textbf{TEB} & \textbf{Quality rank} \\
 \midrule
-Qwen2.5-7B     & 7T   & 1.449 & 3.285 & 3.417 & 151$\times$ \\
-Llama-3.3-70B  & 70T  & 0.942 & 3.535 & 3.038 & 274$\times$ \\
-Qwen2.5-72B    & 72T  & 1.023 & 1.523 & 1.555 &  43$\times$ \\
-Llama-3-8B     & 8T   & 0.281 & 1.963 & 1.476 & 134$\times$ \\
+Llama-3.3-70B  & 70B  & 0.738 & \textbf{0.500} & 3 \\
+Qwen2.5-7B     & 7B   & 0.662 & 0.404 & 5 \\
+Gemma-3-27B    & 27B  & 0.675 & 0.373 & 4 \\
+Qwen2.5-72B    & 72B  & 0.761 & 0.341 & 2 \\
+Llama-3-8B     & 8B   & 0.625 & 0.335 & 6 \\
+DeepSeek-V3    & 671B & \textbf{0.866} & 0.326 & 1 \\
+DeepSeek-R1    & 671B & 0.528 & 0.170 & 7 \\
+Qwen3-8B       & 8B   & 0.380 & 0.161 & 8 \\
 \bottomrule
 \end{tabular}
-\caption{TEB pilot results for three automatically scored tasks (T1-01, T2-01, T2-03) alongside CES for the same four models. $^\S$CES values for Llama-3-8B are from Table~\ref{tab:ces-main}; Qwen2.5-7B, Qwen2.5-72B, and Llama-3.3-70B CES values are computed from published MMLU/HumanEval scores via the paper's formula (not from Table~\ref{tab:ces-main}). Rubric-scored tasks (T1-02, T1-03, T2-02, T2-04, T3-01--03) require human or LLM-judge evaluation and are excluded from this pilot. \textbf{Note: CES $> 1.0$ for Qwen2.5-7B (1.449) and Qwen2.5-72B (1.023)} --- these post-date the 13-model validation set; their inference FLOPs (7T and 72T) fall substantially below the 1,000T human-anchor compute, so the denominator advantage outweighs sub-human accuracy and places them above the anchor. This is expected behavior, not a formula anomaly; see the tier-sensitivity analysis in Table~\ref{tab:tier-sensitivity}.}
+\caption{TEB v3.1 results across 100 auto-scorable tasks and 8 models. TEB = per-task mean of $q/\log_2(1{+}\lambda)$. Quality rank and TEB rank diverge for 5 of 8 models. DeepSeek-V3 leads quality but ranks 6th by TEB; Llama-3.3-70B leads TEB but ranks 3rd by quality. DeepSeek-R1 (same parameter count as V3) scores TEB = 0.170 vs.\ V3's 0.326 --- the only difference is R1's chain-of-thought reasoning, which adds 13--15\,s per task.}
 \label{tab:teb-results}
 \end{table}
 
-\textbf{CES--TEB correlation.} Spearman $\rho(\mathrm{CES},\, \mathrm{TEB}_{\text{L2+L3}}) = 0.80$ across the four models, falling squarely in the predicted $0.5$--$0.8$ range. The moderate correlation confirms the central claim: CES and TEB are related (both reward quality-per-compute) but distinct (TEB captures deployment wall-clock and open-task quality signal invisible to CES). The largest rank divergence is a two-model swap between positions 2 and 3: Qwen2.5-72B ranks second by CES but third by $\mathrm{TEB}_{\text{L2+L3}}$, while Llama-3.3-70B ranks third by CES but second by $\mathrm{TEB}_{\text{L2+L3}}$---Llama-3.3-70B's wall-clock advantage ($274\times$ vs.\ $43\times$ for Qwen2.5-72B) more than compensates for its lower CES, while Qwen2.5-72B's latency penalty drives a one-rank drop relative to its CES position.
+\textbf{Category breakdown.} Per-category results reveal that the TEB--quality inversion is not uniform across task types. Math is the strongest discriminator (quality range 0.200--0.920 across models; DeepSeek-V3 uniquely solves multi-step reasoning traps at 0.920). Classification is near-saturated (0.880--0.960), so TEB differences there reflect latency almost entirely. Structured data shows the widest per-model variance after v3.1 noise additions (range 0.389--0.833), confirming that judgment under ambiguous input is not uniform across model families.
 
-\textbf{Scope and limitations.} This pilot covers three automatically scored tasks on $n=4$ models. With four data points, $\rho=0.80$ has a 95\% confidence interval of approximately $[-0.10, 0.99]$ --- statistically consistent with anything from no correlation to near-perfect. The $\rho=0.80$ value establishes feasibility of the CES--TEB comparison methodology, not a validated finding. A minimum of $n=20$ models across diverse size tiers is required before the correlation can be interpreted. Full TEB results including rubric-scored open-ended tasks (T1-02, T1-03, T2-02, T2-04, T3-01--03) are available in the repository and reserved for a planned extended evaluation.
+\textbf{Reasoning model penalty.} DeepSeek-R1 vs.\ DeepSeek-V3 is a controlled comparison: same parameter count (671B), same training data, different inference mode. R1's chain-of-thought raises average latency from 5--7\,s (V3) to 13--15\,s (R1) per task. The result is TEB = 0.170 for R1 vs.\ 0.326 for V3 --- a $1.9\times$ efficiency penalty purely from reasoning overhead. Notably, R1 quality also drops (0.528 vs.\ 0.866): chain-of-thought reasoning on structured benchmarks produces verbose outputs that fail automated scoring even after tag stripping, and over-extended reasoning chains introduce errors on straightforward classification tasks.
+
+\textbf{Quality--TEB Spearman correlation.} Spearman $\rho(\text{quality},\, \text{TEB}) = 0.476$ ($p = 0.233$, $n = 8$) --- a moderate positive but statistically non-significant correlation. The moderate value (not near 0, not near 1) is precisely what the framework predicts: quality and deployment efficiency are related (both require correct outputs) but not interchangeable. With $n = 8$, the $p$-value does not support strong inference; the finding is directional. Five of eight models change rank between quality ordering and TEB ordering, including the largest swap (DeepSeek-V3: quality rank 1, TEB rank 6). A sample of $n \geq 20$ models is required to estimate the correlation reliably.
+
+\textbf{Scope and limitations.} TEB v3.1 covers 100 auto-scorable tasks across four structured categories. All tasks have deterministic correct answers, which is required for automated scoring but limits coverage of open-ended judgment, ambiguous instructions, and multi-step dependent tasks. The 8-model sample spans 7B--671B parameters but does not include proprietary API models. A minimum of $n=20$ models across diverse size tiers is needed before the Spearman correlation estimate stabilizes. Full task definitions, responses, and scored results are available at the repository.
 
 %-----------------------------------------------------------
 \section{Sensitivity Analysis}
@@ -1103,7 +1259,7 @@ For any capability level $c$, the efficiency frontier is:
 
 A model's CES measures its distance from the frontier. The current data suggests the frontier advanced substantially between 2022--2024 via MoE routing (Mixtral), grouped-query attention (Llama-3), and speculative decoding (Claude-3-Haiku).
 
-\noindent\textbf{Paper structure and contribution types.} This paper makes one empirical contribution (Sections~3--5) and one feasibility-stage companion (TEB, Section~6). The \textit{empirical contribution}: the Turing unit definition, CES measurement pipeline, and three validation experiments on 13 models yielding Spearman correlations and stability bounds. Extensions to human cognitive impact and data valuation are left to future work.
+\noindent\textbf{Paper structure and contribution types.} This paper makes one empirical contribution (Sections~\ref{sec:turing}--\ref{sec:results} and experimental validation) and one feasibility-stage companion (TEB, Section~\ref{sec:teb}). The \textit{empirical contribution}: the Turing unit definition, CES measurement pipeline, and three validation experiments on 13 models yielding Spearman correlations and stability bounds. Extensions to human cognitive impact and data valuation are left to future work.
 
 \subsection{Intuitive Framing}
 
@@ -1217,13 +1373,13 @@ This section documents scope boundaries, design decisions, and open validation q
 \section{Conclusion}
 %-----------------------------------------------------------
 
-This paper makes two contributions toward the goal of deployment-aware LLM evaluation.
+This paper makes two contributions, both at the proposal and preliminary-exploration stage.
 
-\textbf{CES: a standardized compute-adjusted index.} The Cognitive Efficiency Score is a practical heuristic---accuracy per log-compute---with a formal pipeline specification that enables reproducible, apples-to-apples comparisons across model families. Three validation experiments confirm it is well-behaved: rankings are moderately correlated with MMLU ($\rho = 0.725$, 95\% CI $[0.28, 0.91]$), stable under $\pm30\%$ FLOPs estimation error ($\rho \geq 0.989$), and insensitive to benchmark weight perturbations ($\rho = 0.994$ between weighting schemes). The central empirical finding: compute efficiency and accuracy are only moderately correlated ($\rho = 0.725$), meaning accuracy-only leaderboards systematically misrepresent models' deployment efficiency. CES is not a new concept but a standardized specification for computing a known tradeoff.
+\textbf{CES: a framework proposal.} The Cognitive Efficiency Score defines a standardized protocol for compute-adjusted model comparison---bits of benchmark uncertainty resolved per unit of log-scaled inference compute, normalized to a human expert baseline. The contribution is the definition and the specification, not an empirically validated unit. An illustrative analysis on 13 models using published benchmark data shows that CES rankings diverge from accuracy rankings in practically meaningful ways (Gemini Ultra: \#1 by MMLU, \#6 by CES). Sensitivity analyses confirm the formula is mathematically well-behaved: rankings are stable under $\pm30\%$ FLOPs perturbation ($\rho \geq 0.989$) and insensitive to benchmark weight choices ($\rho = 0.994$). These are properties of the formula, not empirical validation of CES against real deployment outcomes.
 
-\textbf{TEB: a direct measurement of deployment efficiency.} The Task Efficiency Benchmark formalizes the quantity CES approximates: human time saved per task, adjusted for output quality. TEB is the novel contribution. A feasibility pilot ($n=4$ models, 3 automated tasks) yields $\rho(\mathrm{CES}, \mathrm{TEB}_{\mathrm{L2+L3}}) = 0.80$ (95\% CI $[-0.10, 0.99]$ at $n=4$; feasibility demonstration only). The priority for follow-on work is running TEB at scale: $n \geq 20$ models, all 10 tasks including rubric-scored tiers, with inter-rater reliability established. A well-validated TEB would be independently publishable and would provide the ground-truth labels needed to externally validate CES rankings.
+\textbf{TEB: a path to actual validation.} The Task Efficiency Benchmark defines the quantity CES approximates---human time saved per task, adjusted for quality---and provides a measurement protocol for computing it directly. TEB is the missing piece: the ground-truth signal needed to establish whether CES is a useful proxy for real deployment efficiency, or not. A feasibility pilot ($n=4$, 3 automated tasks) yields $\rho(\mathrm{CES}, \mathrm{TEB}) = 0.80$ (95\% CI $[-0.10, 0.99]$; establishes that the measurement protocol runs, nothing more). Running TEB at scale---$n \geq 20$ models, all 10 tasks, inter-rater reliability established---is the next step and the work that would make this a validated contribution.
 
-Engineers selecting models for deployment should treat CES as a cheap screening tool---one input alongside latency, cost, and domain-specific evaluation. TEB is the right tool when the deployment stakes are high enough to justify direct measurement.
+Until TEB is run at scale, CES should be treated as a structured heuristic with a transparent protocol, not a validated efficiency unit. The value of this paper is the framework and the open question it poses, not a closed claim.
 
 \section*{Acknowledgements}
 

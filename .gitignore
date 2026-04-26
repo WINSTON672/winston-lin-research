@@ -12,9 +12,6 @@
 *.snm
 *.vrb
 
-# Compiled PDFs (regenerate from .tex)
-*.pdf
-
 # Python cache
 __pycache__/
 *.pyc
