@@ -25,4 +25,5 @@ data/          Any data used for experiments
 figures/       Charts, diagrams, and images
 code/          Scripts or tools used in projects
 
+
 #IT IS A WIP REPO I WILL CONTINUE TO ADD NEW IDEAS
