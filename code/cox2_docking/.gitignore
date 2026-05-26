@@ -1,0 +1,8 @@
+ligands/
+unidock_out/
+1CX2.pdb
+receptor_protein.pdb
+receptor.pdbqt
+ligands.txt
+__pycache__/
+*.pyc
