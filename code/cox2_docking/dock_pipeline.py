@@ -52,7 +52,8 @@ def _pip_install(pkgs):
 def ensure_deps():
     needed = []
     for mod, pkg in [("rdkit","rdkit"), ("meeko","meeko"), ("pandas","pandas"),
-                     ("requests","requests"), ("tqdm","tqdm"), ("numpy","numpy")]:
+                     ("requests","requests"), ("tqdm","tqdm"), ("numpy","numpy"),
+                     ("scipy","scipy")]:
         try: __import__(mod)
         except ImportError: needed.append(pkg)
     if needed:
