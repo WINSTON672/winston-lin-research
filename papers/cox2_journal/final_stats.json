@@ -1,0 +1,62 @@
+{
+  "celecoxib_vina": -11.196,
+  "celecoxib_pose_rmsd": 0.6391651706598341,
+  "our_vina_best": -10.174,
+  "our_vina_mean": -7.410661417322834,
+  "our_vina_median": -7.456,
+  "our_vina_worst": -2.8,
+  "our_vina_std": 1.208311127680839,
+  "n_strong_le_minus8": 35,
+  "n_beat_celecoxib": 0,
+  "random_vina_best": -9.57,
+  "random_vina_mean": -7.378020000000001,
+  "random_vina_median": -7.528499999999999,
+  "random_n_strong": 24,
+  "random_n_beat_celecoxib": 0,
+  "mwu_p": 0.5332591834007978,
+  "mwu_U": 6390.5,
+  "mean_diff_random_minus_ours": 0.0326414173228331,
+  "welch_t": -0.20873687775457553,
+  "welch_p": 0.8348486825478013,
+  "pearson_r": -0.05365576265292449,
+  "pearson_ci": [
+    -0.21664920741125063,
+    0.1106822024935646
+  ],
+  "spearman_rho": -0.06482011743673385,
+  "spearman_ci": [
+    -0.23136978046950277,
+    0.10373821892779049
+  ],
+  "sa_mean": 2.9771795349764845,
+  "sa_median": 2.9191750733143937,
+  "sa_le4": 120,
+  "sa_le5": 127,
+  "sa_gt6": 0,
+  "brenk_flagged": 40,
+  "brenk_clean": 87,
+  "top_brenk_alerts": [
+    {
+      "name": "Thiocarbonyl_group",
+      "count": 17
+    },
+    {
+      "name": "thiol_1",
+      "count": 9
+    },
+    {
+      "name": "Aliphatic_long_chain",
+      "count": 7
+    },
+    {
+      "name": "isolated_alkene",
+      "count": 4
+    },
+    {
+      "name": "diketo_group",
+      "count": 2
+    }
+  ],
+  "n_127_docked": 127,
+  "n_random_docked": 100
+}

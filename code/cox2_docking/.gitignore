@@ -1,7 +1,9 @@
 ligands/
 unidock_out/
+vina_out/
 1CX2.pdb
 receptor_protein.pdb
+receptor_protein_chainA.pdb
 receptor.pdbqt
 ligands.txt
 __pycache__/
