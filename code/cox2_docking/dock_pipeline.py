@@ -120,12 +120,31 @@ def split_pdb(pdb_path: Path):
     return protein_pdb, centroid
 
 def prep_receptor(protein_pdb: Path) -> Path:
+    """Prep receptor PDBQT. Tries OpenBabel first (most permissive), then Meeko."""
     out_pdbqt = HERE / "receptor.pdbqt"
     if out_pdbqt.exists():
         print(f"[receptor] cached: {out_pdbqt}")
         return out_pdbqt
-    print("[receptor] running mk_prepare_receptor (Meeko)")
     tried = []
+
+    # Path A: OpenBabel (robust for crystal PDBs with non-standard residues)
+    obabel = shutil.which("obabel")
+    if obabel:
+        print("[receptor] running obabel (rigid receptor mode)")
+        try:
+            subprocess.check_call([
+                obabel, str(protein_pdb), "-O", str(out_pdbqt),
+                "-xr",      # rigid receptor (no rotatable bonds)
+                "-p", "7.4" # protonate at physiological pH
+            ])
+            if out_pdbqt.exists():
+                print(f"[receptor] PDBQT -> {out_pdbqt}  (via obabel)")
+                return out_pdbqt
+        except subprocess.CalledProcessError as e:
+            tried.append(f"obabel: {e}")
+
+    # Path B: Meeko fallback
+    print("[receptor] obabel unavailable/failed, trying Meeko")
     for cmd in [
         [sys.executable, "-m", "meeko.cli.mk_prepare_receptor",
          "--read_pdb", str(protein_pdb), "-o", str(out_pdbqt.with_suffix("")), "-p"],
@@ -137,8 +156,8 @@ def prep_receptor(protein_pdb: Path) -> Path:
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
             tried.append(f"{cmd[0]}: {e}")
     if not out_pdbqt.exists():
-        raise SystemExit("[err] receptor prep failed:\n  " + "\n  ".join(tried))
-    print(f"[receptor] PDBQT -> {out_pdbqt}")
+        raise SystemExit("[err] receptor prep failed (tried obabel + meeko):\n  " + "\n  ".join(tried))
+    print(f"[receptor] PDBQT -> {out_pdbqt}  (via meeko)")
     return out_pdbqt
 
 
