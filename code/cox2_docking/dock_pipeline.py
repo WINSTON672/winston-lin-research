@@ -51,6 +51,8 @@ def _pip_install(pkgs):
 
 def ensure_deps():
     needed = []
+    # Note: 'vina' Python package skipped — pip-broken on Windows.
+    # Docking uses standalone unidock or vina binary instead.
     for mod, pkg in [("rdkit","rdkit"), ("meeko","meeko"), ("pandas","pandas"),
                      ("requests","requests"), ("tqdm","tqdm"), ("numpy","numpy"),
                      ("scipy","scipy")]:
@@ -61,19 +63,23 @@ def ensure_deps():
 
 
 def detect_engine(forced: str | None):
-    """Return ('unidock', path) or ('vina', None) or raise."""
-    if forced == "vina":
-        return ("vina", None)
+    """Return ('unidock', path) or ('vina', path) or raise."""
+    ud = shutil.which("unidock") or shutil.which("unidock.exe")
+    vn = shutil.which("vina") or shutil.which("vina.exe")
     if forced == "unidock":
-        path = shutil.which("unidock") or shutil.which("unidock.exe")
-        if not path:
-            raise SystemExit("[err] --engine unidock requested but binary not found in PATH")
-        return ("unidock", path)
-    # auto
-    udpath = shutil.which("unidock") or shutil.which("unidock.exe")
-    if udpath:
-        return ("unidock", udpath)
-    return ("vina", None)
+        if not ud: raise SystemExit("[err] --engine unidock: binary not in PATH. Install: conda install -c conda-forge unidock")
+        return ("unidock", ud)
+    if forced == "vina":
+        if not vn: raise SystemExit("[err] --engine vina: vina.exe not in PATH. Download from https://github.com/ccsb-scripps/AutoDock-Vina/releases")
+        return ("vina", vn)
+    if ud: return ("unidock", ud)
+    if vn: return ("vina", vn)
+    raise SystemExit(
+        "[err] No docking engine found. Install ONE of:\n"
+        "  GPU (fast):  conda install -c conda-forge unidock\n"
+        "  CPU:         download vina.exe from https://github.com/ccsb-scripps/AutoDock-Vina/releases\n"
+        "               put it in C:\\Windows\\System32 or anywhere in PATH"
+    )
 
 
 # ── PDB + receptor prep ───────────────────────────────────────────────────────
@@ -219,24 +225,40 @@ def dock_unidock(unidock_bin, receptor_pdbqt: Path, ligand_items, centroid):
         scores[item["idx"]] = (best, "ok" if best is not None else "no_score")
     return scores
 
-def dock_vina_cpu(receptor_pdbqt: Path, ligand_items, centroid):
+def dock_vina_cpu(vina_bin, receptor_pdbqt: Path, ligand_items, centroid):
+    """Sequential CPU docking via standalone vina.exe binary (subprocess)."""
     from tqdm import tqdm
-    try:
-        from vina import Vina
-    except ImportError:
-        _pip_install(["vina"]); from vina import Vina
-    v = Vina(sf_name="vina", cpu=0, seed=42, verbosity=0)
-    v.set_receptor(str(receptor_pdbqt))
-    v.compute_vina_maps(center=centroid.tolist(),
-                        box_size=[BOX_SIZE, BOX_SIZE, BOX_SIZE])
+    cx, cy, cz = [f"{v:.3f}" for v in centroid]
+    sz = f"{BOX_SIZE:.1f}"
+    out_dir = HERE / "vina_out"; out_dir.mkdir(exist_ok=True)
     scores = {}
     for item in tqdm([x for x in ligand_items if x["ok"]], desc="vina"):
+        name = Path(item["path"]).stem
+        out_file = out_dir / f"{name}_out.pdbqt"
+        cmd = [
+            vina_bin,
+            "--receptor", str(receptor_pdbqt),
+            "--ligand", item["path"],
+            "--center_x", cx, "--center_y", cy, "--center_z", cz,
+            "--size_x", sz, "--size_y", sz, "--size_z", sz,
+            "--out", str(out_file),
+            "--exhaustiveness", str(EXHAUSTIVENESS),
+            "--num_modes", str(N_POSES),
+        ]
         try:
-            v.set_ligand_from_file(item["path"])
-            v.dock(exhaustiveness=EXHAUSTIVENESS, n_poses=N_POSES)
-            energies = v.energies(n_poses=1)
-            best = float(energies[0][0]) if energies is not None and len(energies) else None
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+            if res.returncode != 0:
+                scores[item["idx"]] = (None, f"vina_err:{res.returncode}")
+                continue
+            best = None
+            if out_file.exists():
+                for ln in out_file.read_text().splitlines():
+                    if ln.startswith("REMARK VINA RESULT"):
+                        try: best = float(ln.split()[3]); break
+                        except (IndexError, ValueError): pass
             scores[item["idx"]] = (best, "ok" if best is not None else "no_score")
+        except subprocess.TimeoutExpired:
+            scores[item["idx"]] = (None, "timeout")
         except Exception as e:
             scores[item["idx"]] = (None, f"err:{e}")
     return scores
@@ -262,8 +284,8 @@ def main():
     if args.test: df = df.head(args.test)
     print(f"[input] {len(df)} candidates")
 
-    engine, ud_bin = detect_engine(None if args.engine == "auto" else args.engine)
-    print(f"[engine] {engine}" + (f" ({ud_bin})" if ud_bin else ""))
+    engine, engine_bin = detect_engine(None if args.engine == "auto" else args.engine)
+    print(f"[engine] {engine} ({engine_bin})")
 
     pdb_path = download_pdb()
     protein_pdb, centroid = split_pdb(pdb_path)
@@ -272,9 +294,9 @@ def main():
 
     t0 = time.time()
     if engine == "unidock":
-        scores = dock_unidock(ud_bin, receptor_pdbqt, ligand_items, centroid)
+        scores = dock_unidock(engine_bin, receptor_pdbqt, ligand_items, centroid)
     else:
-        scores = dock_vina_cpu(receptor_pdbqt, ligand_items, centroid)
+        scores = dock_vina_cpu(engine_bin, receptor_pdbqt, ligand_items, centroid)
     print(f"[done] docking finished in {(time.time()-t0)/60:.1f} min")
 
     rows = []

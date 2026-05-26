@@ -1,8 +1,12 @@
 rdkit>=2024.3.1
 meeko>=0.6.0
-vina>=1.2.5
 scipy>=1.11
 pandas>=2.0
 numpy>=1.24
 requests>=2.31
 tqdm>=4.66
+# Note: vina Python package is NOT installed via pip on Windows (build breaks).
+# Use either:
+#   - Uni-Dock binary (conda install -c conda-forge unidock)  [GPU, fastest]
+#   - vina.exe standalone (https://github.com/ccsb-scripps/AutoDock-Vina/releases)
+
