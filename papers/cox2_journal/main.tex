@@ -46,7 +46,7 @@ Our results document a generic but underreported failure mode of ML virtual scre
 
 Machine-learning approaches to ligand-based virtual screening have become routine: a model is trained on a bioactivity database such as ChEMBL~\cite{mendez2019}, applied to a generic drug-like library such as ZINC~\cite{irwin2020}, and candidates above a potency threshold are reported as prioritized hits. Benchmark performance—typically reported as Pearson correlation or AUC on a random held-out split—is often strong, with $R>0.80$ achievable using simple Random Forest regressors on Morgan fingerprints~\cite{rogers2010,pedregosa2011}. Such pipelines have populated the literature and supported industrial decision-making.
 
-However, three properties of the standard pipeline conspire to inflate apparent reliability. First, random train/test splitting permits structurally similar compounds to appear in both sets, leaking information across the split~\cite{martin2018, sheridan2013}. Second, the screening library is, by construction, structurally distinct from the training data: the purpose of cross-library screening is to identify novel chemotypes. Third, model confidence calibration is rarely reported, leaving consumers of computational predictions without quantitative warning when predictions extrapolate.
+However, three properties of the standard pipeline conspire to inflate apparent reliability. First, random train/test splitting permits structurally similar compounds to appear in both sets, leaking information across the split~\cite{martin2017, sheridan2013}. Second, the screening library is, by construction, structurally distinct from the training data: the purpose of cross-library screening is to identify novel chemotypes. Third, model confidence calibration is rarely reported, leaving consumers of computational predictions without quantitative warning when predictions extrapolate.
 
 The applicability domain (AD) concept~\cite{netzeva2005, jaworska2005} addresses the third gap: it provides a structural test for whether a candidate compound lies within the chemical region where the model's predictions are credible. For fingerprint-based regressors, maximum Tanimoto similarity to the training set is a standard AD metric, with $T \geq 0.40$ commonly used as the threshold below which predictions should be flagged as extrapolations~\cite{sheridan2004, weaver2008}.
 
@@ -76,7 +76,7 @@ For each isoform independently, we trained a Random Forest regressor (500 estima
 
 For comparison, mean baseline, Ridge regression, and XGBoost~\cite{chen2016} (500 trees) were trained on identical splits.
 
-We note that random splitting may inflate generalization estimates relative to scaffold-based splitting~\cite{martin2018}; we use it here for comparability with prior literature and report AD analysis as an external check on this potential overestimate.
+We note that random splitting may inflate generalization estimates relative to scaffold-based splitting~\cite{martin2017}; we use it here for comparability with prior literature and report AD analysis as an external check on this potential overestimate.
 
 \subsection{Virtual Screening Filters}
 
@@ -278,7 +278,7 @@ We do not propose that Vina rescue alone makes a candidate ``validated.'' Free-e
 \subsection{Limitations}
 
 \begin{enumerate}
-\item Random train/test splitting may overestimate test-set generalization. Scaffold-based splitting~\cite{martin2018} is preferred and is consistent with our AD-derived characterization of the candidate list as OOD.
+\item Random train/test splitting may overestimate test-set generalization. Scaffold-based splitting~\cite{martin2017} is preferred and is consistent with our AD-derived characterization of the candidate list as OOD.
 
 \item The AD threshold $T\geq 0.40$ is a conventional choice; thresholds in the literature range from $0.30$ to $0.50$~\cite{sheridan2004, weaver2008}. Our headline result (0/127 above $T=0.40$) is robust within this range; we report the full distribution to permit reanalysis.
 
@@ -342,176 +342,208 @@ No external funding was received for this work.
 
 The author declares no competing interests.
 
-\begin{thebibliography}{30}
+\begin{thebibliography}{35}
 
 \bibitem{vane1971}
 Vane JR.
 Inhibition of prostaglandin synthesis as a mechanism of action for aspirin-like drugs.
 \textit{Nature New Biology}, 231(25):232--235, 1971.
+\href{https://doi.org/10.1038/newbio231232a0}{doi:10.1038/newbio231232a0}.
 
 \bibitem{hawkey1999}
 Hawkey CJ.
 COX-2 inhibitors.
 \textit{The Lancet}, 353(9149):307--314, 1999.
+\href{https://doi.org/10.1016/S0140-6736(98)12154-2}{doi:10.1016/S0140-6736(98)12154-2}.
 
 \bibitem{bombardier2000}
-Bombardier C et al.
+Bombardier C, Laine L, Reicin A, Shapiro D, Burgos-Vargas R, Davis B, Day R, Ferraz MB, Hawkey CJ, Hochberg MC, Kvien TK, Schnitzer TJ; VIGOR Study Group.
 Comparison of upper gastrointestinal toxicity of rofecoxib and naproxen in patients with rheumatoid arthritis.
-\textit{NEJM}, 343(21):1520--1528, 2000.
+\textit{New England Journal of Medicine}, 343(21):1520--1528, 2000.
+\href{https://doi.org/10.1056/NEJM200011233432103}{doi:10.1056/NEJM200011233432103}.
 
 \bibitem{silverstein2000}
-Silverstein FE et al.
-Gastrointestinal toxicity with celecoxib vs nonsteroidal anti-inflammatory drugs.
+Silverstein FE, Faich G, Goldstein JL, Simon LS, Pincus T, Whelton A, Makuch R, Eisen G, Agrawal NM, Stenson WF, Burr AM, Zhao WW, Kent JD, Lefkowith JB, Verburg KM, Geis GS.
+Gastrointestinal toxicity with celecoxib vs nonsteroidal anti-inflammatory drugs for osteoarthritis and rheumatoid arthritis: the CLASS study.
 \textit{JAMA}, 284(10):1247--1255, 2000.
+\href{https://doi.org/10.1001/jama.284.10.1247}{doi:10.1001/jama.284.10.1247}.
 
 \bibitem{fitzgerald2001}
 FitzGerald GA, Patrono C.
 The coxibs, selective inhibitors of cyclooxygenase-2.
-\textit{NEJM}, 345(6):433--442, 2001.
+\textit{New England Journal of Medicine}, 345(6):433--442, 2001.
+\href{https://doi.org/10.1056/NEJM200108093450607}{doi:10.1056/NEJM200108093450607}.
 
 \bibitem{mendez2019}
-Mendez D et al.
+Mendez D, Gaulton A, Bento AP, Chambers J, De Veij M, F\'elix E, Magari\~nos MP, et al.
 ChEMBL: towards direct deposition of bioassay data.
 \textit{Nucleic Acids Research}, 47(D1):D930--D940, 2019.
+\href{https://doi.org/10.1093/nar/gky1075}{doi:10.1093/nar/gky1075}.
 
 \bibitem{rogers2010}
 Rogers D, Hahn M.
 Extended-connectivity fingerprints.
-\textit{JCIM}, 50(5):742--754, 2010.
+\textit{Journal of Chemical Information and Modeling}, 50(5):742--754, 2010.
+\href{https://doi.org/10.1021/ci100050t}{doi:10.1021/ci100050t}.
 
 \bibitem{landrum2006}
 Landrum G.
 RDKit: Open-source cheminformatics.
-2006. \url{https://www.rdkit.org}
+2006. \url{https://www.rdkit.org}.
 
 \bibitem{irwin2020}
-Irwin JJ et al.
-ZINC20: a free ultralarge-scale chemical database for ligand discovery.
-\textit{JCIM}, 60(12):6065--6073, 2020.
+Irwin JJ, Tang KG, Young J, Dandarchuluun C, Wong BR, Khurelbaatar M, Moroz YS, Mayfield J, Sayle RA.
+ZINC20---a free ultralarge-scale chemical database for ligand discovery.
+\textit{Journal of Chemical Information and Modeling}, 60(12):6065--6073, 2020.
+\href{https://doi.org/10.1021/acs.jcim.0c00675}{doi:10.1021/acs.jcim.0c00675}.
 
 \bibitem{lipinski1997}
-Lipinski CA et al.
+Lipinski CA, Lombardo F, Dominy BW, Feeney PJ.
 Experimental and computational approaches to estimate solubility and permeability in drug discovery and development settings.
-\textit{Adv.\ Drug Deliv.\ Rev.}, 23(1--3):3--25, 1997.
+\textit{Advanced Drug Delivery Reviews}, 23(1--3):3--25, 1997.
+\href{https://doi.org/10.1016/S0169-409X(96)00423-1}{doi:10.1016/S0169-409X(96)00423-1}.
 
 \bibitem{pedregosa2011}
-Pedregosa F et al.
-Scikit-learn: Machine learning in Python.
-\textit{JMLR}, 12:2825--2830, 2011.
+Pedregosa F, Varoquaux G, Gramfort A, Michel V, Thirion B, Grisel O, Blondel M, et al.
+Scikit-learn: machine learning in Python.
+\textit{Journal of Machine Learning Research}, 12:2825--2830, 2011.
 
 \bibitem{chen2016}
 Chen T, Guestrin C.
 XGBoost: a scalable tree boosting system.
-\textit{Proc.\ KDD}, 785--794, 2016.
+In \textit{Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '16)}, pp.\ 785--794, 2016.
+\href{https://doi.org/10.1145/2939672.2939785}{doi:10.1145/2939672.2939785}.
 
 \bibitem{baell2010}
 Baell JB, Holloway GA.
-New substructure filters for removal of pan assay interference compounds (PAINS).
-\textit{J.\ Med.\ Chem.}, 53(7):2719--2740, 2010.
+New substructure filters for removal of pan assay interference compounds (PAINS) from screening libraries and for their exclusion in bioassays.
+\textit{Journal of Medicinal Chemistry}, 53(7):2719--2740, 2010.
+\href{https://doi.org/10.1021/jm901137j}{doi:10.1021/jm901137j}.
 
 \bibitem{bemis1996}
 Bemis GW, Murcko MA.
 The properties of known drugs. 1. Molecular frameworks.
-\textit{J.\ Med.\ Chem.}, 39(15):2887--2893, 1996.
+\textit{Journal of Medicinal Chemistry}, 39(15):2887--2893, 1996.
+\href{https://doi.org/10.1021/jm9602928}{doi:10.1021/jm9602928}.
 
 \bibitem{kurumbail1996}
-Kurumbail RG et al.
+Kurumbail RG, Stevens AM, Gierse JK, McDonald JJ, Stegeman RA, Pak JY, Gildehaus D, et al.
 Structural basis for selective inhibition of cyclooxygenase-2 by anti-inflammatory agents.
-\textit{Nature}, 384:644--648, 1996.
+\textit{Nature}, 384(6610):644--648, 1996.
+\href{https://doi.org/10.1038/384644a0}{doi:10.1038/384644a0}.
 
 \bibitem{trott2010}
 Trott O, Olson AJ.
 AutoDock Vina: improving the speed and accuracy of docking with a new scoring function, efficient optimization, and multithreading.
-\textit{J.\ Comput.\ Chem.}, 31(2):455--461, 2010.
+\textit{Journal of Computational Chemistry}, 31(2):455--461, 2010.
+\href{https://doi.org/10.1002/jcc.21334}{doi:10.1002/jcc.21334}.
 
 \bibitem{eberhardt2021}
-Eberhardt J et al.
+Eberhardt J, Santos-Martins D, Tillack AF, Forli S.
 AutoDock Vina 1.2.0: new docking methods, expanded force field, and Python bindings.
-\textit{JCIM}, 61(8):3891--3898, 2021.
+\textit{Journal of Chemical Information and Modeling}, 61(8):3891--3898, 2021.
+\href{https://doi.org/10.1021/acs.jcim.1c00203}{doi:10.1021/acs.jcim.1c00203}.
 
 \bibitem{oboyle2011}
-O'Boyle NM et al.
+O'Boyle NM, Banck M, James CA, Morley C, Vandermeersch T, Hutchison GR.
 Open Babel: an open chemical toolbox.
-\textit{J.\ Cheminform.}, 3(1):33, 2011.
+\textit{Journal of Cheminformatics}, 3(1):33, 2011.
+\href{https://doi.org/10.1186/1758-2946-3-33}{doi:10.1186/1758-2946-3-33}.
 
 \bibitem{riniker2015}
 Riniker S, Landrum GA.
 Better informed distance geometry: using what we know to improve conformation generation.
-\textit{JCIM}, 55(12):2562--2574, 2015.
+\textit{Journal of Chemical Information and Modeling}, 55(12):2562--2574, 2015.
+\href{https://doi.org/10.1021/acs.jcim.5b00654}{doi:10.1021/acs.jcim.5b00654}.
 
 \bibitem{rappe1992}
-Rappe AK et al.
+Rapp\'e AK, Casewit CJ, Colwell KS, Goddard WA III, Skiff WM.
 UFF, a full periodic table force field for molecular mechanics and molecular dynamics simulations.
-\textit{JACS}, 114(25):10024--10035, 1992.
+\textit{Journal of the American Chemical Society}, 114(25):10024--10035, 1992.
+\href{https://doi.org/10.1021/ja00051a040}{doi:10.1021/ja00051a040}.
 
 \bibitem{meeko2024}
-Forli S et al.
-Meeko: AutoDock-ready ligand and receptor preparation. 2024. \url{https://github.com/forlilab/Meeko}
+Forli Lab.
+Meeko: preparation of small molecules for AutoDock.
+2024. \url{https://github.com/forlilab/Meeko}.
 
 \bibitem{netzeva2005}
-Netzeva TI et al.
-Current status of methods for defining the applicability domain of (quantitative) structure--activity relationships.
-\textit{ATLA}, 33(2):155--173, 2005.
+Netzeva TI, Worth AP, Aldenberg T, Benigni R, Cronin MTD, Gramatica P, Jaworska JS, et al.
+Current status of methods for defining the applicability domain of (quantitative) structure--activity relationships: the report and recommendations of ECVAM Workshop 52.
+\textit{Alternatives to Laboratory Animals}, 33(2):155--173, 2005.
+\href{https://doi.org/10.1177/026119290503300209}{doi:10.1177/026119290503300209}.
 
 \bibitem{jaworska2005}
-Jaworska J et al.
-QSAR applicability domain estimation by projection of the training set in descriptor space.
-\textit{ATLA}, 33(5):445--459, 2005.
+Jaworska J, Nikolova-Jeliazkova N, Aldenberg T.
+QSAR applicability domain estimation by projection of the training set in descriptor space: a review.
+\textit{Alternatives to Laboratory Animals}, 33(5):445--459, 2005.
+\href{https://doi.org/10.1177/026119290503300508}{doi:10.1177/026119290503300508}.
 
 \bibitem{sheridan2004}
-Sheridan RP et al.
+Sheridan RP, Feuston BP, Maiorov VN, Kearsley SK.
 Similarity to molecules in the training set is a good discriminator for prediction accuracy in QSAR.
-\textit{JCIM}, 44(6):1912--1928, 2004.
+\textit{Journal of Chemical Information and Computer Sciences}, 44(6):1912--1928, 2004.
+\href{https://doi.org/10.1021/ci049782w}{doi:10.1021/ci049782w}.
 
 \bibitem{weaver2008}
 Weaver S, Gleeson MP.
 The importance of the domain of applicability in QSAR modeling.
-\textit{J.\ Mol.\ Graph.\ Model.}, 26(8):1315--1326, 2008.
+\textit{Journal of Molecular Graphics and Modelling}, 26(8):1315--1326, 2008.
+\href{https://doi.org/10.1016/j.jmgm.2008.01.002}{doi:10.1016/j.jmgm.2008.01.002}.
 
-\bibitem{martin2018}
-Martin EJ et al.
+\bibitem{martin2017}
+Martin EJ, Polyakov VR, Tian L, Perez RC.
 Profile-QSAR 2.0: kinase virtual screening accuracy comparable to four-concentration IC50s for realistically novel compounds.
-\textit{JCIM}, 58(11):2350--2363, 2018.
+\textit{Journal of Chemical Information and Modeling}, 57(8):2077--2088, 2017.
+\href{https://doi.org/10.1021/acs.jcim.7b00166}{doi:10.1021/acs.jcim.7b00166}.
 
 \bibitem{sheridan2013}
 Sheridan RP.
 Time-split cross-validation as a method for estimating the goodness of prospective prediction.
-\textit{JCIM}, 53(4):783--790, 2013.
+\textit{Journal of Chemical Information and Modeling}, 53(4):783--790, 2013.
+\href{https://doi.org/10.1021/ci400084k}{doi:10.1021/ci400084k}.
 
 \bibitem{walters2020}
 Walters WP, Murcko M.
 Assessing the impact of generative AI on medicinal chemistry.
-\textit{Nat.\ Biotechnol.}, 38:143--145, 2020.
+\textit{Nature Biotechnology}, 38(2):143--145, 2020.
+\href{https://doi.org/10.1038/s41587-020-0418-2}{doi:10.1038/s41587-020-0418-2}.
 
 \bibitem{bender2021}
 Bender A, Cortes-Ciriano I.
 Artificial intelligence in drug discovery: what is realistic, what are illusions?
-\textit{Drug Discov.\ Today}, 26(2):511--524, 2021.
+\textit{Drug Discovery Today}, 26(4):1040--1052, 2021.
+\href{https://doi.org/10.1016/j.drudis.2020.11.037}{doi:10.1016/j.drudis.2020.11.037}.
 
 \bibitem{wang2016}
-Wang Z et al.
-Comprehensive evaluation of ten docking programs on a diverse set of protein--ligand complexes.
-\textit{Phys.\ Chem.\ Chem.\ Phys.}, 18:12964--12975, 2016.
+Wang Z, Sun H, Yao X, Li D, Xu L, Li Y, Tian S, Hou T.
+Comprehensive evaluation of ten docking programs on a diverse set of protein--ligand complexes: the prediction accuracy of sampling power and scoring power.
+\textit{Physical Chemistry Chemical Physics}, 18(18):12964--12975, 2016.
+\href{https://doi.org/10.1039/C6CP01555G}{doi:10.1039/C6CP01555G}.
 
 \bibitem{gaillard2018}
 Gaillard T.
 Evaluation of AutoDock and AutoDock Vina on the CASF-2013 benchmark.
-\textit{JCIM}, 58(8):1697--1706, 2018.
+\textit{Journal of Chemical Information and Modeling}, 58(8):1697--1706, 2018.
+\href{https://doi.org/10.1021/acs.jcim.8b00312}{doi:10.1021/acs.jcim.8b00312}.
 
 \bibitem{wang2015}
-Wang L et al.
+Wang L, Wu Y, Deng Y, Kim B, Pierce L, Krilov G, Lupyan D, et al.
 Accurate and reliable prediction of relative ligand binding potency in prospective drug discovery by way of a modern free-energy calculation protocol and force field.
-\textit{JACS}, 137(7):2695--2703, 2015.
+\textit{Journal of the American Chemical Society}, 137(7):2695--2703, 2015.
+\href{https://doi.org/10.1021/ja512751q}{doi:10.1021/ja512751q}.
 
 \bibitem{shan2011}
-Shan Y et al.
+Shan Y, Kim ET, Eastwood MP, Dror RO, Seeliger MA, Shaw DE.
 How does a drug molecule find its target binding site?
-\textit{JACS}, 133(24):9181--9183, 2011.
+\textit{Journal of the American Chemical Society}, 133(24):9181--9183, 2011.
+\href{https://doi.org/10.1021/ja202726y}{doi:10.1021/ja202726y}.
 
 \bibitem{cortes2019}
-Cortes-Ciriano I, Bender A.
+Cort\'es-Ciriano I, Bender A.
 Concepts and applications of conformal prediction in computational drug discovery.
-\textit{Wiley Interdiscip.\ Rev.\ Comput.\ Mol.\ Sci.}, 9(5):e1410, 2019.
+\textit{Wiley Interdisciplinary Reviews: Computational Molecular Science}, 9(5):e1410, 2019.
+\href{https://doi.org/10.1002/wcms.1410}{doi:10.1002/wcms.1410}.
 
 \end{thebibliography}
 
