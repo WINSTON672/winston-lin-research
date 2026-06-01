@@ -52,12 +52,15 @@ formula is computable from publicly available model cards, and its log-scaled de
 is designed to compress FLOPs estimation noise. As an illustrative analysis, we apply CES
 to 13 models using published benchmark scores and estimated FLOPs, finding that CES
 rankings diverge substantially from accuracy rankings---Gemini Ultra ranks \#1 by MMLU
-(90.4\%) but \#6 by CES due to its 1{,}000T FLOPs cost. We also propose the \textbf{Task
+(90.4\%) but \#6 by CES due to its 1{,}000T FLOPs cost. We also introduce the \textbf{Task
 Efficiency Benchmark} (TEB), which measures the quantity CES approximates directly: human
-time saved per task, adjusted for output quality. A feasibility pilot ($n=4$, 3 automated
-tasks) yields $\rho(\mathrm{CES}, \mathrm{TEB}) = 0.80$ (95\% CI $[-0.10,\, 0.99]$;
-establishes feasibility only). Full validation of CES against real deployment efficiency
-at scale remains future work. Open-source implementation:
+time saved per task, adjusted for output quality. TEB v3.1 (100 auto-scorable tasks, 8
+open-weight models) yields $\rho(\mathrm{quality}, \mathrm{TEB}) = 0.476$ ($p = 0.233$,
+$n = 8$): a moderate but non-significant correlation in which five of eight models change
+rank between quality and deployment-efficiency orderings. DeepSeek-V3 leads quality
+($0.866$) but ranks sixth by TEB ($0.326$); Llama-3.3-70B is third on quality but first
+on TEB. Reaching a power-adequate estimate ($n \geq 20$ models, including proprietary
+systems) remains future work. Open-source implementation:
 \url{https://github.com/WINSTON672/lin-score}.
 \end{abstract}
 
@@ -110,8 +113,9 @@ conditions.
 \textbf{Contributions.} (1)~Three conditions for a legitimate AI efficiency unit
 (Section~\ref{sec:conditions}). (2)~CES---the Turing unit definition and measurement
 pipeline satisfying all three (Sections~\ref{sec:turing}--\ref{sec:results}). (3)~TEB---the
-first formalization of direct deployment efficiency measurement, with a feasibility pilot
-yielding $\rho(\mathrm{CES}, \mathrm{TEB}) = 0.80$ (Section~\ref{sec:teb}).
+first formalization of direct deployment efficiency measurement, run at v3.1 scale (100
+auto-scorable tasks, 8 models) with $\rho(\mathrm{quality}, \mathrm{TEB}) = 0.476$ and
+rank divergence on 5 of 8 models (Section~\ref{sec:teb}).
 
 %-----------------------------------------------------------
 \section{Related Work}
@@ -1092,7 +1096,7 @@ Qwen2.5-72B   & 10/10 = 1.000 & 10/10 = 1.000 & 0.999$^\dagger$ & 2.073 \\
 
 \textbf{Motivation.} CES is a proxy: it approximates deployment efficiency from benchmark accuracy and estimated FLOPs. The ground truth is simpler and more direct --- \textit{did using this model save a human meaningful time?} TEB measures that directly. Where CES asks ``how many bits did the model resolve per FLOP?'', TEB asks ``how much faster did the user complete the task, and was the output good enough to use?''
 
-TEB measures a quantity a product team would directly care about: human time saved per task, adjusted for output quality. CES approximates this from benchmark accuracy and estimated FLOPs when direct time measurements are unavailable. The two metrics are correlated in a feasibility pilot ($\rho = 0.80$, $n = 4$; see Section~\ref{sec:teb} for the statistical limits of this estimate): a model with high CES but low TEB is efficient on benchmarks but fails to deliver proportionate value on real open-ended work --- a divergence invisible to CES alone.
+TEB measures a quantity a product team would directly care about: human time saved per task, adjusted for output quality. CES approximates this from benchmark accuracy and estimated FLOPs when direct time measurements are unavailable. The two should agree only insofar as benchmark quality predicts deployment quality; TEB v3.1 (Table~\ref{tab:teb-results}) finds $\rho(\text{quality}, \text{TEB}) = 0.476$ with five of eight models changing rank between the two orderings. A model with high benchmark quality but low TEB is efficient on aggregate accuracy but fails to deliver proportionate value on real, latency-sensitive tasks --- a divergence invisible to CES alone.
 
 Experiment~4 also revealed a structural limitation of accuracy-based question sets: when all models achieve near-ceiling performance, CES degrades into a pure compute comparison. TEB avoids this by using open-ended tasks where quality differences between model sizes remain large.
 
@@ -1103,7 +1107,7 @@ Three design principles distinguish TEB from prior benchmarks:
 \begin{enumerate}
     \item \textbf{Human baseline anchoring.} Every task has an empirically grounded human completion time (minutes). This allows direct measurement of AI speedup rather than implicit comparison.
     \item \textbf{Difficulty stratification for model discrimination.} Tasks are designed across three tiers so that Tier-1 (L1) tasks are solvable by any capable model (testing AI-vs-human efficiency), while Tier-2 (L2) and Tier-3 (L3) tasks create quality gaps between 7B and 70B-scale models (testing model-vs-model discrimination).
-    \item \textbf{Revision burden as part of quality.} A response that requires substantial human editing before use is not fully efficient. Each rubric-scored response includes a revision burden rating ($0$=use as-is, $1$=minor edits, $2$=major rework), applied as a quality multiplier ($\times 1.0 / \times 0.80 / \times 0.50$). \textbf{Note on multiplier derivation}: the three-level scale and its multipliers (1.0, 0.80, 0.50) are heuristic estimates of the proportional editing cost relative to producing the response from scratch; they have not been calibrated against measured editing times. The rubric-based tasks also lack formal inter-rater reliability validation (Cohen's $\kappa$ or similar); the pilot's three automated tasks sidestep this limitation, but generalizing TEB to rubric-scored tasks requires establishing rater agreement before the metric can be used for model comparisons.
+    \item \textbf{Revision burden as part of quality.} A response that requires substantial human editing before use is not fully efficient. For rubric-scored task variants, each response carries a revision burden rating ($0$=use as-is, $1$=minor edits, $2$=major rework), applied as a quality multiplier ($\times 1.0 / \times 0.80 / \times 0.50$). \textbf{Note on multiplier derivation}: the three-level scale and its multipliers (1.0, 0.80, 0.50) are heuristic estimates of the proportional editing cost relative to producing the response from scratch; they have not been calibrated against measured editing times. TEB v3.1 reported in Section~\ref{sec:teb} sidesteps this entirely by restricting to 100 fully auto-scorable tasks; extending the benchmark to rubric-scored open-ended tasks requires establishing inter-rater reliability (Cohen's $\kappa$) before per-model comparisons can be trusted.
 \end{enumerate}
 
 \subsection{Task Set}
@@ -1259,7 +1263,7 @@ For any capability level $c$, the efficiency frontier is:
 
 A model's CES measures its distance from the frontier. The current data suggests the frontier advanced substantially between 2022--2024 via MoE routing (Mixtral), grouped-query attention (Llama-3), and speculative decoding (Claude-3-Haiku).
 
-\noindent\textbf{Paper structure and contribution types.} This paper makes one empirical contribution (Sections~\ref{sec:turing}--\ref{sec:results} and experimental validation) and one feasibility-stage companion (TEB, Section~\ref{sec:teb}). The \textit{empirical contribution}: the Turing unit definition, CES measurement pipeline, and three validation experiments on 13 models yielding Spearman correlations and stability bounds. Extensions to human cognitive impact and data valuation are left to future work.
+\noindent\textbf{Paper structure and contribution types.} This paper makes two empirical contributions. The \textit{formula contribution} (Sections~\ref{sec:turing}--\ref{sec:results}): the Turing unit definition, CES measurement pipeline, and three validation experiments on 13 models yielding Spearman correlations and stability bounds. The \textit{benchmark contribution} (TEB v3.1, Section~\ref{sec:teb}): 100 auto-scorable tasks run on 8 open-weight models, with the central finding that deployment efficiency diverges from benchmark quality (5-of-8 rank changes, $\rho = 0.476$ at $n = 8$). Extensions to human cognitive impact and data valuation are left to future work.
 
 \subsection{Intuitive Framing}
 
@@ -1336,7 +1340,7 @@ This section documents scope boundaries, design decisions, and open validation q
 
 \item \textbf{External tool compute.} Agentic CES (Section~3.8) addresses this directly: model-only CES is the default; Agentic CES = model + tool FLOPs for system-level evaluation. Tool FLOPs can be estimated from documented per-call costs (e.g., web search $\approx 10^8$ FLOPs/call).
 
-\item \textbf{Real-task FLOPs uncertainty.} Experiment~2 shows CES rankings are stable under $\pm 30\%$ FLOPs perturbation ($\rho \geq 0.945$). The TEB pilot (Section~\ref{sec:teb}) uses directly measured wall-clock latency rather than estimated FLOPs, side-stepping this uncertainty for deployment-efficiency comparisons. Exact FLOPs measurement via hardware profiling is required before making strong deployment-proxy claims from CES alone. A latency-normalized variant of $\mathcal{T}$ is a natural extension for deployment contexts where FLOPs are unavailable; it is deferred to future work because log-scaling latency lacks the empirical grounding (scaling laws) that justifies log-scaling compute.
+\item \textbf{Real-task FLOPs uncertainty.} Experiment~2 shows CES rankings are stable under $\pm 30\%$ FLOPs perturbation ($\rho \geq 0.945$). TEB v3.1 (Section~\ref{sec:teb}) uses directly measured wall-clock latency rather than estimated FLOPs, side-stepping this uncertainty for deployment-efficiency comparisons. Exact FLOPs measurement via hardware profiling is required before making strong deployment-proxy claims from CES alone. A latency-normalized variant of $\mathcal{T}$ is a natural extension for deployment contexts where FLOPs are unavailable; it is deferred to future work because log-scaling latency lacks the empirical grounding (scaling laws) that justifies log-scaling compute.
 
 \item \textbf{Cross-domain generalization.} CES is explicitly scope-limited to benchmarks used (Assumption~2, Section~3.5). Domain-stratified subscores ($\mathcal{T}_{\text{knowledge}}, \mathcal{T}_{\text{code}}, \mathcal{T}_{\text{reasoning}}$) are defined in Section~3.4 for deployment-specific use. Extrapolation to multimodal or creative tasks is not claimed.
 
@@ -1348,7 +1352,7 @@ This section documents scope boundaries, design decisions, and open validation q
 
 \begin{itemize}
 
-\item \textbf{TEB at scale.} The pilot ($n=4$ models, 3 tasks) establishes feasibility. The central open question is whether $\rho(\mathrm{CES}, \mathrm{TEB})$ holds at $n \geq 20$ models across all 10 tasks. A well-powered TEB study would either validate CES as a useful proxy or identify the conditions under which it fails.
+\item \textbf{TEB at scale.} TEB v3.1 has been run on 8 open-weight models across 100 auto-scorable tasks, yielding $\rho(\mathrm{quality}, \mathrm{TEB}) = 0.476$ ($p=0.233$, $n=8$) and a 5-of-8 rank divergence between quality and TEB orderings. The directional finding---that deployment efficiency is not collapsible to benchmark quality---is established; the correlation estimate itself is underpowered. The central open question is whether this divergence pattern, and a stable $\rho$ estimate, holds at $n \geq 20$ models including proprietary API systems (GPT-4-class, Claude-class, Gemini-class). A well-powered study would also test whether the same divergence appears on rubric-scored open-ended tasks, which TEB v3.1 deliberately excludes.
 
 \item \textbf{Benchmark marginal contribution.} Experiment~3 shows HumanEval adds $+0.126$ Spearman points of discriminating signal given MMLU, while GSM8K subtracts $0.033$. Confirming that this ordering generalizes to other model populations requires a pre-registered replication with a held-out model set.
 
@@ -1359,7 +1363,7 @@ This section documents scope boundaries, design decisions, and open validation q
 \label{sec:future}
 %-----------------------------------------------------------
 
-\textbf{TEB extended evaluation}: Section~\ref{sec:teb} reports a pilot TEB run ($n=4$ models, 3 automatically scored tasks) yielding $\rho(\mathrm{CES}, \mathrm{TEB}_{\text{L2+L3}}) = 0.80$. Extending to full rubric-scored tasks (T1-02, T1-03, T2-02, T2-04, T3-01--03) and a larger model set remains as follow-on work.
+\textbf{TEB extended evaluation}: TEB v3.1 (Section~\ref{sec:teb}) covers 100 auto-scorable tasks on 8 open-weight models. Two extensions are queued: (i)~include proprietary API models (GPT-4-class, Claude-class, Gemini-class) to reach $n \geq 20$ for a reliable $\rho(\mathrm{quality}, \mathrm{TEB})$ estimate, and (ii)~add rubric-scored open-ended tasks with established inter-rater reliability ($\kappa$), restoring the revision-burden machinery that v3.1 deliberately left out.
 
 \textbf{Extended benchmarks}: GPQA \cite{rein2023} for graduate-level reasoning, LiveCodeBench \cite{jain2024} for code, MMMU \cite{yue2024} for multimodal.
 
@@ -1373,13 +1377,13 @@ This section documents scope boundaries, design decisions, and open validation q
 \section{Conclusion}
 %-----------------------------------------------------------
 
-This paper makes two contributions, both at the proposal and preliminary-exploration stage.
+This paper makes two contributions: a framework proposal (CES) and an executed benchmark whose central finding is directional but underpowered (TEB v3.1).
 
 \textbf{CES: a framework proposal.} The Cognitive Efficiency Score defines a standardized protocol for compute-adjusted model comparison---bits of benchmark uncertainty resolved per unit of log-scaled inference compute, normalized to a human expert baseline. The contribution is the definition and the specification, not an empirically validated unit. An illustrative analysis on 13 models using published benchmark data shows that CES rankings diverge from accuracy rankings in practically meaningful ways (Gemini Ultra: \#1 by MMLU, \#6 by CES). Sensitivity analyses confirm the formula is mathematically well-behaved: rankings are stable under $\pm30\%$ FLOPs perturbation ($\rho \geq 0.989$) and insensitive to benchmark weight choices ($\rho = 0.994$). These are properties of the formula, not empirical validation of CES against real deployment outcomes.
 
-\textbf{TEB: a path to actual validation.} The Task Efficiency Benchmark defines the quantity CES approximates---human time saved per task, adjusted for quality---and provides a measurement protocol for computing it directly. TEB is the missing piece: the ground-truth signal needed to establish whether CES is a useful proxy for real deployment efficiency, or not. A feasibility pilot ($n=4$, 3 automated tasks) yields $\rho(\mathrm{CES}, \mathrm{TEB}) = 0.80$ (95\% CI $[-0.10, 0.99]$; establishes that the measurement protocol runs, nothing more). Running TEB at scale---$n \geq 20$ models, all 10 tasks, inter-rater reliability established---is the next step and the work that would make this a validated contribution.
+\textbf{TEB v3.1: deployment efficiency, measured.} The Task Efficiency Benchmark measures the quantity CES approximates---human time saved per task, adjusted for quality---directly from wall-clock latency and auto-scored output quality. TEB v3.1 reports results on 8 open-weight models across 100 auto-scorable tasks. The central finding: deployment efficiency does not collapse to quality. DeepSeek-V3 leads quality ($0.866$) but ranks sixth by TEB ($0.326$); Llama-3.3-70B is third on quality but first on TEB ($0.500$); five of eight models change rank between the two orderings. The Spearman correlation $\rho(\mathrm{quality}, \mathrm{TEB}) = 0.476$ ($p = 0.233$, $n = 8$) is directional --- the rank-divergence pattern is the load-bearing result; the correlation estimate itself is underpowered and a reliable value requires $n \geq 20$ models including proprietary API systems.
 
-Until TEB is run at scale, CES should be treated as a structured heuristic with a transparent protocol, not a validated efficiency unit. The value of this paper is the framework and the open question it poses, not a closed claim.
+CES should be treated as a structured heuristic with a transparent protocol, not a validated efficiency unit; TEB v3.1 establishes that the quantity CES tries to approximate is empirically distinct from benchmark quality, which is the precondition any such proxy needs to be useful. Closing the loop --- a power-adequate $\rho(\mathrm{CES}, \mathrm{TEB})$ estimate including closed models --- is the next step.
 
 \section*{Acknowledgements}
 
