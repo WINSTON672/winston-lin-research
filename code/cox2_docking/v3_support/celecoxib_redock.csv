@@ -1,0 +1,2 @@
+name,smiles,vina_kcal_mol,status,set
+celecoxib,O=S(=O)(N)c1ccc(-c2cc(C(F)(F)F)nn2-c2ccc(C)cc2)cc1,-11.254,ok,control

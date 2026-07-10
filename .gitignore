@@ -23,3 +23,9 @@ __pycache__/
 # Secrets
 .env
 .env*
+
+# Large regenerable docking poses
+code/cox2_docking/v3_support/poses/
+# Local audit-trail artifacts (kept off the public repo)
+*.STALE_*.csv
+*.WRONG_*.csv

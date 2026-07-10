@@ -38,7 +38,8 @@ LIGAND_DIR.mkdir(exist_ok=True)
 PDB_ID = "1CX2"
 PDB_URL = f"https://files.rcsb.org/download/{PDB_ID}.pdb"
 CELECOXIB_RESNAME = "S58"
-BOX_SIZE = 25.0
+CHAIN = "A"          # 1CX2 has 4 chains (homo-tetramer); use chain A only
+BOX_SIZE = 22.0      # Å; covers the celecoxib pocket with margin
 EXHAUSTIVENESS = 8
 N_POSES = 5
 
@@ -97,13 +98,20 @@ def download_pdb() -> Path:
     return pdb_path
 
 def split_pdb(pdb_path: Path):
+    """Extract chain-A protein and chain-A celecoxib centroid only.
+
+    1CX2 is a homo-tetramer (chains A/B/C/D, each with celecoxib).
+    Earlier versions averaged all 4 celecoxibs and produced a phantom
+    docking-box center in the tetramer interior, NOT in any real binding
+    pocket. This version restricts to chain A throughout.
+    """
     import numpy as np
     lines = pdb_path.read_text().splitlines()
     protein_lines, lig_coords = [], []
     for ln in lines:
-        if ln.startswith("ATOM  "):
+        if ln.startswith("ATOM  ") and ln[21] == CHAIN:
             protein_lines.append(ln)
-        elif ln.startswith("HETATM"):
+        elif ln.startswith("HETATM") and ln[21] == CHAIN:
             if ln[17:20].strip() == CELECOXIB_RESNAME:
                 try:
                     lig_coords.append((float(ln[30:38]), float(ln[38:46]), float(ln[46:54])))
@@ -111,12 +119,12 @@ def split_pdb(pdb_path: Path):
         elif ln.startswith(("TER","END")):
             protein_lines.append(ln)
     if not lig_coords:
-        raise SystemExit(f"[err] no {CELECOXIB_RESNAME} ligand in {pdb_path}")
+        raise SystemExit(f"[err] no {CELECOXIB_RESNAME} ligand in chain {CHAIN} of {pdb_path}")
     centroid = np.array(lig_coords).mean(axis=0)
-    print(f"[box] celecoxib centroid: {centroid.round(2).tolist()}  (n={len(lig_coords)} atoms)")
-    protein_pdb = HERE / "receptor_protein.pdb"
+    print(f"[box] chain-{CHAIN} celecoxib centroid: {centroid.round(2).tolist()}  (n={len(lig_coords)} atoms)")
+    protein_pdb = HERE / f"receptor_protein_chain{CHAIN}.pdb"
     protein_pdb.write_text("\n".join(protein_lines) + "\nEND\n")
-    print(f"[receptor] protein-only PDB -> {protein_pdb}")
+    print(f"[receptor] chain-{CHAIN} protein PDB -> {protein_pdb}")
     return protein_pdb, centroid
 
 def prep_receptor(protein_pdb: Path) -> Path:

@@ -1,62 +1,89 @@
 {
-  "celecoxib_vina": -11.196,
-  "celecoxib_pose_rmsd": 0.6391651706598341,
-  "our_vina_best": -10.174,
-  "our_vina_mean": -7.410661417322834,
-  "our_vina_median": -7.456,
-  "our_vina_worst": -2.8,
-  "our_vina_std": 1.208311127680839,
-  "n_strong_le_minus8": 35,
+  "celecoxib_vina": -11.227,
+  "our_vina_best": -11.059,
+  "our_vina_mean": -7.501333333333334,
+  "our_vina_median": -7.58,
+  "our_vina_worst": -3.628,
+  "our_vina_std": 1.3442133372106377,
+  "n_strong_le_minus8": 11,
   "n_beat_celecoxib": 0,
-  "random_vina_best": -9.57,
-  "random_vina_mean": -7.378020000000001,
-  "random_vina_median": -7.528499999999999,
-  "random_n_strong": 24,
+  "random_vina_best": -9.559,
+  "random_vina_mean": -7.40532,
+  "random_vina_median": -7.527,
+  "random_n_strong": 27,
   "random_n_beat_celecoxib": 0,
-  "mwu_p": 0.5332591834007978,
-  "mwu_U": 6390.5,
-  "mean_diff_random_minus_ours": 0.0326414173228331,
-  "welch_t": -0.20873687775457553,
-  "welch_p": 0.8348486825478013,
-  "pearson_r": -0.05365576265292449,
+  "mwu_U": 2069.5,
+  "mwu_p": 0.8933255014861509,
+  "welch_t": -0.4075908588048222,
+  "welch_p": 0.684894855278545,
+  "mean_diff_random_minus_ours": 0.0960133333333344,
+  "cohens_d": -0.08083339580245866,
+  "cles_ours_better": 0.5071428571428571,
+  "hodges_lehmann": -0.021999999999999797,
+  "hl_ci": [
+    -0.4249999999999998,
+    0.3359999999999994
+  ],
+  "mde": {
+    "0.5": 0.3628559995700282,
+    "0.8": 0.5187044086163667,
+    "0.95": 0.667432198005676
+  },
+  "power_at_d": {
+    "0.2": 0.1906897453205307,
+    "0.3": 0.3672507445230765,
+    "0.5": 0.7705326792757748,
+    "0.8": 0.9908827140972699
+  },
+  "pearson_r": -0.1391534214770028,
+  "spearman_rho": -0.08564946114577425,
   "pearson_ci": [
-    -0.21664920741125063,
-    0.1106822024935646
+    -0.33076437383894075,
+    0.033431667046074504
   ],
-  "spearman_rho": -0.06482011743673385,
   "spearman_ci": [
-    -0.23136978046950277,
-    0.10373821892779049
+    -0.3469797999654327,
+    0.19588337798068609
   ],
-  "sa_mean": 2.9771795349764845,
-  "sa_median": 2.9191750733143937,
-  "sa_le4": 120,
-  "sa_le5": 127,
+  "sa_mean": 3.00978807633557,
+  "sa_median": 2.8938909738010583,
+  "sa_le4": 38,
+  "sa_le5": 42,
   "sa_gt6": 0,
-  "brenk_flagged": 40,
-  "brenk_clean": 87,
-  "top_brenk_alerts": [
-    {
-      "name": "Thiocarbonyl_group",
-      "count": 17
+  "brenk_flagged": 19,
+  "brenk_clean": 23,
+  "n_candidates_docked": 42,
+  "n_random_docked": 100,
+  "val_n_active": 49,
+  "val_n_inactive": 49,
+  "val_active_median": -8.399,
+  "val_inactive_median": -7.712,
+  "val_act_vs_ina_U": 1068.0,
+  "val_act_vs_ina_p": 0.3483020842633807,
+  "val_ina_vs_rand_U": 1819.0,
+  "val_ina_vs_rand_p": 0.010846385773271525,
+  "val_act_vs_rand_U": 1774.5,
+  "val_act_vs_rand_p": 0.006383091375019323,
+  "celecoxib_pose_rmsd": 0.626,
+  "contacts": {
+    "ML_top20": {
+      "n": 20,
+      "val523_contacts": 16,
+      "mean_recovery": 0.7300000000000001,
+      "n_far_from_arg120_gt12A": 2
     },
-    {
-      "name": "thiol_1",
-      "count": 9
-    },
-    {
-      "name": "Aliphatic_long_chain",
-      "count": 7
-    },
-    {
-      "name": "isolated_alkene",
-      "count": 4
-    },
-    {
-      "name": "diketo_group",
-      "count": 2
+    "random_zinc20": {
+      "n": 20,
+      "val523_contacts": 16,
+      "mean_recovery": 0.6600000000000001,
+      "n_far_from_arg120_gt12A": 3
     }
-  ],
-  "n_127_docked": 127,
-  "n_random_docked": 100
+  },
+  "celecoxib_key_residues": [
+    "Arg120",
+    "Tyr355",
+    "Trp387",
+    "Phe518",
+    "Val523"
+  ]
 }

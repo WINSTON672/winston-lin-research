@@ -8,6 +8,9 @@
 \usepackage{float}
 \usepackage{cite}
 \usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{xurl}
+\emergencystretch=3em
 
 \title{A Standard Machine-Learning Virtual Screening Pipeline Produces Candidates Indistinguishable From Random Drug-Like Compounds: A Quantitative Audit Using COX-2 As Case Study}
 
@@ -18,7 +21,7 @@ Blair Academy, Blairstown, NJ 07825, USA \\
 ORCID: 0009-0003-6036-8149
 }
 
-\date{May 2026}
+\date{July 2026}
 
 \begin{document}
 
@@ -30,13 +33,13 @@ ORCID: 0009-0003-6036-8149
 Machine-learning (ML) virtual screening pipelines report strong retrospective benchmark performance (Pearson $R > 0.8$) and convert it into prioritized candidate lists. Whether those candidates dock better than random drug-like compounds against the actual target is rarely tested. We test it.
 
 \noindent\textbf{Methods:}
-Random Forest regressors were trained on COX-2 (CHEMBL230, $n=2{,}237$; Pearson $R=0.817$, RMSE $=0.91$ pIC$_{50}$) and COX-1 (CHEMBL1829, $n=2{,}421$; $R=0.791$) and applied to 249{,}455 ZINC250k compounds. Potency, Lipinski, solubility-window ($-1 \leq \log P \leq 3$), and PAINS filters returned 127 candidates, each annotated with predicted COX-1 selectivity, Murcko scaffold, max-Tanimoto applicability-domain coverage, synthetic accessibility (SA), and BRENK alerts. All 127 candidates and a 100-compound random ZINC250k control (sampled before any ML scoring) were docked into the chain-A celecoxib pocket of human COX-2 (PDB 1CX2) with AutoDock Vina. Celecoxib was redocked as positive control; pose recovery was scored by heavy-atom RMSD to the crystal.
+Random Forest regressors were trained on COX-2 (CHEMBL230, $n=4{,}445$; Pearson $R=0.756$, RMSE $=0.81$ pIC$_{50}$) and COX-1 (CHEMBL221, $n=1{,}652$; $R=0.682$, RMSE $=0.72$ pIC$_{50}$) and applied to 249{,}455 ZINC250k compounds. Potency, Lipinski, solubility-window ($-1 \leq \log P \leq 3$), and PAINS filters returned 42 candidates, each annotated with predicted COX-1 selectivity, Murcko scaffold, max-Tanimoto applicability-domain coverage, synthetic accessibility (SA), and BRENK alerts. All 42 candidates and a 100-compound random ZINC250k control (sampled before any ML scoring) were docked into the chain-A binding pocket of human COX-2 (PDB 1CX2) with AutoDock Vina. Celecoxib was redocked as positive control; pose recovery was scored by heavy-atom RMSD to the crystal ligand.
 
 \noindent\textbf{Results:}
-Celecoxib redocked at $-11.20$ kcal/mol with 0.64 \r{A} RMSD to crystal---protocol valid. All 127 candidates docked successfully (Vina best $-10.17$, median $-7.46$, worst $-2.80$ kcal/mol; 35 reached $\leq -8.0$); \textbf{none beat celecoxib}. All 127 lay outside the applicability domain ($T \geq 0.40$; mean max-Tanimoto $= 0.276$). The candidate Vina distribution was \textbf{statistically indistinguishable from the random baseline} (Mann-Whitney $p = 0.53$; Welch $p = 0.83$; Cohen's $d = -0.028$; Hodges--Lehmann shift $+0.01$ kcal/mol, 95\% CI $[-0.28, +0.30]$), with 80\% power for a 0.44 kcal/mol shift. ML pIC$_{50}$ and Vina rankings were uncorrelated (Spearman $\rho = -0.065$, 95\% CI $[-0.23, +0.10]$). The top-20 ML-prioritized candidates contacted celecoxib's pocket residues less often than random ZINC did (Val523: 13/20 vs.\ 15/20). A Vina-on-training validation showed that Vina at our settings separated ChEMBL inactives from random ZINC ($p = 0.005$) but not ChEMBL actives ($p = 0.72$), making the random baseline a stringent comparator. Candidates were synthesizable (SA $\leq 5$ for all 127, mean $2.98$); 40/127 carried BRENK alerts.
+Celecoxib redocked at $-11.23$ kcal/mol with 0.63 \r{A} RMSD to the crystal ligand---protocol valid. All 42 candidates docked successfully (Vina best $-11.06$, median $-7.58$, worst $-3.63$ kcal/mol; 11 reached $\leq -8.0$); \textbf{none beat celecoxib}. 39 of 42 candidates (93\%) lay outside the applicability domain ($T \geq 0.40$; mean max-Tanimoto $= 0.243$). The candidate Vina distribution was \textbf{statistically indistinguishable from the random baseline} (Mann-Whitney $p = 0.89$; Welch $p = 0.68$; Cohen's $d = -0.08$; Hodges--Lehmann shift $-0.02$ kcal/mol, 95\% CI $[-0.42, +0.34]$). ML pIC$_{50}$ and Vina rankings were uncorrelated (Spearman $\rho = -0.086$, 95\% CI $[-0.35, +0.20]$). The top-20 ML-prioritized candidates engaged celecoxib's pocket residues at parity with random ZINC (Val523: 16/20 vs.\ 16/20; mean contact recovery $0.73$ vs.\ $0.66$). A Vina-on-training validation showed that Vina at our settings \emph{did} separate genuine ChEMBL COX-2 actives from random ZINC (actives median $-8.40$ vs.\ random $-7.53$ kcal/mol, $p = 0.006$)---yet the ML candidates docked at the random level ($-7.58$), not the actives level. Candidates were synthesizable (SA $\leq 5$ for all 42, mean $3.01$); 19/42 carried BRENK alerts.
 
 \noindent\textbf{Conclusions:}
-A standard Random Forest screen at $R = 0.817$ produces no candidate enrichment over random ZINC by any objective measure: no docking gain, no positive ML--Vina rank correlation, universal out-of-domain prediction. The benchmark $R$ does not predict prospective hit-finding on cross-library screens. Applicability-domain coverage and a same-library random-baseline comparison should be mandatory reporting elements in ML virtual screening papers.
+A standard Random Forest screen at $R = 0.756$ produces no candidate enrichment over random ZINC by any objective measure: no docking gain, no positive ML--Vina rank correlation, 93\% out-of-domain prediction. Critically, the same docking oracle \emph{does} separate genuine COX-2 actives from random ZINC---so the failure is a property of the ML candidate list, not of the evaluation. The benchmark $R$ does not predict prospective hit-finding on cross-library screens. Applicability-domain coverage and a same-library random-baseline comparison should be mandatory reporting elements in ML virtual screening papers.
 
 \end{abstract}
 
@@ -45,7 +48,7 @@ A standard Random Forest screen at $R = 0.817$ produces no candidate enrichment 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{graphical_abstract.png}
-\caption*{\textbf{Graphical abstract.} A standard ML virtual screening pipeline for COX-2 yields 127 candidates that fail four independent objective checks: (A) all 127 lie outside the model's applicability domain at any conventional threshold; (B) their Vina docking-affinity distribution against the COX-2 chain-A binding pocket is statistically indistinguishable from a random ZINC250k baseline; (C) the ML pIC$_{50}$ ranking and Vina ranking are uncorrelated within the candidate set; (D) the top-20 candidates contact celecoxib's key binding-pocket residues no more frequently than random ZINC compounds. The benchmark test-set $R = 0.817$ does not predict prospective screening performance.}
+\caption*{\textbf{Graphical abstract.} A standard ML virtual screening pipeline for COX-2 yields 42 candidates that fail three convergent objective checks: (A) 39 of 42 lie outside the model's applicability domain ($T \geq 0.40$); (B) their Vina docking-affinity distribution against the COX-2 chain-A binding pocket is statistically indistinguishable from a random ZINC250k baseline; (C) the ML pIC$_{50}$ ranking and Vina ranking are uncorrelated within the candidate set. A docking-based validation confirms Vina separates true COX-2 actives from random ZINC, so the null is not an oracle artifact. The benchmark test-set $R = 0.756$ does not predict prospective screening performance.}
 \end{figure}
 
 \section{Introduction}
@@ -58,9 +61,9 @@ The applicability domain (AD) concept~\cite{netzeva2005, jaworska2005} addresses
 
 Despite the long-standing availability of AD methods, applicability domain analysis is conspicuously absent from many recently published ML virtual screening papers, including high-profile demonstrations of "AI-discovered" inhibitor candidates. This omission has been criticized in the cheminformatics literature~\cite{walters2020, bender2021} but persists in practice.
 
-\textbf{In this work, we apply applicability-domain analysis to a standard COX-2 ML virtual screening pipeline, quantify the prevalence of out-of-domain extrapolation, and ask the most direct empirical question: \textit{does ML potency prioritization plus selectivity, Lipinski, and PAINS filtering produce candidates that dock better than random drug-like compounds against the actual protein structure?}} To answer this, we dock all 127 ML-prioritized candidates and an unfiltered random sample of 100 ZINC250k compounds against the crystal binding pocket of human COX-2 (PDB 1CX2 chain A), with celecoxib as a redocking positive control.
+\textbf{In this work, we apply applicability-domain analysis to a standard COX-2 ML virtual screening pipeline, quantify the prevalence of out-of-domain extrapolation, and ask the most direct empirical question: \textit{does ML potency prioritization plus selectivity, Lipinski, and PAINS filtering produce candidates that dock better than random drug-like compounds against the actual protein structure?}} To answer this, we dock all 42 ML-prioritized candidates and an unfiltered random sample of 100 ZINC250k compounds against the crystal binding pocket of human COX-2 (PDB 1CX2 chain A), with celecoxib as a redocking positive control.
 
-Cyclooxygenase-2 (COX-2) was selected as the target because: (i) it has a large, high-quality public bioactivity dataset; (ii) a well-resolved crystal structure (PDB 1CX2) with a co-crystallized selective inhibitor (celecoxib) provides a defined docking pocket; (iii) the COX-1/COX-2 selectivity question is medicinally important and computationally tractable as a paired prediction; and (iv) the clinical-translation history of the coxib drug class~\cite{bombardier2000, silverstein2000, fitzgerald2001} provides a calibrating context for what virtual-screening outputs do and do not predict.
+Cyclooxygenase catalyzes the committed step of prostaglandin biosynthesis and is the molecular target of nonsteroidal anti-inflammatory drugs~\cite{vane1971}; the inducible COX-2 isoform became a major drug-discovery target once selective inhibitors were developed to spare the gastroprotective COX-1 isoform~\cite{hawkey1999}. Cyclooxygenase-2 (COX-2) was selected as the target because: (i) it has a large, high-quality public bioactivity dataset; (ii) a well-resolved crystal structure (PDB 1CX2) with a co-crystallized selective inhibitor (SC-558, the bromophenyl analog of celecoxib) provides a defined docking pocket; (iii) the COX-1/COX-2 selectivity question is medicinally important and computationally tractable as a paired prediction; and (iv) the clinical-translation history of the coxib drug class~\cite{bombardier2000, silverstein2000, fitzgerald2001} provides a calibrating context for what virtual-screening outputs do and do not predict.
 
 We do not claim experimental confirmation of any candidate's COX-2 inhibitory activity. We provide an audited candidate list with explicit AD coverage flags and orthogonal physics-based scoring, intended to support downstream wet-lab triage decisions.
 
@@ -68,7 +71,7 @@ We do not claim experimental confirmation of any candidate's COX-2 inhibitory ac
 
 \subsection{Bioactivity Datasets}
 
-Bioactivity data were retrieved from ChEMBL~\cite{mendez2019} via the \texttt{chembl\_webresource\_client} API for human COX-2 (CHEMBL230) and COX-1 (CHEMBL1829) on May 25, 2026. Records were filtered to retain IC$_{50}$ measurements with standard relation ``='', assay type ``B'' (binding), and parseable pIC$_{50}$ values. Duplicate SMILES entries were resolved by retaining the lowest IC$_{50}$. Activities were restricted to pIC$_{50}\in[3,12]$. After filtering: $n_{\mathrm{COX-2}}=2{,}237$ and $n_{\mathrm{COX-1}}=2{,}421$ compound--activity pairs.
+Bioactivity data were retrieved from ChEMBL~\cite{mendez2019} via the \texttt{chembl\_webresource\_client} API for human COX-2 (CHEMBL230, Prostaglandin G/H synthase 2) and COX-1 (CHEMBL221, Prostaglandin G/H synthase 1) on July 9, 2026. Records were filtered to retain IC$_{50}$ measurements with standard relation ``='', assay type ``B'' (binding), and parseable pIC$_{50}$ values. Duplicate SMILES entries were resolved by retaining the lowest IC$_{50}$. Activities were restricted to pIC$_{50}\in[3,12]$. After filtering: $n_{\mathrm{COX-2}}=4{,}445$ and $n_{\mathrm{COX-1}}=1{,}652$ compound--activity pairs. Target-identity integrity was confirmed by a chemotype audit of the retrieved sets (COX-2: 12.2\% primary sulfonamide, 15.5\% trifluoromethyl---the coxib chemotype; $<0.5\%$ benzamidine/guanidine protease motif).
 
 The screening library was ZINC250k~\cite{irwin2020} ($n=249{,}455$ drug-like compounds).
 
@@ -95,7 +98,7 @@ Predicted isoform selectivity was defined as
 \Delta\mathrm{pIC}_{50} = \mathrm{pIC}_{50}^{\mathrm{COX-2}} - \mathrm{pIC}_{50}^{\mathrm{COX-1}}.
 \]
 Combined prediction uncertainty is propagated as
-$\sigma_{\Delta} = \sqrt{\mathrm{RMSE}_{\mathrm{COX-2}}^2 + \mathrm{RMSE}_{\mathrm{COX-1}}^2} \approx 1.20$ pIC$_{50}$ units.
+$\sigma_{\Delta} = \sqrt{\mathrm{RMSE}_{\mathrm{COX-2}}^2 + \mathrm{RMSE}_{\mathrm{COX-1}}^2} \approx 1.08$ pIC$_{50}$ units.
 
 \subsection{Applicability Domain}
 
@@ -103,21 +106,21 @@ Maximum Tanimoto similarity~\cite{landrum2006} between each candidate and a rand
 
 \subsection{Scaffold Analysis}
 
-Murcko scaffold decomposition~\cite{bemis1996} was performed using \texttt{rdkit.Chem.Scaffolds.MurckoScaffold}. Canonical scaffold SMILES served as cluster identifiers.
+Murcko scaffold decomposition~\cite{bemis1996} was performed using \texttt{rdkit.Chem.\allowbreak Scaffolds.\allowbreak MurckoScaffold}. Canonical scaffold SMILES served as cluster identifiers.
 
 \subsection{Molecular Docking}
 
-The human COX-2 crystal structure (PDB 1CX2~\cite{kurumbail1996}) was downloaded from the RCSB Protein Data Bank. 1CX2 is a homo-tetramer (chains A--D, each in complex with celecoxib, residue code S58); we restrict to chain A throughout to avoid averaging over four spatially distinct binding pockets. The centroid of the 28 chain-A celecoxib heavy atoms (geometric centroid: $x,y,z = 24.26, 21.53, 16.50$ \r{A}) defined the docking-box center, with cubic box dimensions of $22 \times 22 \times 22$ \r{A}---sufficient to enclose the celecoxib binding pocket with margin.
+The human COX-2 crystal structure (PDB 1CX2~\cite{kurumbail1996}) was downloaded from the RCSB Protein Data Bank. 1CX2 is a homo-tetramer (chains A--D, each in complex with the selective inhibitor SC-558---the bromophenyl analog of celecoxib---residue code S58); we restrict to chain A throughout to avoid averaging over four spatially distinct binding pockets. The centroid of the chain-A SC-558 heavy atoms (geometric centroid: $x,y,z = 24.26, 21.53, 16.50$ \r{A}) defined the docking-box center, with cubic box dimensions of $22 \times 22 \times 22$ \r{A}---sufficient to enclose the celecoxib-class binding pocket with margin.
 
-Water molecules, the celecoxib ligand, heme cofactor, and N-acetylglucosamine glycans of chain A were removed; the remaining chain-A protein was protonated at physiological pH (7.4) and converted to PDBQT format using OpenBabel~\cite{oboyle2011} (\texttt{obabel -xr -p 7.4}).
+Water molecules, the co-crystal SC-558 ligand, heme cofactor, and N-acetylglucosamine glycans of chain A were removed; the remaining chain-A protein was protonated at physiological pH (7.4) and converted to PDBQT format using OpenBabel~\cite{oboyle2011} (\texttt{obabel -xr -p 7.4}).
 
 For each ligand, the SMILES string was converted to a 3D conformer using RDKit's ETKDG embedding algorithm~\cite{riniker2015} followed by UFF energy minimization~\cite{rappe1992}. Ligand PDBQTs were generated using Meeko~\cite{meeko2024}.
 
-Docking was performed with AutoDock Vina 1.2.5~\cite{trott2010, eberhardt2021} (\texttt{exhaustiveness}~$=8$, \texttt{num\_modes}~$=5$). The Vina binding affinity (kcal/mol) for the lowest-energy pose was retained as the docking score. Celecoxib was redocked into the same protocol as a positive control; pose recovery was quantified by heavy-atom RMSD between the lowest-energy redocked pose and the chain-A crystal celecoxib coordinates, using the Hungarian algorithm to handle the unordered atom correspondence between PDBQT and PDB representations.
+Docking was performed with AutoDock Vina 1.2.5~\cite{trott2010, eberhardt2021} (\texttt{exhaustiveness}~$=8$, \texttt{num\_modes}~$=5$). The Vina binding affinity (kcal/mol) for the lowest-energy pose was retained as the docking score. Celecoxib was redocked into the same protocol as a positive control; pose recovery was quantified by heavy-atom RMSD between the lowest-energy redocked celecoxib pose and the chain-A crystal SC-558 coordinates (26 matched heavy atoms), using the Hungarian algorithm to handle the unordered atom correspondence between PDBQT and PDB representations.
 
 \subsection{Random ZINC Baseline}
 
-To test whether the ML potency-prioritization-and-filtering pipeline produces docking enrichment relative to the raw ZINC250k library, 100 compounds were sampled uniformly at random from ZINC250k (\texttt{random\_state=42}, applied \emph{before any ML scoring or filtering}). These compounds were prepared and docked into the identical chain-A pocket with identical Vina settings. The full Vina affinity distributions of the 127 ML-prioritized candidates and the 100-compound random baseline were compared by Mann--Whitney $U$ (one-sided, alternative: ML-prioritized scores are lower / stronger) and Welch's $t$-test. We report both because Vina scores are bounded above and weakly skewed.
+To test whether the ML potency-prioritization-and-filtering pipeline produces docking enrichment relative to the raw ZINC250k library, 100 compounds were sampled uniformly at random from ZINC250k (\texttt{random\_state=42}, applied \emph{before any ML scoring or filtering}). These compounds were prepared and docked into the identical chain-A pocket with identical Vina settings. The full Vina affinity distributions of the 42 ML-prioritized candidates and the 100-compound random baseline were compared by Mann--Whitney $U$ (two-sided) and Welch's $t$-test. We report both because Vina scores are bounded above and weakly skewed.
 
 \subsection{Synthetic Accessibility and BRENK Structural Alerts}
 
@@ -125,7 +128,7 @@ Synthetic accessibility (SA) scores were computed using the RDKit Contrib implem
 
 \subsection{Bootstrap Confidence Intervals}
 
-95\% confidence intervals on the ML--Vina rank correlation were estimated by resampling the 127-candidate index with replacement 5{,}000 times (\texttt{numpy.random.default\_rng(42)}). Bootstrap percentile intervals are reported for both Pearson $r$ and Spearman $\rho$.
+95\% confidence intervals on the ML--Vina rank correlation were estimated by resampling the 42-candidate index with replacement 5{,}000 times (\texttt{numpy.random.default\_rng(42)}). Bootstrap percentile intervals are reported for both Pearson $r$ and Spearman $\rho$.
 
 \subsection{Effect Size and Statistical Power}
 
@@ -151,86 +154,87 @@ Table~\ref{tab:models} compares model performance on the held-out COX-2 test set
 
 \begin{table}[H]
 \centering
-\caption{Model comparison on COX-2 held-out test set ($n=336$).}
+\caption{Model comparison on COX-2 held-out test set ($n=667$).}
 \label{tab:models}
 \begin{tabular}{lccc}
 \toprule
 Model & Pearson $R$ & MSE & RMSE \\
 \midrule
-Mean baseline & --- & 2.503 & 1.582 \\
-Ridge regression & 0.476 & 4.091 & 2.023 \\
-XGBoost (500 trees)~\cite{chen2016} & 0.827 & 0.788 & 0.888 \\
-Random Forest (500 trees) & \textbf{0.817} & \textbf{0.830} & \textbf{0.911} \\
+Mean baseline & --- & 1.530 & 1.237 \\
+Ridge regression & 0.285 & 7.277 & 2.698 \\
+XGBoost (500 trees)~\cite{chen2016} & 0.745 & 0.695 & 0.834 \\
+Random Forest (500 trees) & \textbf{0.756} & \textbf{0.654} & \textbf{0.809} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-XGBoost achieves marginally higher $R$ (0.827 vs.\ 0.817) at lower MSE but lacks native per-prediction uncertainty; we therefore use Random Forest as the primary screening model. The COX-1 model achieved $R=0.791$, MSE $=0.624$ on its analogous held-out test set.
+Random Forest achieves the highest $R$ (0.756 vs.\ XGBoost's 0.745) at the lowest MSE and additionally provides native per-prediction uncertainty via inter-tree variance; we therefore use it as the primary screening model. The COX-1 model achieved $R=0.682$, MSE $=0.520$ on its analogous held-out test set ($n=248$).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.55\textwidth]{loss_curve.png}
-\caption{COX-2 Random Forest: predicted vs.\ measured pIC$_{50}$ on the held-out test set ($n=336$). Dashed line: identity.}
+\caption{COX-2 Random Forest: predicted vs.\ measured pIC$_{50}$ on the held-out test set ($n=667$). Dashed line: identity.}
 \label{fig:scatter}
 \end{figure}
 
 \subsection{Candidate Generation}
 
-Screening 249,455 ZINC250k compounds against the COX-2 RF model and applying all filters yielded 127 candidates. Predicted pIC$_{50}$ ranged from 7.20 to 8.21 (median 7.54). Inter-tree prediction SD ranged from 0.65 to 1.21 pIC$_{50}$ units.
+Screening 249,455 ZINC250k compounds against the COX-2 RF model and applying all filters yielded 42 candidates. Predicted pIC$_{50}$ ranged from 7.20 to 8.69 (median 7.33). Inter-tree prediction SD ranged from 1.38 to 2.43 pIC$_{50}$ units---notably wider than the model's held-out RMSE, an early signal that these compounds sit far from the training distribution.
 
 \subsection{COX-1 Selectivity}
 
-All 127 candidates yielded positive predicted $\Delta\mathrm{pIC}_{50}$; 123 of 127 (96.9\%) exceeded the 1.0 pIC$_{50}$ ($\approx$10-fold) margin. Mean $\Delta\mathrm{pIC}_{50}=1.74\pm 0.39$. Maximum predicted selectivity reached $\Delta\mathrm{pIC}_{50}=2.60$ (pIC$_{50}^{\mathrm{COX-2}}=8.20$, pIC$_{50}^{\mathrm{COX-1}}=5.60$).
+All 42 candidates yielded positive predicted $\Delta\mathrm{pIC}_{50}$; 41 of 42 (97.6\%) exceeded the 1.0 pIC$_{50}$ ($\approx$10-fold) margin. Mean $\Delta\mathrm{pIC}_{50}=1.94\pm 0.47$. Maximum predicted selectivity reached $\Delta\mathrm{pIC}_{50}=2.86$ (pIC$_{50}^{\mathrm{COX-2}}=8.69$, pIC$_{50}^{\mathrm{COX-1}}=5.83$).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.52\textwidth]{selectivity_scatter.png}
-\caption{Predicted COX-2 (vertical) vs.\ COX-1 (horizontal) pIC$_{50}$ for the 127 candidates. Color: predicted selectivity margin. Dashed line: equal predicted activity. Combined uncertainty $\sigma_\Delta\approx 1.20$ pIC$_{50}$ units.}
+\caption{Predicted COX-2 (vertical) vs.\ COX-1 (horizontal) pIC$_{50}$ for the 42 candidates. Color: predicted selectivity margin. Dashed line: equal predicted activity. Combined uncertainty $\sigma_\Delta\approx 1.08$ pIC$_{50}$ units.}
 \label{fig:sel}
 \end{figure}
 
-We emphasize that $\sigma_\Delta\approx 1.20$ is comparable to the bulk of the selectivity-margin distribution; rankings of individual compounds within the candidate set should be interpreted as soft.
+We emphasize that $\sigma_\Delta\approx 1.08$ is comparable to the bulk of the selectivity-margin distribution; rankings of individual compounds within the candidate set should be interpreted as soft.
 
 \subsection{Scaffold Diversity}
 
-Murcko decomposition yielded 111 unique scaffolds across 127 candidates (104 singletons). The largest cluster ($n=9$) shared a benzimidazole core; three additional scaffolds appeared 3 times each; all remaining scaffolds had frequency $\leq 2$.
+Murcko decomposition yielded 36 unique scaffolds across the 42 candidates (32 singletons). The largest cluster contained only 3 compounds; no single scaffold dominated the set, indicating a structurally diverse candidate list.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.65\textwidth]{scaffold_distribution.png}
-\caption{Frequency of the top 15 Murcko scaffolds among the 127 candidates. Singleton scaffolds (frequency 1) constitute 104 of 111 unique scaffolds and are not shown individually.}
+\caption{Frequency of the top 15 Murcko scaffolds among the 42 candidates. Singleton scaffolds (frequency 1) constitute 32 of 36 unique scaffolds and are not shown individually.}
 \label{fig:scaffold}
 \end{figure}
 
-The benzimidazole cluster requires a target-class caveat: benzimidazoles are the core scaffold of proton pump inhibitors such as omeprazole, which irreversibly inhibit gastric H$^+$/K$^+$-ATPase. Any benzimidazole candidate advancing to experimental evaluation would require orthogonal profiling to exclude PPI-like activity, particularly given the gastric-physicochemistry framing of this screening campaign.
+The absence of a dominant scaffold cluster distinguishes this candidate set from many ML screening outputs, which frequently over-populate a single privileged chemotype. Here the diversity is a direct consequence of the near-total out-of-domain character of the list (Section~\ref{subsec:ad}): with no candidate anchored near a training exemplar, no training-set scaffold is preferentially reproduced.
 
-\subsection{Applicability Domain: Universal Extrapolation}
+\subsection{Applicability Domain: Predominant Extrapolation}
+\label{subsec:ad}
 
-The central methodological finding of this work is the applicability domain result. Across all 127 candidates, no compound exceeded the conventional $T\geq 0.40$ threshold for in-domain prediction. Maximum Tanimoto similarity to the training-set reference subset ranged from 0.176 to 0.398 (mean 0.276, median 0.268; Fig.~\ref{fig:ad}).
+A central methodological finding of this work is the applicability domain result. Of the 42 candidates, only 3 (7.1\%) exceeded the conventional $T\geq 0.40$ threshold for in-domain prediction; the remaining 39 (93\%) are extrapolations. Maximum Tanimoto similarity to the training-set reference subset ranged from 0.104 to 0.531 (mean 0.243, median 0.231; Fig.~\ref{fig:ad}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.62\textwidth]{applicability_domain.png}
-\caption{Distribution of maximum Tanimoto similarity between each of the 127 candidates and the COX-2 training-set reference subset. Red dashed line: AD threshold $T=0.40$. \textbf{Zero candidates fall in-domain.}}
+\caption{Distribution of maximum Tanimoto similarity between each of the 42 candidates and the COX-2 training-set reference subset. Red dashed line: AD threshold $T=0.40$. \textbf{Only 3 of 42 candidates fall in-domain.}}
 \label{fig:ad}
 \end{figure}
 
-This result is not an artifact of the threshold choice. Even at the more permissive $T\geq 0.30$ threshold reported in some literature, only 36 of 127 candidates (28.3\%) would be classified in-domain. The mean Tanimoto of 0.276 indicates that the bulk of the ML-prioritized candidate list occupies chemical space genuinely distinct from the training data.
+This result is not an artifact of the threshold choice. Even at the more permissive $T\geq 0.30$ threshold reported in some literature, only 6 of 42 candidates (14.3\%) would be classified in-domain. The mean Tanimoto of 0.243 indicates that the bulk of the ML-prioritized candidate list occupies chemical space genuinely distinct from the training data, and the wide inter-tree prediction SD on these compounds (1.38--2.43 pIC$_{50}$; cf.\ test-set RMSE 0.81) is an internal corroboration of that extrapolation.
 
-The implication is direct: the test-set RMSE ($\pm 0.91$ pIC$_{50}$) characterizes the model's behavior in the chemical neighborhood of its training data, but is not a reliable estimate of prediction error on this candidate set. Standard ML virtual screening pipelines do not flag this gap. \textbf{Without AD analysis, a candidate list constructed exactly as ours was would be reported with the test-set RMSE as the operative uncertainty—an understatement of the true risk on these structures.}
+The implication is direct: the test-set RMSE ($\pm 0.81$ pIC$_{50}$) characterizes the model's behavior in the chemical neighborhood of its training data, but is not a reliable estimate of prediction error on this candidate set. Standard ML virtual screening pipelines do not flag this gap. \textbf{Without AD analysis, a candidate list constructed exactly as ours was would be reported with the test-set RMSE as the operative uncertainty---an understatement of the true risk on these structures.}
 
 \subsection{Docking Protocol Validation}
 
-Celecoxib was redocked into the chain-A binding pocket of 1CX2 as a positive control. The lowest-energy redocked pose had Vina affinity $-11.20$ kcal/mol and a heavy-atom RMSD of \textbf{0.64 \r{A}} to its crystal pose (Hungarian-optimal correspondence). RMSDs below 2.0 \r{A} are the conventional threshold for ``correct'' pose recovery in protein--ligand docking benchmarks~\cite{wang2016, gaillard2018}, so the protocol recovers the crystal binding mode with substantial margin. This validates the receptor preparation, box placement, ligand preparation, and Vina settings used in the remainder of the docking analyses.
+Celecoxib was redocked into the chain-A binding pocket of 1CX2 as a positive control. The lowest-energy redocked pose had Vina affinity $-11.23$ kcal/mol and a heavy-atom RMSD of \textbf{0.63 \r{A}} to the crystal SC-558 pose (Hungarian-optimal correspondence over 26 matched heavy atoms). RMSDs below 2.0 \r{A} are the conventional threshold for ``correct'' pose recovery in protein--ligand docking benchmarks~\cite{wang2016, gaillard2018}, so the protocol recovers the crystallographic binding mode with substantial margin. This validates the receptor preparation, box placement, ligand preparation, and Vina settings used in the remainder of the docking analyses.
 
 \subsection{Candidate Docking Distribution}
 
-All 127 candidates produced valid docked poses. Vina scores ranged from $-10.17$ to $-2.80$ kcal/mol (mean $-7.41$, median $-7.46$, SD $1.21$; Fig.~\ref{fig:vina_hist}). 35 of 127 candidates (27.6\%) reached $\leq -8.0$ kcal/mol. \textbf{None of the 127 candidates beat the celecoxib redocked affinity of $-11.20$ kcal/mol}; the strongest candidate was $1.03$ kcal/mol weaker than celecoxib.
+All 42 candidates produced valid docked poses. Vina scores ranged from $-11.06$ to $-3.63$ kcal/mol (mean $-7.50$, median $-7.58$, SD $1.34$; Fig.~\ref{fig:vina_hist}). 11 of 42 candidates (26.2\%) reached $\leq -8.0$ kcal/mol. \textbf{None of the 42 candidates beat the celecoxib redocked affinity of $-11.23$ kcal/mol}; the strongest candidate ($-11.06$) came within $0.17$ kcal/mol but carries both a nitro group and a thiocarbonyl (two BRENK reactivity alerts), so its near-celecoxib score reflects a reactive, developability-limited structure rather than a credible lead.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.62\textwidth]{vina_histogram.png}
-\caption{Distribution of Vina docking affinities across the 127 ML-prioritized candidates. Red dashed line: celecoxib redocked positive control ($-11.20$ kcal/mol). Dotted line: $-8.0$ kcal/mol strong-binder threshold. 35 of 127 candidates fall at or below this threshold; none beat celecoxib's redocked affinity.}
+\caption{Distribution of Vina docking affinities across the 42 ML-prioritized candidates. Red dashed line: celecoxib redocked positive control ($-11.23$ kcal/mol). Dotted line: $-8.0$ kcal/mol strong-binder threshold. 11 of 42 candidates fall at or below this threshold; none beat celecoxib's redocked affinity.}
 \label{fig:vina_hist}
 \end{figure}
 
@@ -238,32 +242,32 @@ All 127 candidates produced valid docked poses. Vina scores ranged from $-10.17$
 
 To test whether ML potency prioritization, COX-1 selectivity filtering, Lipinski compliance, $-1 \leq \log P \leq 3$, and PAINS exclusion together produce a candidate set enriched in actual COX-2 binders, we docked an unfiltered random sample of 100 ZINC250k compounds against the identical chain-A pocket with identical Vina settings.
 
-The random ZINC baseline distribution was: best $-9.57$, mean $-7.38$, median $-7.53$, SD $1.20$ kcal/mol; 24 of 100 compounds ($24.0\%$) reached $\leq -8.0$ kcal/mol. The two distributions are visually similar and statistically indistinguishable (Fig.~\ref{fig:baseline}):
+The random ZINC baseline distribution was: best $-9.56$, mean $-7.41$, median $-7.53$ kcal/mol; 27 of 100 compounds ($27.0\%$) reached $\leq -8.0$ kcal/mol. The two distributions are visually similar and statistically indistinguishable (Fig.~\ref{fig:baseline}):
 
 \begin{itemize}
-\item Mean difference (random $-$ ours): $+0.03$ kcal/mol. Mann-Whitney $U = 6390.5$, one-sided $p = 0.53$ (alternative: ML-prioritized scores are lower than random).
-\item Welch's $t = -0.21$, two-sided $p = 0.83$.
-\item Strong-binder rate ($\leq -8.0$): 27.6\% (ours) vs.\ 24.0\% (random), 95\% CI overlap by construction at this $n$.
+\item Mean difference (random $-$ ours): $+0.10$ kcal/mol. Mann-Whitney $U = 2069.5$, two-sided $p = 0.89$.
+\item Welch's $t = -0.41$, two-sided $p = 0.68$.
+\item Strong-binder rate ($\leq -8.0$): 26.2\% (ours) vs.\ 27.0\% (random)---if anything marginally lower for the ML-prioritized set.
 \end{itemize}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.65\textwidth]{vina_baseline_comparison.png}
-\caption{Docking-affinity distributions for the 127 ML-prioritized candidates (blue) and a 100-compound random ZINC250k baseline (gray, sampled before any ML scoring or filtering). Red dashed line: celecoxib redocked ($-11.20$ kcal/mol). Mann--Whitney $U = 6390.5$, $p = 0.53$: the distributions are not statistically distinguishable.}
+\caption{Docking-affinity distributions for the 42 ML-prioritized candidates (blue) and a 100-compound random ZINC250k baseline (gray, sampled before any ML scoring or filtering). Red dashed line: celecoxib redocked ($-11.23$ kcal/mol). Mann--Whitney $U = 2069.5$, $p = 0.89$: the distributions are not statistically distinguishable.}
 \label{fig:baseline}
 \end{figure}
 
-This is the core empirical result: \textbf{the full ML virtual screening pipeline, run exactly as standard practice in the recent literature, produces candidates that do not dock significantly better than random drug-like compounds drawn from the same library.} The strong benchmark performance ($R = 0.817$) of the underlying RF model does not translate into prospective hit-finding enrichment as measured by physics-based docking against the actual crystal pocket.
+This is the core empirical result: \textbf{the full ML virtual screening pipeline, run exactly as standard practice in the recent literature, produces candidates that do not dock significantly better than random drug-like compounds drawn from the same library.} The benchmark performance ($R = 0.756$) of the underlying RF model does not translate into prospective hit-finding enrichment as measured by physics-based docking against the actual crystal pocket.
 
 We are not claiming the ML model has zero signal in any sense: on its held-out test set, drawn from the same chemical neighborhood as training, it achieves competitive accuracy. The claim is narrower and more practical: when the pipeline is pointed at ZINC250k and asked to deliver a candidate list, that list is not detectably better than what one would obtain by random sampling from the same library, after applying physics-based docking as the evaluation. The benchmark $R$ overpromises prospective performance.
 
 \subsection{ML and Vina Rankings Are Statistically Uncorrelated Within the Candidate Set}
 
-Within the 127 candidates, the ML pIC$_{50}$ ranking and the Vina ranking are independent. Bootstrap 95\% confidence intervals (5{,}000 resamples, fixed seed):
+Within the 42 candidates, the ML pIC$_{50}$ ranking and the Vina ranking are independent. Bootstrap 95\% confidence intervals (5{,}000 resamples, fixed seed):
 
 \begin{itemize}
-\item Pearson $r$ (ML pIC$_{50}$ vs.\ $-$Vina): $r = -0.054$, 95\% CI $[-0.217,\ +0.111]$.
-\item Spearman $\rho$ on the corresponding ranks: $\rho = -0.065$, 95\% CI $[-0.231,\ +0.104]$.
+\item Pearson $r$ (ML pIC$_{50}$ vs.\ $-$Vina): $r = -0.139$, 95\% CI $[-0.331,\ +0.033]$.
+\item Spearman $\rho$ on the corresponding ranks: $\rho = -0.086$, 95\% CI $[-0.347,\ +0.196]$.
 \end{itemize}
 
 Both CIs straddle zero by a wide margin. The two scoring methods do not produce concordant rankings on this candidate set (Fig.~\ref{fig:vina_ml}). The combination of (a) no enrichment over random and (b) zero internal rank correlation means that, on this candidate set, the ML pIC$_{50}$ ranking and the docking ranking carry essentially independent (and, by the random-baseline result, jointly uninformative) information.
@@ -271,127 +275,129 @@ Both CIs straddle zero by a wide margin. The two scoring methods do not produce 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.66\textwidth]{vina_vs_ml_scatter.png}
-\caption{Vina docking affinity vs.\ ML-predicted COX-2 pIC$_{50}$ for the 127 candidates. Color: applicability-domain max-Tanimoto similarity to the COX-2 training set. The two ranking signals are statistically uncorrelated (Spearman $\rho = -0.065$, 95\% bootstrap CI $[-0.23,\ +0.10]$). Red dashed line: celecoxib redocked ($-11.20$ kcal/mol). Y-axis is inverted so ``up'' indicates stronger binding by both metrics.}
+\caption{Vina docking affinity vs.\ ML-predicted COX-2 pIC$_{50}$ for the 42 candidates. Color: applicability-domain max-Tanimoto similarity to the COX-2 training set. The two ranking signals are statistically uncorrelated (Spearman $\rho = -0.086$, 95\% bootstrap CI $[-0.35,\ +0.20]$). Red dashed line: celecoxib redocked ($-11.23$ kcal/mol). Y-axis is inverted so ``up'' indicates stronger binding by both metrics.}
 \label{fig:vina_ml}
 \end{figure}
 
-Under the standard ML virtual screening narrative, the ML model is interpreted as an inexpensive surrogate for binding affinity, and higher ML pIC$_{50}$ should imply stronger pocket binding. Our data falsify that interpretation on this candidate set: the ML model's ranking of the 127 candidates does not track the protein-pocket fit predicted by Vina. This is consistent with the AD finding: when the ML model is asked to rank compounds outside its training-set chemical space, its output ceases to be a calibrated affinity proxy.
+Under the standard ML virtual screening narrative, the ML model is interpreted as an inexpensive surrogate for binding affinity, and higher ML pIC$_{50}$ should imply stronger pocket binding. Our data falsify that interpretation on this candidate set: the ML model's ranking of the 42 candidates does not track the protein-pocket fit predicted by Vina. This is consistent with the AD finding: when the ML model is asked to rank compounds outside its training-set chemical space, its output ceases to be a calibrated affinity proxy.
 
 \subsection{Top Candidates by Vina Docking}
 
-Table~\ref{tab:top} reports the 10 candidates with the strongest Vina docking affinities at the chain-A celecoxib pocket. None lie within the model's applicability domain ($T \geq 0.40$); the highest max-Tanimoto in the top-10 Vina set is 0.36. All have synthetic accessibility scores $\leq 3.0$, suggesting tractable medicinal chemistry follow-up should any be experimentally validated.
+Table~\ref{tab:top} reports the 10 candidates with the strongest Vina docking affinities at the chain-A celecoxib-class pocket. Only one of the top-10 lies within the model's applicability domain (max-Tanimoto 0.53); the other nine remain extrapolations ($T = 0.19$--$0.35$). Synthetic accessibility scores range 2.34--3.55, indicating tractable medicinal chemistry should any be experimentally validated---though the two strongest-docking candidates both carry nitro/thiocarbonyl BRENK alerts.
 
 \begin{table}[H]
 \centering
 \small
-\caption{Top 10 candidates by Vina docking affinity (kcal/mol; more negative = stronger). $\Delta$pIC$_{50}$ = predicted COX-2 $-$ COX-1. ``Tan'' = max Tanimoto to training set (in-domain $\geq 0.40$). SA = synthetic accessibility (1 easy / 10 hard). $!$ = BRENK structural alert. Celecoxib redock control: $-11.20$ kcal/mol.}
+\caption{Top 10 candidates by Vina docking affinity (kcal/mol; more negative = stronger). $\Delta$pIC$_{50}$ = predicted COX-2 $-$ COX-1. ``Tan'' = max Tanimoto to training set (in-domain $\geq 0.40$). SA = synthetic accessibility (1 easy / 10 hard). $!$ = BRENK structural alert. Celecoxib redock control: $-11.23$ kcal/mol.}
 \label{tab:top}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{clccccccl}
 \toprule
 \# & SMILES (truncated) & Vina & ML pIC$_{50}$ & $\Delta$pIC$_{50}$ & Tan & SA & BRENK \\
 \midrule
- 1 & \texttt{Cc1nc2cc(NC(=O)C(=O)NCC3CC3c3cc\ldots)ccc2n1C}     & $-10.17$ & 7.80 & $+1.49$ & 0.33 & 3.01 & $!$ \\
- 2 & \texttt{Cc1cc(F)cc(-n2c(C)nc3cc(C(=O)[O-])ccc32)c1}        & $-10.11$ & 7.32 & $+1.73$ & 0.25 & 2.64 &     \\
- 3 & \texttt{Cc1nc2cc(C(=O)NCCN3CCOCC3)ccc2n1-c1ccc(F)cc1F}     & $-9.91$  & 8.18 & $+2.12$ & 0.28 & 2.28 &     \\
- 4 & \texttt{O=C(COC(=O)c1ccc2c(=O)n3c\ldots)Nc1ccc(OC(F)F)cc1}  & $-9.69$  & 7.56 & $+1.41$ & 0.24 & 2.31 &     \\
- 5 & \texttt{O=C(NCCCN1CCOCC1)c1ccc2nc3[nH]c4ccccc4c3nc2c1}     & $-9.57$  & 7.88 & $+1.28$ & 0.31 & 2.33 & $!$ \\
- 6 & \texttt{Cc1nc2cc(C(=O)NCC(=O)NCc3ccco3)ccc2n1-c1ccccc1}    & $-9.36$  & 7.95 & $+1.63$ & 0.34 & 2.15 &     \\
- 7 & \texttt{CCn1c(C)nc2cc(C(=O)NNC(=O)NCCc3\ldots)ccc21}        & $-9.35$  & 8.10 & $+2.13$ & 0.31 & 2.30 & $!$ \\
- 8 & \texttt{O=C(c1ccc2[nH]cnc2c1)N1CCn2c1nc1ccccc12}            & $-9.14$  & 7.26 & $+1.13$ & 0.36 & 2.50 &     \\
- 9 & \texttt{Cn1c(N2CCC(O)C2)nc2cc(C(=O)NCCCOc3\ldots)ccc21}     & $-9.11$  & 7.86 & $+2.09$ & 0.34 & 2.67 & $!$ \\
-10 & \texttt{CCC(C)c1nc2cc(C(=O)[O-])ccc2n1Cc1ccccc1}           & $-8.96$  & 7.32 & $+1.65$ & 0.33 & 2.85 &     \\
+ 1 & \texttt{NC(=S)c1cc2cc([N+](=O)[O-])ccc2o\ldots} & $-11.06$ & 7.57 & $+2.72$ & 0.25 & 3.33 & $!$ \\
+ 2 & \texttt{CCOc1cccc(/[NH+]=c2\ldots}              & $-9.96$  & 7.33 & $+2.60$ & 0.25 & 3.27 & $!$ \\
+ 3 & \texttt{C=CCN1C(=O)/C(=C\ldots}                 & $-9.51$  & 7.46 & $+0.81$ & 0.30 & 2.88 & $!$ \\
+ 4 & \texttt{O=c1c(-c2nc(-c3cccc(F)c3)no2)c([\ldots} & $-9.42$  & 7.34 & $+1.47$ & 0.35 & 2.62 &     \\
+ 5 & \texttt{Cc1ncc2c(c1-c1noc(-c3ccc4[nH]c(C\ldots} & $-9.06$  & 8.02 & $+1.93$ & 0.19 & 3.48 &     \\
+ 6 & \texttt{COc1cccc(-c2[nH]c3ccccc3c2[C@@H]\ldots} & $-8.98$  & 7.73 & $+1.71$ & 0.25 & 2.91 &     \\
+ 7 & \texttt{Cc1cc(C[NH+]2CCN(CC(=O)c3c(-c4cc\ldots} & $-8.83$  & 8.40 & $+1.93$ & 0.31 & 3.35 &     \\
+ 8 & \texttt{Cn1cc(-c2nc(C(=O)O[C@@H]3CC[C@@H\ldots} & $-8.43$  & 7.26 & $+2.11$ & 0.25 & 3.55 &     \\
+ 9 & \texttt{O=C([O-])c1[nH]c2ccc(Cl)cc2c1-c1\ldots} & $-8.35$  & 7.34 & $+1.72$ & 0.53 & 2.34 &     \\
+10 & \texttt{Cn1cc(-c2nc(C(=O)Nc3cccc(CN4C(=O\ldots} & $-8.29$  & 7.21 & $+1.89$ & 0.22 & 2.52 & $!$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 Full SMILES and per-candidate annotations (ML pIC$_{50}$, COX-1 pIC$_{50}$, selectivity, max-Tanimoto, Murcko scaffold, SA score, BRENK alerts, Vina affinity) are provided in the supplementary file \texttt{candidates\_full.csv}.
 
 \subsection{Synthetic Accessibility}
 
-Mean SA score across the 127 candidates was $2.98$ (median $2.92$, range $1.81$--$5.00$). 120 of 127 compounds had SA $\leq 4$, all 127 had SA $\leq 5$, and none had SA $> 6$. By the Ertl--Schuffenhauer scoring convention, all 127 candidates are in the moderately accessible to easy synthetic range, consistent with the ZINC250k library's drug-like curation. Synthesis tractability is therefore not the limiting factor for downstream experimental work on this set.
+Mean SA score across the 42 candidates was $3.01$ (median $2.89$, range $2.16$--$4.78$). 38 of 42 compounds had SA $\leq 4$, all 42 had SA $\leq 5$, and none had SA $> 6$. By the Ertl--Schuffenhauer scoring convention, all 42 candidates are in the moderately accessible to easy synthetic range, consistent with the ZINC250k library's drug-like curation. Synthesis tractability is therefore not the limiting factor for downstream experimental work on this set.
 
 \subsection{BRENK Structural Alerts}
 
-40 of 127 candidates (31.5\%) were flagged by at least one BRENK substructure alert; 87 of 127 (68.5\%) were BRENK-clean. The most common alert types were thiocarbonyl groups ($n = 17$), thiols ($n = 9$), and aliphatic long chains ($n = 7$); rarer alerts included isolated alkenes ($n = 4$) and diketo groups ($n = 2$). Thiocarbonyl/thiol motifs are associated with metabolic and reactivity liabilities and warrant orthogonal counter-screens before any experimental commitment. PAINS filtering (applied during candidate generation) is not redundant with BRENK: PAINS targets known frequent-hitter scaffolds in HTS assays, whereas BRENK targets reactivity, toxicity, and PK liabilities more broadly.
+19 of 42 candidates (45.2\%) were flagged by at least one BRENK substructure alert; 23 of 42 (54.8\%) were BRENK-clean. The most common alert types were oxygen--nitrogen single bonds ($n = 13$), thiocarbonyl groups ($n = 10$), and hydrazines ($n = 9$); rarer alerts included nitro groups ($n = 3$) and acyl hydrazines ($n = 3$). These reactive, hydrazine, and nitro motifs are associated with metabolic and reactivity liabilities and warrant orthogonal counter-screens before any experimental commitment. The higher BRENK-flagged fraction than a typical drug-like set is itself consistent with the out-of-domain character of the list: the model is extrapolating into regions of ZINC250k it cannot vouch for. PAINS filtering (applied during candidate generation) is not redundant with BRENK: PAINS targets known frequent-hitter scaffolds in HTS assays, whereas BRENK targets reactivity, toxicity, and PK liabilities more broadly.
 
 \subsection{Effect Size, Power, and Sensitivity}
 
-The null result against the random ZINC baseline (Mann--Whitney $p = 0.53$) is supported by tight effect-size estimates rather than being a low-power artifact:
+The null result against the random ZINC baseline (Mann--Whitney $p = 0.89$) is supported by tight effect-size estimates rather than being a low-power artifact:
 
 \begin{itemize}
-\item \textbf{Cohen's $d$} (ours $-$ random) $= -0.028$. Below the conventional ``negligible'' threshold ($|d| < 0.2$).
-\item \textbf{Common-language effect size}: $P(\text{ours binds stronger than random}) = 0.497$ (null $= 0.500$). Essentially a coin flip.
-\item \textbf{Hodges--Lehmann shift estimator} (median of all $\text{ours}-\text{random}$ pairwise differences): $+0.013$ kcal/mol, 95\% CI $[-0.276,\ +0.297]$.
+\item \textbf{Cohen's $d$} (ours $-$ random) $= -0.081$. Below the conventional ``negligible'' threshold ($|d| < 0.2$).
+\item \textbf{Common-language effect size}: $P(\text{ours binds stronger than random}) = 0.507$ (null $= 0.500$). Essentially a coin flip.
+\item \textbf{Hodges--Lehmann shift estimator} (median of all $\text{ours}-\text{random}$ pairwise differences): $-0.022$ kcal/mol, 95\% CI $[-0.425,\ +0.336]$.
 \end{itemize}
 
-\textbf{Power}: Welch's $t$ at our sample sizes ($n = 127$, $n = 100$; $\alpha = 0.05$, two-sided) has minimum detectable effect $d = 0.376$ at 80\% power, corresponding to a 0.44 kcal/mol shift. We have 96\% power to detect a medium effect ($d = 0.5$) and 100\% power for a large effect ($d = 0.8$). The 95\% CI on the Hodges--Lehmann shift excludes both $-0.3$ and $+0.3$ kcal/mol. We can therefore confidently reject the hypothesis that the ML-prioritized candidates dock systematically better than random ZINC by any margin exceeding $\sim 0.3$ kcal/mol---less than a third of Vina's published RMSE against experimental affinity~\cite{wang2016}. Smaller effects than this are unlikely to be operationally meaningful for screening triage.
+\textbf{Power}: Welch's $t$ at our sample sizes ($n = 42$, $n = 100$; $\alpha = 0.05$, two-sided) has minimum detectable effect $d = 0.52$ at 80\% power ($d = 0.36$ at 50\%, $d = 0.67$ at 95\%). We have 77\% power to detect a medium effect ($d = 0.5$) and 99\% power for a large effect ($d = 0.8$); power for a small effect ($d = 0.3$) is only 37\%. The smaller candidate set here ($n = 42$, versus 100 random) yields less power than a larger list would, and the 95\% CI on the Hodges--Lehmann shift, $[-0.43,\ +0.34]$ kcal/mol, is consistent with no shift while excluding only effects larger than $\sim 0.4$ kcal/mol---itself under half of Vina's published RMSE against experimental affinity~\cite{wang2016}. We can therefore confidently reject a \emph{medium-or-larger} docking advantage for the ML-prioritized candidates over random ZINC, though not a small one; the point estimate ($-0.02$ kcal/mol) sits essentially at zero.
 
-\subsection{Vina-on-Training Validation: Modest Discrimination, Stringent Baseline}
+\subsection{Vina-on-Training Validation: The Docking Oracle Separates Real Actives From Random}
 
-Before interpreting the random-baseline null result, we tested whether Vina at our settings has signal in the relevant affinity regime. We docked 47 ChEMBL COX-2 compounds with experimentally measured pIC$_{50}\geq 7.0$ (potent actives) and 40 with pIC$_{50}\leq 5.0$ (weak / inactive) at the same chain-A pocket. Three Mann--Whitney comparisons were performed:
+Before interpreting the random-baseline null result, we tested whether Vina at our settings has signal in the relevant affinity regime. We docked 49 ChEMBL COX-2 compounds with experimentally measured pIC$_{50}\geq 7.0$ (potent actives) and 49 with pIC$_{50}\leq 5.0$ (weak / inactive) at the same chain-A pocket. Three Mann--Whitney comparisons were performed:
 
 \begin{table}[H]
 \centering
 \small
-\caption{Vina-on-training validation. Vina at \texttt{exhaustiveness}~$=8$ discriminates ChEMBL inactives from random ZINC drug-likes ($p = 0.005$) but does \emph{not} discriminate ChEMBL actives from random ZINC ($p = 0.72$). Random drug-like ZINC compounds dock on par with bona-fide ChEMBL COX-2 actives in this protocol.}
+\caption{Vina-on-training validation. Vina at \texttt{exhaustiveness}~$=8$ discriminates genuine ChEMBL COX-2 actives from random ZINC drug-likes ($p = 0.006$; actives dock $\sim 0.9$ kcal/mol more strongly). The weak/inactive ChEMBL set is also marginally separable from random ($p = 0.011$). The docking oracle has real signal in this pocket.}
 \label{tab:vina_val}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lccc}
 \toprule
-Comparison & Median shift (kcal/mol) & Mann--Whitney $p$ & Direction \\
+Comparison & Median shift (kcal/mol) & Mann--Whitney $p$ & Interpretation \\
 \midrule
-ChEMBL inactives vs.\ random ZINC & $+0.85$ (worse) & $0.005$  & Vina detects inactives \\
-ChEMBL actives vs.\ random ZINC   & $+0.18$ (similar) & $0.72$ & Indistinguishable \\
-ChEMBL actives vs.\ inactives    & $-0.67$ (stronger) & $0.11$ & Trend, n.s.\ \\
+ChEMBL actives vs.\ random ZINC   & $-0.87$ (stronger) & $\mathbf{0.006}$ & Vina resolves actives \\
+ChEMBL inactives vs.\ random ZINC & $-0.18$ (marginal) & $0.011$ & Weakly separable \\
+ChEMBL actives vs.\ inactives    & $-0.69$ (stronger) & $0.35$ & Trend, n.s.\ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
-Two implications. \textbf{(i)} Vina retains genuine discriminative signal at our settings: ChEMBL inactives dock significantly more weakly than random drug-like ZINC compounds. The null random-baseline result for our 127 ML candidates is therefore not a Vina-resolution artifact---when there is a real signal (here, the presence of compounds that simply do not bind the COX-2 pocket), Vina detects it. \textbf{(ii)} ZINC250k drug-like compounds dock indistinguishably from ChEMBL COX-2 actives ($p = 0.72$). This is a striking chemical observation in its own right: the drug-like region of chemical space (Lipinski-passing, no PAINS, $-1 \leq \log P \leq 5$) contains many compounds whose Vina-evaluated pocket fit is comparable to known COX-2 binders, presumably because pocket-fit is determined more by ring count, polar surface area, and rotatable bond distribution than by specific chemotype.
+Two implications. \textbf{(i)} Vina at our settings has genuine discriminative power in this pocket: bona-fide ChEMBL COX-2 actives dock $\sim 0.9$ kcal/mol more strongly than random drug-like ZINC ($p = 0.006$; actives median $-8.40$ vs.\ random $-7.53$), and even the weak/inactive ChEMBL set is marginally separable from random ($p = 0.011$). The docking oracle is not blind to real binders. \textbf{(ii)} Measured against this validated yardstick, the 42 ML-prioritized candidates (median $-7.58$ kcal/mol) sit at the random-ZINC level ($-7.53$), well short of the actives band ($-8.40$). The pipeline has not selected compounds that dock like real COX-2 actives; it has selected compounds that dock like random drug-like matter.
 
-The implication for the random-baseline comparison: the random ZINC baseline used in this paper is not a sandbag. It is, in this protocol, a comparator approximately equivalent to ``a random ChEMBL COX-2 active.'' The ML pipeline failing to beat this baseline therefore means it is failing to beat a strong comparator, not a weak one.
+This \emph{strengthens} rather than weakens the central null. The failure to enrich cannot be blamed on a docking oracle too coarse to see a signal, because the same oracle---same pocket, same settings---cleanly resolves true actives from random. The affinity signal the ML pipeline was supposed to capture is one Vina can measure; it is simply absent from the candidate list.
 
-\subsection{Per-Residue Contact Analysis: Top-Vina Hits Do Not Recover Celecoxib's Pocket Engagement}
+\subsection{Per-Residue Contact Analysis: Candidates Engage the Pocket at Parity With Random}
 
-Celecoxib redocked into the chain-A pocket contacts (heavy-atom distance $\leq 4.0$ \r{A}) five of nine medicinally relevant residues: Arg120, Tyr355, Trp387, Phe518, and Val523 (Table~\ref{tab:contacts}). Among the top-20 Vina candidates from our 127 ML-prioritized set, 13/20 contact Val523 (the selectivity gateway), and the mean fraction of celecoxib's five key contacts recovered is 0.53. Five of the top-20 candidates dock into a region $> 12$ \r{A} from Arg120, indicating they are not engaging the celecoxib binding mode at all.
+Celecoxib redocked into the chain-A pocket contacts (heavy-atom distance $\leq 4.0$ \r{A}) five of nine medicinally relevant residues: Arg120, Tyr355, Trp387, Phe518, and Val523 (Table~\ref{tab:contacts}). Among the top-20 Vina candidates from our 42 ML-prioritized set, 16/20 contact Val523 (the selectivity gateway), and the mean fraction of celecoxib's five key contacts recovered is 0.73. Two of the top-20 candidates dock into a region $> 12$ \r{A} from Arg120, not engaging the celecoxib binding mode at all.
 
 \begin{table}[H]
 \centering
 \small
-\caption{Per-residue contact analysis. Celecoxib (redocked positive control) makes contacts at five of nine key residues. Top-20 candidates are compared to a 20-compound random ZINC sample for the same analysis. Random ZINC compounds make celecoxib-like contacts \emph{more} frequently than the ML-prioritized top-20.}
+\caption{Per-residue contact analysis. Celecoxib (redocked positive control) makes contacts at five of nine key residues. Top-20 candidates are compared to a 20-compound random ZINC sample for the same analysis. The ML top-20 and random ZINC engage the pocket at parity---equal Val523 contact frequency and comparable overall contact recovery.}
 \label{tab:contacts}
 \begin{tabular}{lccc}
 \toprule
 Set & Val523 contact & Mean contact recovery & N \\
 \midrule
 Celecoxib (redocked)        & 1/1   & 5/5 (1.00) & 1 \\
-Top-20 candidates (ours)    & 13/20 & 0.53        & 20 \\
-Random ZINC (20-compound)   & 15/20 & 0.63        & 20 \\
+Top-20 candidates (ours)    & 16/20 & 0.73        & 20 \\
+Random ZINC (20-compound)   & 16/20 & 0.66        & 20 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Critically, random ZINC compounds contact Val523 \emph{more frequently} (15/20 vs.\ 13/20) and recover a larger fraction of celecoxib's key contacts on average (0.63 vs.\ 0.53) than our top-20 ML-prioritized candidates. This pattern is consistent with the overall random-baseline result: the ML pipeline has not selected for compounds that engage the celecoxib binding mode any better than random sampling would.
+The two sets are at parity: ML top-20 and random ZINC contact Val523 equally (16/20 each), and the ML set recovers a marginally larger fraction of celecoxib's key contacts on average (0.73 vs.\ 0.66). Neither set engages the celecoxib binding mode meaningfully better than the other. This is consistent with the overall random-baseline result: contact-based pocket engagement, like aggregate docking affinity, provides no evidence that the ML pipeline selected for compounds whose docked geometry mimics celecoxib's binding mode any more than random sampling would. Unlike aggregate affinity, this measure does not show the ML set to be worse than random---it shows equivalence.
 
 \section{Discussion}
 
-\subsection{Four Stacked Failure Signals}
+\subsection{Three Convergent Null Signals, Against a Validated Oracle}
 
-Our analysis produces four independent indicators that the ML virtual screening pipeline, as applied here, is not delivering binding-affinity-predictive output:
+Our analysis produces three independent indicators that the ML virtual screening pipeline, as applied here, is not delivering binding-affinity-predictive output, plus a corroborating pocket-engagement result:
 
 \begin{enumerate}
-\item \textbf{Applicability domain.} All 127 candidates fall outside the chemical-space region in which the test-set RMSE of $0.91$ pIC$_{50}$ characterizes prediction error (mean max-Tanimoto $= 0.276$; 0/127 at $T \geq 0.40$). The model's reported performance is silent on these compounds.
-\item \textbf{Random baseline.} The candidate Vina distribution is statistically indistinguishable from a 100-compound random ZINC250k sample (Mann--Whitney $p = 0.53$; Welch $p = 0.83$; Cohen's $d = -0.028$; Hodges--Lehmann shift $+0.01$ kcal/mol, 95\% CI $[-0.28,\ +0.30]$). The full filter cascade (ML potency, COX-1 selectivity, Lipinski, $\log P$ window, PAINS) does not detectably enrich for binders relative to no filtering at all.
-\item \textbf{Zero internal rank correlation.} Within the candidate set, ML pIC$_{50}$ and Vina rankings are uncorrelated (Spearman $\rho = -0.065$, 95\% CI $[-0.23,\ +0.10]$). The ML model's rank-ordering of candidates is not concordant with their docking-pocket fit at the actual protein.
-\item \textbf{Pocket-engagement pattern.} Per-residue contact analysis shows that random ZINC compounds make celecoxib-like contacts to the chain-A binding pocket residues \emph{more frequently} than the ML-prioritized top-20 do (Val523 selectivity-gateway contacts: 15/20 vs.\ 13/20; mean celecoxib-contact recovery: 0.63 vs.\ 0.53). The ML pipeline has not selected for compounds whose docked geometry mimics celecoxib's known binding mode any better than random sampling.
+\item \textbf{Applicability domain.} 39 of 42 candidates (93\%) fall outside the chemical-space region in which the test-set RMSE of $0.81$ pIC$_{50}$ characterizes prediction error (mean max-Tanimoto $= 0.243$; 3/42 at $T \geq 0.40$). The model's reported performance is silent on the great majority of the compounds it selects.
+\item \textbf{Random baseline.} The candidate Vina distribution is statistically indistinguishable from a 100-compound random ZINC250k sample (Mann--Whitney $p = 0.89$; Welch $p = 0.68$; Cohen's $d = -0.08$; Hodges--Lehmann shift $-0.02$ kcal/mol, 95\% CI $[-0.43,\ +0.34]$). The full filter cascade (ML potency, COX-1 selectivity, Lipinski, $\log P$ window, PAINS) does not detectably enrich for binders relative to no filtering at all.
+\item \textbf{Zero internal rank correlation.} Within the candidate set, ML pIC$_{50}$ and Vina rankings are uncorrelated (Spearman $\rho = -0.086$, 95\% CI $[-0.35,\ +0.20]$). The ML model's rank-ordering of candidates is not concordant with their docking-pocket fit at the actual protein.
+\item \textbf{Pocket-engagement parity (corroborating).} Per-residue contact analysis shows the ML-prioritized top-20 and a random ZINC sample engage the chain-A pocket equivalently (Val523 selectivity-gateway contacts: 16/20 vs.\ 16/20; mean celecoxib-contact recovery: 0.73 vs.\ 0.66). The ML pipeline has not selected for compounds whose docked geometry mimics celecoxib's known binding mode any better than random sampling---parity, not enrichment.
 \end{enumerate}
 
-Any one of these signals could be explained away in isolation; together, they are mutually reinforcing. For the ML pipeline to be producing a real but undetected screening signal, that signal would have to simultaneously (i) lie outside the model's calibrated chemical space, (ii) show no rank concordance with Vina, (iii) produce no aggregate Vina enrichment relative to random, and (iv) produce no enrichment in celecoxib-pocket residue engagement. The joint probability that a real signal evades all four checks is implausibly small.
+The decisive context is the validation control: the same docking oracle, in the same pocket, \emph{does} separate genuine COX-2 actives from random ZINC ($p = 0.006$). The three null signals therefore cannot be dismissed as an insensitive evaluation. For the ML pipeline to be producing a real but undetected screening signal, that signal would have to simultaneously (i) lie outside the model's calibrated chemical space for 93\% of candidates, (ii) show no rank concordance with Vina, and (iii) produce no aggregate Vina enrichment over random---all while the oracle demonstrably resolves true actives. The joint probability that a real signal evades every one of these checks is small.
 
 \subsection{Why the Benchmark $R$ Misleads}
 
-The COX-2 RF achieves $R = 0.817$ on its random held-out test set. This is at the upper end of what cheminformatics literature reports for Morgan-fingerprint regressors on ChEMBL data. It would, in any standard methods paper, be reported as evidence of a useful predictive model.
+The COX-2 RF achieves $R = 0.756$ on its random held-out test set. This is squarely within the range cheminformatics literature reports for Morgan-fingerprint regressors on ChEMBL data. It would, in any standard methods paper, be reported as evidence of a useful predictive model.
 
-The benchmark $R$ characterizes the model's behavior on compounds drawn from the same distribution as training. The candidates the pipeline actually produces are drawn from ZINC250k under a high-pIC$_{50}$ filter, and the ZINC250k library has $\sim 0$ overlap with the ChEMBL COX-2 training set by Tanimoto similarity at $T \geq 0.40$. The high-pIC$_{50}$ ZINC250k compounds the model selects are, by construction, the ZINC compounds whose Morgan-fingerprint feature vectors map (via the trained model) into the upper tail of pIC$_{50}$ predictions. That mapping has no calibration guarantee outside the training distribution: it is whatever interpolation/extrapolation behavior the fitted forest happens to perform.
+The benchmark $R$ characterizes the model's behavior on compounds drawn from the same distribution as training. The candidates the pipeline actually produces are drawn from ZINC250k under a high-pIC$_{50}$ filter, and 93\% of that candidate list has no near neighbor in the ChEMBL COX-2 training set by Tanimoto similarity at $T \geq 0.40$. The high-pIC$_{50}$ ZINC250k compounds the model selects are, by construction, the ZINC compounds whose Morgan-fingerprint feature vectors map (via the trained model) into the upper tail of pIC$_{50}$ predictions. That mapping has no calibration guarantee outside the training distribution: it is whatever interpolation/extrapolation behavior the fitted forest happens to perform.
 
 Our random-baseline result quantifies the cost of this slippage. The cost is total: the prioritization signal has been entirely absorbed into the AD gap.
 
@@ -400,8 +406,8 @@ Our random-baseline result quantifies the cost of this slippage. The cost is tot
 We initially expected, from prior literature on hybrid ML-plus-docking pipelines, that the docking step would partially rescue the ML output by surfacing those candidates whose pocket fit is favorable in the explicit protein structure. The data do not support that rescue narrative on this dataset:
 
 \begin{itemize}
-\item The strongest Vina hit ($-10.17$ kcal/mol) is 1.0 kcal/mol weaker than redocked celecoxib ($-11.20$ kcal/mol), so even our best is not predicted to beat a known approved coxib.
-\item The Vina distribution of our 127 is not enriched relative to random ZINC250k, so docking is not detecting an ML-driven signal that selectivity or AD analysis missed.
+\item The strongest Vina hit ($-11.06$ kcal/mol) comes within 0.2 kcal/mol of redocked celecoxib ($-11.23$ kcal/mol), but it carries two BRENK reactivity alerts (a nitro group and a thiocarbonyl), so its near-celecoxib score reflects a reactive, non-developable structure rather than a credible lead---and no candidate actually beats celecoxib.
+\item The Vina distribution of our 42 candidates is not enriched relative to random ZINC250k, so docking is not detecting an ML-driven signal that selectivity or AD analysis missed.
 \end{itemize}
 
 Two implications. First, Vina at exhaustiveness $=8$ may simply be too noisy to discriminate weak rank differences on a tightly drug-like library. Second, and more important: the ML filter as applied was not encoding meaningful pocket-fit information in the first place, so there is no rescue work for Vina to do.
@@ -415,13 +421,13 @@ We do not propose that Vina rescue alone makes a candidate ``validated.'' Free-e
 \begin{enumerate}
 \item Random train/test splitting may overestimate test-set generalization. Scaffold-based splitting~\cite{martin2017} is preferred. Our AD finding is consistent with a high-end estimate of test-set $R$ being inflated relative to prospective use, but we did not directly compare to a scaffold-split RF.
 
-\item The random ZINC baseline used $n=100$. With this sample size, the Mann-Whitney test has limited power to detect small differences in distribution mean; the 95\% confidence interval on the mean difference (random $-$ ours) is approximately $\pm 0.4$ kcal/mol. We can reject the hypothesis that our candidates are substantially better than random; we cannot reject very small effects.
+\item The corrected filter cascade yields only $n=42$ candidates (against a 100-compound random baseline). With these sample sizes, the Mann-Whitney test has moderate power (80\% minimum detectable effect $d \approx 0.52$); the 95\% confidence interval on the Hodges--Lehmann shift is approximately $\pm 0.4$ kcal/mol. We can reject a medium-or-larger docking advantage for our candidates over random, but not a small one. A larger candidate set (e.g.\ from a lower pIC$_{50}$ threshold) would tighten this bound.
 
 \item Vina docking at \texttt{exhaustiveness}~$=8$ is approximate. Published correlations with experimental affinity are modest ($R \sim 0.4$~\cite{wang2016, gaillard2018}). Higher-fidelity methods (MM-GBSA, FEP) would be appropriate at later triage stages and could in principle reveal signal that Vina misses.
 
 \item We docked into chain A of 1CX2 (the crystallographic asymmetric unit was a homo-tetramer; we did not test whether docking into chains B/C/D would produce statistically equivalent rankings).
 
-\item The AD threshold $T \geq 0.40$ is a literature convention. We provide the full Tanimoto distribution; the headline 0/127 result is robust at $T = 0.30$ as well (36/127 above $T = 0.30$, still a minority).
+\item The AD threshold $T \geq 0.40$ is a literature convention. We provide the full Tanimoto distribution; the predominantly-out-of-domain result is robust to the threshold (3/42 in-domain at $T = 0.40$; 6/42 at the more permissive $T = 0.30$---still 86\% extrapolation).
 
 \item ChEMBL assay heterogeneity introduces label noise indistinguishable from structural variance.
 
@@ -443,36 +449,35 @@ We do not propose that Vina rescue alone makes a candidate ``validated.'' Free-e
 
 \item Conformal prediction~\cite{cortes2019} to provide per-candidate calibrated uncertainty intervals.
 
-\item For benzimidazole cluster: orthogonal counter-screen against gastric H$^+$/K$^+$-ATPase to exclude PPI-like activity, given the overlap with omeprazole-class scaffolds.
-
 \item Experimental COX-2 and COX-1 IC$_{50}$ measurements on a small pilot batch of BRENK-clean, high-Vina, high-SA candidates---if any are advanced, the experimental result should be used to recalibrate the screening pipeline itself.
 \end{enumerate}
 
 \section{Conclusions}
 
-A standard Random Forest virtual screening pipeline trained on ChEMBL COX-2 IC$_{50}$ data ($R = 0.817$, RMSE $= 0.91$) and applied to ZINC250k under conventional drug-likeness and selectivity filters produces 127 ML-prioritized candidates whose docking-affinity distribution against the actual COX-2 crystal pocket (PDB 1CX2 chain A) is \textbf{statistically indistinguishable from a 100-compound random ZINC250k baseline} (Mann-Whitney $p = 0.53$). All 127 candidates lie outside the model's applicability domain ($T \geq 0.40$). The ML pIC$_{50}$ ranking is uncorrelated with the Vina ranking within the candidate set (Spearman $\rho = -0.065$, 95\% CI $[-0.23,\ +0.10]$). The docking protocol is validated by 0.64 \r{A} celecoxib pose recovery.
+A standard Random Forest virtual screening pipeline trained on ChEMBL COX-2 IC$_{50}$ data ($R = 0.756$, RMSE $= 0.81$) and applied to ZINC250k under conventional drug-likeness and selectivity filters produces 42 ML-prioritized candidates whose docking-affinity distribution against the actual COX-2 crystal pocket (PDB 1CX2 chain A) is \textbf{statistically indistinguishable from a 100-compound random ZINC250k baseline} (Mann-Whitney $p = 0.89$). 39 of 42 candidates (93\%) lie outside the model's applicability domain ($T \geq 0.40$). The ML pIC$_{50}$ ranking is uncorrelated with the Vina ranking within the candidate set (Spearman $\rho = -0.086$, 95\% CI $[-0.35,\ +0.20]$). The docking protocol is validated by 0.63 \r{A} celecoxib pose recovery \emph{and} by its ability to separate genuine ChEMBL COX-2 actives from random ZINC ($p = 0.006$)---a signal wholly absent from the ML candidate list.
 
 The benchmark $R$ does not predict prospective hit-finding performance on cross-library screening in this case. We therefore argue that ML virtual screening papers should be required to report (i) applicability domain coverage of the final candidate list and (ii) a same-library random baseline distribution against the same evaluation oracle (here, docking against the crystal pocket). Without these two checks, a high test-set $R$ is consistent with both a real screening signal and the case documented here: no signal beyond random, dressed in confident predictions.
 
-The 127-compound enriched candidate list is provided with explicit AD flags, COX-1 selectivity margins, Murcko scaffolds, SA scores, BRENK alerts, and Vina docking affinities. The list remains useful as a structurally diverse, synthetically accessible, drug-like compound set for downstream experimental triage. We make no claims of computational evidence for COX-2 inhibitory activity on this set; the AD and baseline results are explicit warnings against such inference.
+The 42-compound enriched candidate list is provided with explicit AD flags, COX-1 selectivity margins, Murcko scaffolds, SA scores, BRENK alerts, and Vina docking affinities. The list remains useful as a structurally diverse, synthetically accessible, drug-like compound set for downstream experimental triage. We make no claims of computational evidence for COX-2 inhibitory activity on this set; the AD and baseline results are explicit warnings against such inference.
 
 \section*{Reproducibility and Computational Environment}
 
-All random seeds are fixed: \texttt{random\_state=42} for the train/test/validation splits, the Random Forest fit, the 500-compound applicability-domain reference sample, and the random ZINC baseline draw; \texttt{random\_state=123} for the Vina-on-training validation sample. Docking is deterministic at \texttt{Vina --seed 42}.
+All ML random seeds are fixed at \texttt{random\_state=42}: the train/test/validation splits, the Random Forest fit, the 500-compound applicability-domain reference sample, and the Vina-on-training active/inactive sampling. The 100-compound random ZINC baseline was drawn once (\texttt{random\_state=42}) and retained verbatim. AutoDock Vina was run at its default (clock-seeded) random seed; docking scores are therefore subject to Vina's stochastic conformational search. The positive-control redock (celecoxib, $-11.23$ kcal/mol, 0.63 \r{A} RMSD) confirms run-to-run stability at \texttt{exhaustiveness}~$=8$.
 
-Software versions used: Python 3.9.6, RDKit 2025.09.2, Meeko 0.7.1, scikit-learn 1.5.x, scipy 1.13.x, OpenBabel 3.1.1 (Homebrew), AutoDock Vina 1.2.5 (CCSB pre-built macOS binary, x86\_64 via Rosetta on Apple Silicon).
+Software versions used: Python 3.9.6, RDKit 2025.09.2, Meeko 0.7.1, scikit-learn 1.6.1, SciPy 1.13.1, XGBoost 2.1.4, statsmodels 0.14.6, OpenBabel 3.1.0 (Homebrew), AutoDock Vina 1.2.5 (CCSB pre-built macOS binary, x86\_64 via Rosetta on Apple Silicon).
 
 Hardware: Apple M-series (arm64), CPU docking, Vina exhaustiveness $=8$.
 
-Data sources (retrieved 2026-05-25 and 2026-05-26): ChEMBL targets CHEMBL230 (COX-2, $n = 2{,}237$ records after filtering) and CHEMBL1829 (COX-1, $n = 2{,}421$) via the \texttt{chembl\_webresource\_client} API. Screening library: ZINC250k~\cite{irwin2020}. Protein structure: PDB 1CX2~\cite{kurumbail1996} (downloaded from RCSB).
+Data sources (retrieved 2026-07-09): ChEMBL targets CHEMBL230 (COX-2, $n = 4{,}445$ records after filtering) and CHEMBL221 (COX-1, $n = 1{,}652$) via the \texttt{chembl\_webresource\_client} API. Screening library: ZINC250k~\cite{irwin2020}. Protein structure: PDB 1CX2~\cite{kurumbail1996} (downloaded from RCSB).
 
 \section*{Code and Data Availability}
 
 All code and data are publicly available at \url{https://github.com/WINSTON672/winston-lin-research}:
 \begin{itemize}
+\item \texttt{scripts/pull\_chembl.py} — ChEMBL retrieval for the study targets (CHEMBL230 / CHEMBL221) with a chemotype integrity check
 \item \texttt{scripts/cox2\_additions.py} — ML model training, screening, selectivity, AD, scaffold pipeline
-\item \texttt{code/cox2\_docking/dock\_pipeline.py} — Vina docking pipeline (chain A, 22 \r{A} box, exh 8)
-\item \texttt{papers/cox2\_journal/candidates\_full.csv} — 127-candidate list with all annotations
+\item \texttt{code/cox2\_docking/dock\_pipeline.py}, \texttt{cox2\_v3\_docking.py}, \texttt{cox2\_v3\_stats.py}, \texttt{cox2\_v3\_contacts.py} — Vina docking, baseline/validation docking, statistics, and per-residue contact analysis (chain A, 22 \r{A} box, exh 8)
+\item \texttt{papers/cox2\_journal/candidates\_full.csv} — 42-candidate list with all annotations
 \item \texttt{papers/cox2\_journal/docking\_results.csv} — full Vina docking results (chain-A site)
 \item \texttt{papers/cox2\_journal/random\_zinc\_baseline.csv} — random ZINC docking baseline ($n = 100$)
 \item \texttt{papers/cox2\_journal/final\_stats.json} — all summary statistics
@@ -482,7 +487,7 @@ All code and data are publicly available at \url{https://github.com/WINSTON672/w
 
 The conclusion of this paper would be falsified by any of the following:
 \begin{enumerate}
-\item Mann--Whitney $p \leq 0.05$ for the 127-candidate Vina distribution vs the random ZINC baseline, with the candidate median more negative.
+\item Mann--Whitney $p \leq 0.05$ for the 42-candidate Vina distribution vs the random ZINC baseline, with the candidate median more negative. (Observed: $p = 0.89$.)
 \item Pearson or Spearman 95\% CI on the ML--Vina rank correlation excluding zero in the positive direction.
 \item $> 50\%$ of the top-20 candidates contacting all five of celecoxib's key residues (Arg120, Tyr355, Trp387, Phe518, Val523), with the random ZINC baseline at $< 25\%$.
 \item Cohen's $d \geq 0.5$ in favor of the candidate set on the Vina comparison.
@@ -493,7 +498,7 @@ None of these are observed.
 \section*{Abbreviations}
 
 \noindent
-AD: applicability domain; ChEMBL: chemistry database of bioactive molecules; COX: cyclooxygenase; ETKDG: Experimental-Torsion Knowledge Distance Geometry; FEP: free-energy perturbation; MM-GBSA: molecular mechanics generalized Born surface area; NSAID: non-steroidal anti-inflammatory drug; OOD: out-of-domain; PAINS: pan-assay interference compounds; PDB: Protein Data Bank; pIC$_{50}$: $-\log_{10}$(IC$_{50}$ in M); PPI: proton pump inhibitor; QED: quantitative estimate of drug-likeness; RF: Random Forest; RMSE: root mean square error; SMILES: simplified molecular-input line-entry system; UFF: Universal Force Field; ZINC: ZINC Is Not Commercial.
+AD: applicability domain; ChEMBL: chemistry database of bioactive molecules; COX: cyclooxygenase; ETKDG: Experimental-Torsion Knowledge Distance Geometry; FEP: free-energy perturbation; MM-GBSA: molecular mechanics generalized Born surface area; NSAID: non-steroidal anti-inflammatory drug; OOD: out-of-domain; PAINS: pan-assay interference compounds; PDB: Protein Data Bank; pIC$_{50}$: $-\log_{10}$(IC$_{50}$ in M); QED: quantitative estimate of drug-likeness; RF: Random Forest; RMSE: root mean square error; SMILES: simplified molecular-input line-entry system; UFF: Universal Force Field; ZINC: ZINC Is Not Commercial.
 
 \section*{Author Contributions}
 
