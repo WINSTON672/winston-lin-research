@@ -70,7 +70,7 @@ Multi-Substrate AI Architecture with Neuromorphic Components}
 
 % ── Abstract ────────────────────────────────────────────────────────────────
 \begin{abstract}
-This paper has two goals: to explain \textit{why} the SPECTRUM multi-substrate AI architecture is designed the way it is, and to show \textit{how to build} its core neuromorphic component. The first half derives the SPECTRUM architecture from first principles---the substrate problem, why transformers are the wrong tool for reasoning, and what a physically heterogeneous system looks like. The second half is an implementation guide. We present the DST (Dendritic/Somatic/Threshold) neuron, a three-variable model designed from architectural principles rather than biological replication, and its extension to DSTC (adding a two-compartment dendrite, voltage-gated NMDA coincidence detection, inhibitory synapses, and a calcium plasticity signal). We provide complete Python implementations with annotated equations, working simulations, and the full circuit specification for physical fabrication. The D compartment---an electrolytic capacitor and bleeder resistor---is the first buildable piece; its schematic, component values, and test protocol are given explicitly. SPECTRUM's claim is that the ceiling of AI capability is a substrate problem, not an algorithmic one. This paper makes that claim concrete.
+This paper has two goals: to explain \textit{why} the SPECTRUM multi-substrate AI architecture is designed the way it is, and to show \textit{how to build} its core neuromorphic component. The first half derives the SPECTRUM architecture from first principles---the substrate problem, why transformers are the wrong tool for reasoning, and what a physically heterogeneous system looks like. The second half is an implementation guide. We present the DST (Dendritic/Somatic/Threshold) neuron, a three-variable model designed from architectural principles rather than biological replication, and its extension to DSTC (adding a two-compartment dendrite, voltage-gated NMDA coincidence detection, inhibitory synapses, and a calcium plasticity signal). We provide complete Python implementations with annotated equations, working simulations, and the full circuit specification for physical fabrication. The D compartment---an electrolytic capacitor and bleeder resistor---is the first buildable piece; its schematic, component values, and test protocol are given explicitly. SPECTRUM's position is that the ceiling of AI capability is at least partly a substrate problem rather than a purely algorithmic one; this paper does not attempt to establish that, and states it as the motivation for the design rather than as a result. What the paper does establish is narrower and measured: against LIF, Izhikevich and AdEx under matched conditions, DST is the only model tested that holds an absolute refractory period, and its linear dynamics tolerate a coarser integration timestep and lower cost than either nonlinear competitor---which is also what makes the D compartment realisable as a capacitor and a resistor.
 \end{abstract}
 
 % ── 1. Why SPECTRUM Exists ──────────────────────────────────────────────────
@@ -420,7 +420,9 @@ Each model file produces an 8-panel figure. We describe the key demonstrations.
 
 \textbf{Calcium accumulation (Panel 6).} Under sustained input, $Ca$ builds up across spikes and decays slowly ($\tau_{Ca} = 200$\,ms). This staircasing calcium trace is the plasticity signal: a synapse consistently active before spikes will see rising $Ca$ and undergo LTP.
 
-\subsection{Physical D Compartment (\texttt{D\_compartment.py})}
+\subsection{D Compartment, Simulated Circuit Response (\texttt{D\_compartment.py})}
+
+\noindent The figures in this subsection are produced by a circuit simulator, not measured on hardware. The component values are those specified in Section~\ref{sec:hardware}; the traces are what those values predict.
 
 \textbf{Circuit (Panel 1).} The schematic: three synaptic inputs each through a 2\,k$\Omega$ weight resistor, converging on a 10\,$\mu$F capacitor with a 1\,k$\Omega$ bleeder to ground. Output is the capacitor voltage $V_D$.
 
@@ -434,7 +436,7 @@ Each model file produces an 8-panel figure. We describe the key demonstrations.
 \section{Hardware Build Path}
 \label{sec:hardware}
 
-\subsection{D Compartment (Built)}
+\subsection{D Compartment (Specified; Build Pending)}
 
 \begin{center}
 \small
@@ -448,6 +450,8 @@ Synaptic resistors $R_w$ & 1--10\,k$\Omega$ & Weight: $w_i = 1/R_{w,i}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\noindent The bench for this measurement is implemented in \texttt{bench/} (firmware, capture, and an overlay that fits $\tau_D$ from the recorded trace and reports the capacitance it implies). No measured data is reported in this paper; the protocol below is what the bench executes.
 
 \noindent\textbf{Test protocol.} (1) Apply a 2\,V pulse for 5\,ms through one synaptic resistor. Measure $V_D$ with an oscilloscope. Confirm exponential decay with $\tau = 10$\,ms. (2) Apply two simultaneous pulses; confirm $V_D$ peaks at $\sim 2\times$ the single-pulse value. (3) Apply two pulses 8\,ms apart; confirm $V_D$ from the second pulse builds on residual from the first. These three tests validate spatial summation, temporal summation, and the $\tau_D$ time constant.
 
@@ -508,6 +512,54 @@ The FLUID architecture \cite{lin2026fluid}, which modifies neural topology via H
 
 \textbf{Leaky integrate-and-fire (LIF)} \cite{lapicque1907} is the industry standard for neuromorphic chips. LIF has one variable; it cannot produce spike-rate adaptation, NMDA coincidence detection, or dendritic integration. DST adds these at the cost of two additional variables.
 
+\textbf{Izhikevich} \cite{izhikevich2003,izhikevich2004} is the closest prior work and sets the bar DST must clear. It reaches spike-rate adaptation and a wide firing repertoire with \textit{two} state variables and four parameters, and it was written for the reason given in Section~\ref{sec:dst}---that Hodgkin-Huxley is too expensive to put on a chip. We state plainly that DST does not win on economy: three variables and eight parameters is more, not less. Table~\ref{tab:baselines} reports what DST does buy for that cost.
+
+\textbf{Adaptive exponential integrate-and-fire (AdEx)} \cite{brette2005} likewise obtains adaptation with two variables, via an exponential spike-initiation term and a coupled adaptation current.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{DST against published spiking-neuron models. All models integrated at
+$dt = 0.01$\,ms over 300\,ms; each driven at multiples of its \textit{own}
+rheobase, since the four carry different current units. Behaviours are read
+from each model's output rather than asserted. ``Max stable $dt$'' is the
+coarsest timestep that still reproduces the spike count obtained at
+$dt = 0.01$\,ms. Runtime is wall-clock for one 300\,ms trace, same host, same
+$dt$. Reproduced by \texttt{bench/baselines.py}.}
+\label{tab:baselines}
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Model} & \textbf{Vars} & \textbf{Params} & \textbf{Refractory}
+  & \textbf{Temporal sum.} & \textbf{Adaptation}
+  & \textbf{Max $dt$ (ms)} & \textbf{Runtime (ms)} \\
+\midrule
+\textbf{DST (ours)} & 3 & 8 & \textbf{yes} & yes & yes & \textbf{2.0} & \textbf{12.7} \\
+LIF                 & 1 & 5 & no  & yes & no  & 1.0 & 6.8 \\
+Izhikevich          & 2 & 4 & no  & yes & yes & 1.0 & 23.2 \\
+AdEx                & 2 & 9 & no  & yes & yes & 0.5 & 68.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two results in Table~\ref{tab:baselines} bear on the design. First, DST is the
+only model tested that holds an \textit{absolute} refractory period: under a
+pulse pair at 20$\times$ rheobase the others recover through a slow current and
+can be driven to fire again immediately, whereas the threshold jump $\Delta\theta$
+is a hard veto. Second, and more consequential for fabrication, DST tolerates a
+timestep twice Izhikevich's and four times AdEx's, and at matched $dt$ runs
+$1.8\times$ faster than Izhikevich and $5.4\times$ faster than AdEx despite the
+extra state variable. Both competitors pay for a nonlinearity---a quadratic term
+requiring sub-stepping, an exponential---while DST's dynamics are entirely
+linear.
+
+That linearity is the argument, not the variable count. A linear system maps
+onto an RC network, which is why the D compartment in Section~\ref{sec:hardware}
+is a capacitor and a resistor; neither a quadratic nor an exponential term has
+any comparable two-component realisation. The point-neuron comparison also
+cannot score the DSTC extensions at all, since a point neuron has no morphology
+on which to place a two-compartment dendrite, a voltage-gated NMDA conductance,
+or a proximal/distal inhibition asymmetry.
+
 \textbf{Intel Loihi} \cite{davies2021} and \textbf{IBM NorthPole} \cite{ibm2023} are state-of-the-art neuromorphic chips using LIF neurons. Neither integrates with transformer language models. SPECTRUM proposes this integration with DSTC at L1.
 
 \textbf{Multi-compartment models} \cite{mainen1996} extend HH with spatial dendritic structure. DSTC takes a minimal two-compartment approach (distal + proximal) sufficient to demonstrate NMDA coincidence detection and shunting inhibition without the parameter burden of full compartmental models.
@@ -520,9 +572,9 @@ The FLUID architecture \cite{lin2026fluid}, which modifies neural topology via H
 
 The argument for SPECTRUM is simple: intelligence needs different physical machinery for different cognitive functions, and building it all on one substrate is leaving capability and energy efficiency on the table. The transformer is not wrong; it is mispositioned. It belongs at the output, not the core.
 
-The DST neuron shows that a neuromorphic unit can be derived from first principles---three equations, three variables, eight parameters---and produce the full behavioral repertoire of a spiking neuron without biological fitting. DSTC extends this with NMDA coincidence detection, two-compartment dendritic integration, inhibitory shunting, and calcium-based online learning. These are not biological luxuries; they are computational capabilities (coincidence detection, online STDP, top-down inhibitory control) that make L1 more powerful than a LIF array.
+The DST neuron shows that a neuromorphic unit can be derived from first principles---three equations, three variables, eight parameters---and produce the behavioral repertoire of a spiking neuron without biological fitting. That repertoire alone is not the contribution: Izhikevich reaches it with two variables and four parameters \cite{izhikevich2003}. What DST adds, per Table~\ref{tab:baselines}, is an absolute refractory period the two-variable models lack, and fully linear dynamics---which cost less to integrate and, unlike a quadratic or exponential term, correspond directly to passive components. DSTC extends this with NMDA coincidence detection, two-compartment dendritic integration, inhibitory shunting, and calcium-based online learning. These are not biological luxuries; they are computational capabilities (coincidence detection, online STDP, top-down inhibitory control) that make L1 more powerful than a LIF array.
 
-The D compartment circuit---10\,$\mu$F, 1\,k$\Omega$, a few weight resistors---is the first physical piece. It is buildable today on a breadboard. The progression from there to the full DSTC chip is specified: S compartment (Schmitt trigger), $\theta$ compartment (slow RC), calcium compartment (slow RC on spike output), MOSFET NMDA gate. Each step is a standard analog component.
+The D compartment circuit---10\,$\mu$F, 1\,k$\Omega$, a few weight resistors---is the first physical piece. It is buildable today on a breadboard, and has not yet been built; the measurement bench is written and awaiting the parts. The progression from there to the full DSTC chip is specified: S compartment (Schmitt trigger), $\theta$ compartment (slow RC), calcium compartment (slow RC on spike output), MOSFET NMDA gate. Each step is a standard analog component.
 
 The Python code (\texttt{dst\_model.py}, \texttt{dstc\_model.py}, \texttt{D\_compartment.py}) is not a simulation to be discarded---it is the specification. Every equation in the code corresponds directly to a circuit element. The software and hardware are the same system at different levels of abstraction.
 
@@ -534,6 +586,12 @@ SPECTRUM needs six layers. Three now have concrete instantiations: DSTC at L1, a
 \bibitem{vaswani2017} Vaswani, A., et al.\ (2017). Attention is all you need. \textit{NeurIPS 2017}.
 
 \bibitem{hodgkin1952} Hodgkin, A.L., \& Huxley, A.F.\ (1952). A quantitative description of membrane current and its application to conduction and excitation in nerve. \textit{Journal of Physiology}, 117(4), 500--544.
+
+\bibitem{izhikevich2003} Izhikevich, E.M.\ (2003). Simple model of spiking neurons. \textit{IEEE Transactions on Neural Networks}, 14(6), 1569--1572.
+
+\bibitem{izhikevich2004} Izhikevich, E.M.\ (2004). Which model to use for cortical spiking neurons? \textit{IEEE Transactions on Neural Networks}, 15(5), 1063--1070.
+
+\bibitem{brette2005} Brette, R., \& Gerstner, W.\ (2005). Adaptive exponential integrate-and-fire model as an effective description of neuronal activity. \textit{Journal of Neurophysiology}, 94(5), 3637--3642.
 
 \bibitem{lapicque1907} Lapicque, L.\ (1907). Recherches quantitatives sur l'excitation \'{e}lectrique des nerfs trait\'{e}e comme une polarisation. \textit{J.\ Physiol.\ Pathol.\ Gen.}, 9, 620--635.
 
