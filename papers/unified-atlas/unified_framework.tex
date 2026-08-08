@@ -42,7 +42,7 @@ This paper's central thesis is that no domain of human cognitive, creative, or r
 
 A complete intelligence system requires seven architectural properties: (1) efficiency measurement grounded in deployment value rather than benchmark accuracy; (2) domain-expert depth through specialist routing rather than uniform generalization; (3) computation allocated to physically optimal substrates rather than forced through a single digital pipeline; (4) structural adaptation during learning rather than fixed topology; (5) autonomous aesthetic agency with an internal drive toward novelty rather than prompt-response generation; (6) deliberate reasoning via explicit intermediate state and metacognitive uncertainty tracking rather than pattern completion; and (7) persistent relational intelligence---a live model of a specific individual that evolves across time and navigates genuine moral complexity. Current systems satisfy none of these fully. Not because a wall has been reached, but because none of these were design goals.
 
-We present \textbf{ATLAS} (Adaptive Topology Living Architecture with Specialists), a unified architecture satisfying all seven requirements through six composed components: \textbf{CES/TEB} (efficiency evaluation), \textbf{ARBOR} (specialist routing), \textbf{SPECTRUM} (substrate allocation), \textbf{FLUID} (topology learning), \textbf{MUSE} (aesthetic agency), \textbf{LOGOS} (deliberate reasoning), and \textbf{SOCIUS} (relational intelligence). Empirical validation of CES/TEB is provided ($\rho = 0.80$, $n=4$ models); the FLUID Stability Conjecture has been empirically resolved (stable topology exists within a narrow parameter band; Lyapunov mechanism open); remaining components are theoretically specified with falsifiable validation protocols. All code and task sets: \url{https://github.com/WINSTON672/lin-score}.
+We present \textbf{ATLAS} (Adaptive Topology Living Architecture with Specialists), a unified architecture \emph{designed to} satisfy all seven requirements through seven composed components: \textbf{CES/TES} (efficiency evaluation), \textbf{ARBOR} (specialist routing), \textbf{SPECTRUM} (substrate allocation), \textbf{FLUID} (topology learning), \textbf{MUSE} (aesthetic agency), \textbf{LOGOS} (deliberate reasoning), and \textbf{SOCIUS} (relational intelligence). We provide empirical work on two of these. In a sample of eight models on 100 tasks, token efficiency (TES) and answer quality are inversely ranked (Spearman $\rho = -0.33$, $n=8$, $p \approx 0.42$---an observed sample association, not a statistically significant effect), and the two reasoning models incur a $12$--$18\times$ token penalty for quality comparable to far cheaper dense models. A grid search over the FLUID growth rule reveals a \emph{narrow} stable-topology regime (12 of 120 configurations) rather than establishing convergence, with the candidate Lyapunov function failing in all stable cases. The remaining five components are theoretically specified with falsifiable validation protocols. All token-efficiency code, the task suite, and results are released (see Code and data).
 \end{abstract}
 
 %-----------------------------------------------------------
@@ -72,17 +72,18 @@ No existing system satisfies all seven. This is not evidence of a wall. It is ev
 
 \begin{figure}[H]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
     box/.style={rectangle, draw, rounded corners, minimum width=2.8cm, minimum height=1cm, align=center, font=\small},
     arrow/.style={-{Stealth}, thick}
 ]
-\node[box, fill=blue!15]   (eval)     at (0,5.5)    {CES / TEB\\(Section~\ref{sec:eval})\\{\footnotesize measure efficiency}};
+\node[box, fill=blue!15]   (eval)     at (0,5.5)    {CES / TES\\(Section~\ref{sec:eval})\\{\footnotesize measure efficiency}};
 \node[box, fill=green!15]  (arbor)    at (-7,1.5)   {ARBOR\\(Section~\ref{sec:arbor})\\{\footnotesize route to depth}};
-\node[box, fill=orange!15] (spectrum) at (-4,1.5)   {SPECTRUM\\(Section~\ref{sec:spectrum})\\{\footnotesize optimal substrate}};
+\node[box, fill=orange!15] (spectrum) at (-4,1.5)   {SPECTRUM\\(Section~\ref{sec:spectrum})\\{\footnotesize substrate}};
 \node[box, fill=red!15]    (fluid)    at (-1.2,1.5) {FLUID\\(Section~\ref{sec:fluid})\\{\footnotesize fluid topology}};
-\node[box, fill=teal!20]   (muse)     at (1.8,1.5)  {MUSE\\(Section~\ref{sec:muse})\\{\footnotesize creative agency}};
-\node[box, fill=yellow!30] (logos)    at (4.5,1.5)  {LOGOS\\(Section~\ref{sec:logos})\\{\footnotesize deliberate reasoning}};
-\node[box, fill=pink!40]   (socius)   at (7.5,1.5)  {SOCIUS\\(Section~\ref{sec:socius})\\{\footnotesize relational intelligence}};
+\node[box, fill=teal!20]   (muse)     at (1.8,1.5)  {MUSE\\(Section~\ref{sec:muse})\\{\footnotesize creativity}};
+\node[box, fill=yellow!30] (logos)    at (4.5,1.5)  {LOGOS\\(Section~\ref{sec:logos})\\{\footnotesize reasoning}};
+\node[box, fill=pink!40]   (socius)   at (7.5,1.5)  {SOCIUS\\(Section~\ref{sec:socius})\\{\footnotesize relational}};
 \node[box, fill=purple!20] (atlas)    at (0,-1)     {ATLAS\\(Section~\ref{sec:atlas})\\{\footnotesize complete system}};
 
 \draw[arrow] (eval) -- (arbor);
@@ -97,14 +98,15 @@ No existing system satisfies all seven. This is not evidence of a wall. It is ev
 \draw[arrow] (muse) -- (atlas);
 \draw[arrow] (logos) -- (atlas);
 \draw[arrow] (socius) -- (atlas);
-\draw[arrow, dashed, bend right=30] (atlas) to node[right,font=\footnotesize]{feedback} (eval);
-\end{tikzpicture}
-\caption{The unified framework. Each component satisfies one architectural requirement for complete intelligence. ATLAS combines all six; CES/TEB measures whether it is working.}
+\draw[arrow, dashed, bend right=45] (atlas) to node[pos=0.5, right=2pt, fill=white, inner sep=1pt, font=\footnotesize]{feedback} (eval);
+\end{tikzpicture}%
+}
+\caption{The unified framework. Each component targets one architectural requirement for complete intelligence. ATLAS is designed to combine all seven; CES/TES measures whether it is working.}
 \label{fig:framework}
 \end{figure}
 
 %-----------------------------------------------------------
-\section{Layer I: Evaluation --- CES and TEB}
+\section{Layer I: Evaluation --- CES and TES}
 \label{sec:eval}
 %-----------------------------------------------------------
 
@@ -118,45 +120,87 @@ MMLU accuracy of 90\% does not tell you whether a model is worth deploying. It d
 \begin{equation}
 \mathcal{L}(M) = \frac{I(M)}{\log_2(1 + C(M))} \bigg/ \frac{I(H)}{\log_2(1 + C(H))}
 \end{equation}
-where $I(M) = w_M \cdot b(p_{\text{MMLU}}) + w_{HE} \cdot b(p_{\text{HE}})$ is the Shannon information resolved by model $M$ (bits\_resolved over MMLU and HumanEval benchmarks), $C(M)$ is the model's inference FLOPs in teraFLOPs, and $H$ is a human expert anchor ($C(H) = 1000$T). Variance-optimal weights: $w_M = 0.47$, $w_{HE} = 0.53$.
+where $I(M) = w_M \cdot b_{\text{MMLU}}(p_{\text{MMLU}}) + w_{HE} \cdot b_{\text{HE}}(p_{\text{HE}})$ is a bounded competence score aggregating two benchmarks through the per-benchmark transforms $b_j(\cdot)$ defined below, $C(M)$ is the model's inference FLOPs in teraFLOPs, and $H$ is a human expert anchor ($C(H) = 1000$T). Variance-optimal weights: $w_M = 0.47$, $w_{HE} = 0.53$.
 \end{definition}
 
-The bits\_resolved function $b(p) = 1 + p\log_2 p + (1-p)\log_2(1-p)$ maps accuracy $p \in (0.5, 1]$ to information in $[0,1]$, zeroing below chance. CES = 1.0 means human-expert efficiency; CES > 1.0 means more efficient than a human expert relative to compute.
-
-\textbf{Empirical results} (13 models): CES correlates with HumanEval at $\rho = 0.923$ and MMLU at $\rho = 0.725$, confirming CES is neither redundant with nor independent of benchmarks. FLOPs perturbation ($\pm 30\%$) yields $\rho \geq 0.989$ ranking stability. No model in the 13-model sample exceeds CES = 0.73 under variance-optimal weights.
-
-\subsection{Task Efficiency Benchmark (TEB)}
-
-CES measures benchmark efficiency. TEB measures deployment efficiency: ``is using this model for this task worth a human's time?''
-
-\begin{definition}[Task Efficiency Benchmark Score]
+Each benchmark $j$ contributes a competence score that normalizes accuracy against that benchmark's chance baseline $c_j$ and clips below-chance performance to zero:
 \begin{equation}
-\mathrm{TEB}(M) = \frac{\bar{q}(M)}{\log_2(1 + \bar{t}(M))}
+b_j(p) = 1 - H_2\!\Big(\operatorname{clip}_{[0,1]}\!\Big(\frac{p - c_j}{1 - c_j}\Big)\Big),
 \end{equation}
-where $\bar{q}(M) \in [0,1]$ is mean quality ratio across tasks and $\bar{t}(M)$ is mean response time in seconds. $\mathrm{TEB} > 1.0$ means the model delivers a better speed/quality tradeoff than the human baseline.
+where $H_2$ is the binary entropy, $\operatorname{clip}_{[0,1]}$ bounds below-chance performance to zero and perfect performance to one, $c_{\text{MMLU}} \approx 0.25$ (four-option) and $c_{\text{HE}} \approx 0$ (unit-test pass/fail). Rescaling the argument by the benchmark's own chance baseline before the entropy transform fixes a defect in the earlier form $b(p) = 1 - H_2(p)$, which assumes a $0.5$ chance level and so over-penalizes sub-$0.5$ multi-choice scores: a $0.49$ on four-option MMLU is well above chance yet is scored near zero.
+
+We note that the purely linear rescaling $b_j(p) = \max(0, (p-c_j)/(1-c_j))$, which appears to be the natural chance correction, \emph{degenerates the metric}. Recomputed over the same 13 models it inverts the ranking---the smallest model in the sample (phi-3-mini, 3.8T FLOPs) attains the highest score at CES $=3.22$, and both benchmark correlations turn negative ($\rho_{\text{HE}} = -0.12$, $\rho_{\text{MMLU}} = -0.47$). The steepness of the entropy transform is therefore load-bearing rather than cosmetic: it is what prevents the logarithmic compute penalty in the denominator from dominating the competence signal in the numerator. We report this because the linear form is the obvious first correction and its failure is not obvious in advance. We use $b_j$ as a monotone $[0,1]$ competence proxy, not a literal information-theoretic quantity. The anchor $C(H)=1000$T, the logarithmic compute penalty, and the weights $w$ are design choices, not derived or independently validated here, and the CES scale depends on them; CES is therefore an \emph{anchor-relative} score. Under this anchor, CES $=1.0$ denotes parity with the chosen human reference and CES $>1.0$ better quality-per-compute than it. Establishing an absolute ``human-expert efficiency'' reading would require estimating the anchor and weights from data and reporting sensitivity to them.
+
+\textbf{Empirical results} (13 models, $w_M = 0.47$, $w_{HE} = 0.53$): CES correlates with HumanEval at $\rho = 0.813$ and MMLU at $\rho = 0.632$. Because these benchmarks are \emph{inputs} to CES, this correlation is partly mechanical and does not independently validate the metric; it shows only that the compute normalization does not wholly override benchmark signal. Perturbing every model's FLOPs estimate uniformly by $\pm 30\%$ (1000 draws) leaves the ranking essentially intact: mean Spearman $\rho = 0.987$ against the unperturbed order, minimum $0.962$. The highest score in the sample is gpt-4o at CES $= 0.692$; no model reaches parity with the human anchor. All figures in this paragraph are recomputed from the released scorer and model table under the chance-normalized transform above.
+
+\subsection{Token Efficiency (TES)}
+\label{sec:tes}
+
+CES measures efficiency relative to a model's static compute (FLOPs). But the compute a user actually pays for at deployment is not a fixed parameter count --- it is the number of tokens the model \emph{generates} to answer each query. Tokens are a primary driver of inference cost and, at a fixed model and hardware, of wall-clock time. Two models of similar size can differ by more than an order of magnitude in tokens emitted per task, and reasoning models that spend a long chain-of-thought before answering can emit tens of times more. We therefore measure generated-token economy. Two caveats. First, per-token cost itself scales with model size---a token from a 671B model is far dearer than one from a 7B model---so TES captures how economically a model uses its \emph{own} generation, not absolute dollar cost; a price comparison across sizes would weight tokens by a per-model rate. Second, tokens are not a uniform unit across models: different tokenizers encode different amounts of text per token, so cross-model counts carry tokenizer variation, and a fully normalized comparison would report characters or bytes (or retokenized output) alongside provider tokens. We treat TES as a token-economy measure and flag both as limitations.
+
+\begin{definition}[Token Efficiency Score]
+\begin{equation}
+\mathrm{TES}(M) = \frac{1000\,\bar{q}(M)}{\bar{\tau}(M)}
+\end{equation}
+where $\bar{q}(M) \in [0,1]$ is mean quality across tasks and $\bar{\tau}(M)$ is the mean number of tokens the model generates per task, counting the full completion (chain-of-thought plus answer). TES is quality delivered per thousand generated tokens. Token counts are more portable than wall-clock latency, which varies with server load and batching. They are not, however, exactly deterministic: at temperature $0$ they are typically stable for a fixed endpoint, tokenizer, and model revision, but can vary across inference backends, batching, kernel nondeterminism, and revisions, and depend on the tokenizer and on whether hidden reasoning tokens are billed and observable. We report provider-billed completion tokens from the HuggingFace inference router; the endpoint, decoding settings, and repeated-run variance are given in the released artifacts, and the values below should be read as characteristic magnitudes rather than exact constants.
 \end{definition}
 
-TEB v1.0 contains 10 tasks across three tiers: Tier 1 (simple, tests AI-vs-human), Tier 2 (medium, tests 7B vs 70B), Tier 3 (complex, tests expert-level capability). Three tasks are automatically scored; seven require rubric or LLM-judge evaluation.
-
-\textbf{Empirical results} (4 models, 3 automated tasks):
+We evaluate eight instruction-tuned models (7B--671B parameters) on a 100-task suite spanning structured data, code, math, and classification, all scored automatically against ground truth.
 
 \begin{table}[H]
 \centering\small
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrr}
 \toprule
-\textbf{Model} & \textbf{FLOPs} & \textbf{CES} & \textbf{TEB$_{\text{all}}$} & \textbf{TEB$_{\text{L2+L3}}$} & \textbf{Avg.\ speedup}\\
+\textbf{Model} & \textbf{Params} & \textbf{Tokens/task} & \textbf{Avg.\ quality} & \textbf{TES}\\
 \midrule
-Qwen2.5-7B    & 7T   & 1.449 & 3.285 & 3.417 & 151$\times$\\
-Llama-3.3-70B & 70T  & 0.942 & 3.535 & 3.038 & 274$\times$\\
-Qwen2.5-72B   & 72T  & 1.023 & 1.523 & 1.555 &  43$\times$\\
-Llama-3-8B    & 8T   & 0.281 & 1.963 & 1.476 & 134$\times$\\
+Qwen2.5-72B   &  72B & 121 & 0.780 & 6.46\\
+Qwen2.5-7B    &   7B & 113 & 0.682 & 6.03\\
+Llama-3.3-70B &  70B & 146 & 0.758 & 5.20\\
+Gemma-3-27B   &  27B & 151 & 0.695 & 4.61\\
+DeepSeek-V3   & 671B & 200 & 0.885 & 4.43\\
+Llama-3-8B    &   8B & 162 & 0.645 & 3.98\\
+Qwen3-8B      &   8B & 1833 & 0.867 & 0.47\\
+DeepSeek-R1   & 671B & 2685 & 0.841 & 0.31\\
 \bottomrule
 \end{tabular}
-\caption{CES and TEB pilot results. Spearman $\rho(\text{CES}, \text{TEB}_{\text{L2+L3}}) = 0.80$, confirming they are related but distinct.}
-\label{tab:ces_teb}
+\caption{Token efficiency across eight models on 100 tasks. TES is quality per thousand generated tokens (higher is better). The two reasoning models (bottom) are measured with their full chain-of-thought. Spearman $\rho(\text{quality}, \text{TES}) = -0.33$ ($n=8$, $p \approx 0.42$; a sample association, not a significant effect).}
+\label{tab:tes}
 \end{table}
 
-$\rho(\text{CES}, \text{TEB}) = 0.80$: related (both reward quality-per-compute) but distinct (TEB captures wall-clock and open-task signal invisible to CES). The role of this layer in the unified framework: CES/TEB provides the fitness function against which all architectural decisions in ARBOR, SPECTRUM, and FLUID are evaluated.
+\textbf{Token efficiency and quality are inversely ranked in this sample.} Across these eight models, quality and token efficiency show a negative rank association (Spearman $\rho(\text{quality}, \text{TES}) = -0.33$). With only $n=8$ models this is not statistically significant (two-sided $p \approx 0.42$); we report it as an observed pattern to test at larger scale, not an established law. The highest-quality systems in this sample are nonetheless among the \emph{least} token-efficient (Figure~\ref{fig:tes_divergence}). DeepSeek-V3 leads on quality (0.885) yet sits mid-pack on TES because it emits the most tokens of any dense model; the most token-efficient models are the mid-size dense Qwen variants (TES 6.0--6.5), which pair competitive quality with terse output. \emph{Reasoning models pay a severe token tax.} DeepSeek-R1 (quality 0.841) and Qwen3-8B (quality 0.867) reach near-top quality but generate $2{,}685$ and $1{,}833$ tokens per task respectively, roughly $12$--$18\times$ the $\sim$148-token median of the dense models, collapsing their quality-per-token to $0.31$ and $0.47$, an order of magnitude below the dense field. (Whether the chain-of-thought \emph{causes} their quality would require a controlled reasoning-on/off comparison, which we do not run here.) This is the cost-grounded, token-count-based form of the observation that ``more thinking'' is not free: it is paid for in tokens, and a deployment-value metric must price it. The role of this layer in the unified framework: CES/TES provides the fitness function against which all architectural decisions in ARBOR, SPECTRUM, and FLUID are evaluated --- and it explicitly prices the tokens a design chooses to spend.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+% axes
+\draw[->,thick] (0,0) -- (8.9,0) node[right] {\small quality};
+\draw[->,thick] (0,0) -- (0,6.0) node[above] {\small TES};
+\foreach \x/\lab in {1.33/0.65, 4.0/0.75, 6.67/0.85}
+  \draw (\x,0.08) -- (\x,-0.08) node[below] {\scriptsize \lab};
+\foreach \y/\lab in {1.57/2, 3.14/4, 4.71/6}
+  \draw (0.08,\y) -- (-0.08,\y) node[left] {\scriptsize \lab};
+% dense models (blue circles)
+\foreach \px/\py/\lab/\anc in {%
+  4.80/5.08/{Qwen2.5-72B}/above,
+  2.19/4.74/{Qwen2.5-7B}/{above left},
+  4.21/4.09/{Llama-3.3-70B}/above,
+  2.53/3.62/{Gemma-3-27B}/{above left},
+  7.60/3.48/{DeepSeek-V3}/left,
+  1.20/3.13/{Llama-3-8B}/{below right}} {
+  \fill[blue!70] (\px,\py) circle (2.4pt);
+  \node[\anc,font=\scriptsize] at (\px,\py) {\lab};}
+% reasoning models (red squares)
+\fill[red!80] (7.12,0.37) +(-2.6pt,-2.6pt) rectangle +(2.6pt,2.6pt);
+\node[above right,font=\scriptsize] at (7.12,0.37) {Qwen3-8B};
+\fill[red!80] (6.43,0.24) +(-2.6pt,-2.6pt) rectangle +(2.6pt,2.6pt);
+\node[above left,font=\scriptsize] at (6.43,0.24) {DeepSeek-R1};
+% guide + annotation
+\node[align=center,font=\scriptsize,red!80!black] at (3.0,1.15) {reasoning models:\\top quality, bottom TES};
+\draw[red!55,->,shorten >=3pt] (4.3,0.85) to[out=-20,in=170] (6.2,0.30);
+\end{tikzpicture}
+\caption{Answer quality vs.\ token efficiency (TES) across the eight models. Dense models (blue) occupy the high-TES region; the two reasoning models (red) reach near-top quality but the lowest TES. The negative rank association in this sample ($\rho(\text{quality},\text{TES}) = -0.33$, $n=8$) is not statistically significant and is shown as an observed pattern.}
+\label{fig:tes_divergence}
+\end{figure}
 
 %-----------------------------------------------------------
 \section{Layer II: Organization --- ARBOR}
@@ -165,26 +209,26 @@ $\rho(\text{CES}, \text{TEB}) = 0.80$: related (both reward quality-per-compute)
 
 \subsection{Depth Requires Separation}
 
-A model trained on all human knowledge allocates parameters uniformly across all domains. A model trained exclusively on physics allocates 100\% of its capacity to physics. For $N$ domains, the specialist achieves $N\times$ greater representational depth on its domain.
+A generalist trained on all human knowledge spreads its parameters across all domains; a specialist trained only on physics devotes its full budget to physics. Under a uniform-allocation idealization (and ignoring cross-domain transfer), a specialist can therefore reach up to $N\times$ the per-domain capacity of an equal-budget generalist covering $N$ domains.
 
 \begin{definition}[ARBOR System]
 ARBOR consists of: (1) a \textbf{Big Brain} $\mathcal{B}$---a generalist model handling routing, translation, and synthesis; (2) a \textbf{Long Brain Registry} $\mathcal{L} = \{(\ell_i, \mathbf{d}_i, \Omega_i)\}$---domain specialists trained exclusively on domain $\Omega_i$; and (3) a standardized \textbf{Interface Contract} exposing three functions per specialist: \texttt{domain\_embedding()}, \texttt{query(text)→(answer, confidence)}, \texttt{scope()}.
 \end{definition}
 
-\begin{theorem}[Specialization Depth Advantage]
-For parameter budget $P$ distributed over $N$ domains, a specialist of size $P_\ell$ achieves depth ratio:
+\medskip
+\noindent\textbf{Depth intuition (informal, not a theorem).}
+Let $\mathcal{D}(m, \Omega)$ denote the effective capacity model $m$ devotes to domain $\Omega$. Under the idealization that a generalist $\mathcal{G}$ of budget $P$ spreads capacity uniformly across its $N$ domains with no cross-domain transfer, its per-domain capacity is $\mathcal{D}(\mathcal{G}, \Omega_i) \approx P/N$, while a specialist committing its full budget $P_\ell = P$ to one domain has $\mathcal{D}(\ell_i, \Omega_i) \approx P_\ell$, giving
 \begin{equation}
-\frac{\mathcal{D}(\ell_i, \Omega_i)}{\mathcal{D}(\mathcal{G}, \Omega_i)} = \frac{N \cdot P_\ell}{P_\mathcal{B} + N \cdot P_\ell}
+\frac{\mathcal{D}(\ell_i, \Omega_i)}{\mathcal{D}(\mathcal{G}, \Omega_i)} \;\approx\; \frac{P_\ell}{P/N} \;=\; N .
 \end{equation}
-For $P_\mathcal{B} \ll N \cdot P_\ell$, each Long Brain approaches full-budget depth on its domain.
-\end{theorem}
+This is an \emph{upper bound under a strong idealization}. Real generalists exhibit substantial cross-domain transfer and shared low-level features, and $\mathcal{D}$ is not a measured quantity here, so the realized advantage is smaller and must be established empirically (see the ARBOR open problems). We state this as a design motivation, not a proven result.
 
 \subsection{Two-Stage Routing}
 
 Stage 1 (fast, $O(N)$): cosine similarity between query embedding and domain embeddings.
 Stage 2 (precise): Big Brain confirmation score $\mathcal{B}_{\text{route}}(q, \Omega_i) \in [0,1]$.
 
-Combined: $s_i = (1-\alpha) \cdot \cos(\mathbf{q}, \mathbf{d}_i) + \alpha \cdot \mathcal{B}_{\text{route}}(q, \Omega_i)$, $\alpha = 0.4$ empirically.
+Combined: $s_i = (1-\alpha) \cdot \cos(\mathbf{q}, \mathbf{d}_i) + \alpha \cdot \mathcal{B}_{\text{route}}(q, \Omega_i)$, with $\alpha = 0.4$ as an illustrative default---a tunable hyperparameter, not yet empirically calibrated.
 
 \subsection{Hierarchical Synthesis}
 
@@ -192,7 +236,7 @@ Single specialist: trivial. Multiple specialists: check agreement $\text{agree}(
 
 \subsection{ARBOR in the Unified Framework}
 
-ARBOR's routing policy is learned from TEB feedback: specialists with $\text{TEB} < 1.0$ on a query type are called less. CES measures whether the routing overhead is worth the depth gain. ARBOR feeds efficiency data back to Layer I.
+ARBOR's routing policy is learned from TES feedback: specialists with low TES on a query type (poor quality per token spent) are called less. CES measures whether the routing overhead is worth the depth gain. ARBOR feeds efficiency data back to Layer I.
 
 %-----------------------------------------------------------
 \section{Layer III: Substrate --- SPECTRUM}
@@ -201,7 +245,7 @@ ARBOR's routing policy is learned from TEB feedback: specialists with $\text{TEB
 
 \subsection{Substrate Is Not Neutral}
 
-Every AI system today runs on GPU matrix multiplication. This is not because GPUs are the best substrate for intelligence. It is because GPUs were available when the field scaled. The transformer architecture was not designed for intelligence; it was designed for what GPUs can do efficiently.
+The dominant foundation-model paradigm runs on dense matrix multiplication on GPUs and TPUs. Other hardware is deployed---CPUs, NPUs, ASICs, FPGAs, and neuromorphic and analog devices---but the large models that define the field are trained and served overwhelmingly on matrix-multiply accelerators. This is not because they are the best substrate for intelligence; it is because they were available when the field scaled. The transformer architecture was not designed for intelligence; it was designed for what this hardware does efficiently.
 
 The brain uses at least six physically distinct computational mechanisms simultaneously, each suited to a different function. SPECTRUM applies the same principle to silicon.
 
@@ -213,16 +257,16 @@ The brain uses at least six physically distinct computational mechanisms simulta
 \toprule
 \textbf{Substrate} & \textbf{Best suited to} & \textbf{SPECTRUM layer} & \textbf{Power}\\
 \midrule
-Neuromorphic    & Event detection, temporal patterns & L1: Perception & $<$10mW\\
-Optical         & Fourier transforms, correlation    & L1: Perception & $\sim$0\\
-Energy-based    & Associative memory, constraint sat.& L2: Working memory & $\sim$50mW\\
-Molecular (DNA) & Long-term storage, pattern match   & L3: Long memory & $\sim$0\\
-Analog          & Physics simulation, continuous opt.& L4: Reasoning & $\sim$5mW\\
-Quantum         & Search, combinatorial optimization & L5: Search & Variable\\
-Digital         & Symbolic manipulation, language    & L6: Language output & $\sim$10W\\
+Neuromorphic \cite{davies2021} & Event detection, temporal patterns & L1: Perception & mW-scale\\
+Optical \cite{goodman2005} & Fourier transforms, correlation    & L1: Perception & passive/low\\
+Energy-based \cite{hopfield1982} & Associative memory, constraint sat.& L2: Working memory & mW-scale\\
+Molecular (DNA) & Long-term storage, pattern match   & L3: Long memory & passive\\
+Analog \cite{sarpeshkar2010} & Physics simulation, continuous opt.& L4: Reasoning & mW-scale\\
+Quantum         & Search, combinatorial optimization & L5: Search & device-dependent\\
+Digital         & Symbolic manipulation, language    & L6: Language output & W-scale\\
 \bottomrule
 \end{tabular}
-\caption{SPECTRUM substrate allocation. Total inference power $\sim$10.055W vs.\ $\sim$300W for transformer-only at equivalent scale, for reasoning-heavy tasks.}
+\caption{SPECTRUM substrate allocation with qualitative per-substrate power-magnitude classes (from the cited hardware literature). These are \emph{not} measured figures or a system total: the classes come from different tasks and devices and omit workload, throughput, data movement, and cross-substrate conversion overhead. A like-for-like comparison against a transformer baseline would require a defined workload and end-to-end measurement, which we do not provide here.}
 \end{table}
 
 \textbf{Two novel substrates not yet integrated in any architecture:}
@@ -237,7 +281,7 @@ In SPECTRUM, the transformer is L6: the output layer. It handles human communica
 
 \subsection{SPECTRUM in the Unified Framework}
 
-CES can be extended to substrate-aware efficiency: $\mathcal{L}_{\text{SPECTRUM}}$ uses physical FLOPs (summed across substrates with substrate-specific energy equivalents) rather than digital FLOPs alone. TEB measures the wall-clock latency of SPECTRUM's multi-layer pipeline. ARBOR's Long Brains run on substrate-native hardware matched to their domains.
+CES can be extended to substrate-aware efficiency: $\mathcal{L}_{\text{SPECTRUM}}$ uses physical FLOPs (summed across substrates with substrate-specific energy equivalents) rather than digital FLOPs alone. TES measures the token cost of routing a query through SPECTRUM's multi-layer pipeline. ARBOR's Long Brains run on substrate-native hardware matched to their domains.
 
 %-----------------------------------------------------------
 \section{Layer IV: Adaptation --- FLUID}
@@ -246,9 +290,9 @@ CES can be extended to substrate-aware efficiency: $\mathcal{L}_{\text{SPECTRUM}
 
 \subsection{Architecture Must Be a Variable}
 
-Every neural network architecture in existence is a fixed graph $G = (V, E)$. Learning modifies weights $w: E \rightarrow \mathbb{R}$ but not the graph itself. This means representational capacity is fully determined before the first training step. No amount of learning can compensate for a wrong architecture.
+In the dominant paradigm, a neural network is a \emph{fixed} graph $G = (V, E)$: learning modifies weights $w: E \rightarrow \mathbb{R}$ but not the graph. Neuroevolution, dynamic sparse training, and adaptive-computation methods do vary connectivity (we compare to them below), but typically between training phases or by weight-magnitude criteria rather than by continuous, co-activation-driven growth during learning. In the standard case, representational capacity is largely determined before the first training step, and learning cannot fully compensate for a poorly matched architecture.
 
-The brain grows $\sim$$10^5$ new synaptic spines per hour in the motor cortex alone. Structural plasticity is not noise---it is how long-term memory and new skills are encoded.
+The brain undergoes continual structural plasticity---synapses form and prune throughout life, not only during development. Structural change is not noise; it is part of how long-term memory and new skills are encoded.
 
 \subsection{FLUID Architecture}
 
@@ -280,13 +324,13 @@ The Fluid Stability Conjecture has been empirically tested on 100-node networks 
 
 \textbf{Lyapunov analysis.} The candidate $\mathcal{V} = C_t / |E_t|$ is non-monotone in all 12 stable configurations tested (0/12 non-increasing; mean decreasing fraction $\approx 0.46$, near chance). This suggests stability in this system is limit-cycle rather than fixed-point convergence, and a different Lyapunov function is needed.
 
-\textbf{Verdict.} The conjecture holds conditionally: stable topology convergence is achievable within a constrained parameter regime. Outside this regime, dynamics degenerate. The path to FLUID implementation is open within the identified stable band, pending extension to causal memory, temporal hierarchy, and node creation dynamics.
+\textbf{Verdict.} These experiments do \emph{not} resolve the conjecture. They identify an \emph{observed} stable regime---12 of 120 configurations (10\%)---under this particular task set and growth rule; outside a narrow band ($\theta_{\text{create}}=0.3$, $\theta_{\text{prune}}\leq 0.01$) the dynamics degenerate, the single task that grew under default parameters had zero clustering, two of the three tasks solved with no hidden edges, and the candidate Lyapunov function failed in all 12 stable cases. The evidence supports the \emph{existence of a stable regime under this experiment}, not convergence in distribution to a stable small-world graph. Establishing convergence would require a validated Lyapunov (or other) argument and a broader sweep over tasks, scales, and node-creation dynamics.
 
 \textbf{Comparison to prior topology learning.} NEAT \cite{stanley2002} modifies topology between training generations; Deep Rewiring \cite{bellec2018} uses weight perturbation rather than co-activation; dynamic sparse training \cite{mocanu2018} grows connections by weight magnitude rather than Hebbian co-activation. None tests convergence under the specific FLUID Hebbian rule.
 
 \subsection{FLUID in the Unified Framework}
 
-TEB replaces compression-progress as FLUID's growth signal when deployment value matters more than abstract information gain. FLUID Long Brains in ARBOR evolve their internal topology as domain knowledge accumulates. FLUID running on SPECTRUM hardware adapts at both the structural and substrate level simultaneously.
+TES replaces compression-progress as FLUID's growth signal when deployment value matters more than abstract information gain. FLUID Long Brains in ARBOR evolve their internal topology as domain knowledge accumulates. FLUID running on SPECTRUM hardware adapts at both the structural and substrate level simultaneously.
 
 %-----------------------------------------------------------
 \section{Layer V: Creative Agency --- MUSE}
@@ -311,10 +355,10 @@ FLUID's compression-progress curiosity $\kappa(t) = C_{t-\Delta t} - C_t$ reward
 \begin{equation}
 \kappa_a(t) = \lambda_1 \cdot \Delta N_a(t) - \lambda_2 \cdot \Delta S(t)
 \end{equation}
-where $\Delta N_a(t) = d(\mathbf{e}_{t}, \mathcal{C})$ is the distance from the current output embedding $\mathbf{e}_t$ to the existing cultural corpus $\mathcal{C}$ in the aesthetic embedding space $\mathcal{E}_a$ (aesthetic novelty), and $\Delta S(t) = \|\mathbf{e}_t - \bar{\mathbf{e}}_{\text{self}}\|$ is style incoherence---distance from MUSE's own recent output centroid. Empirically calibrated weights $\lambda_1, \lambda_2 > 0$ control the novelty/coherence tradeoff.
+where $\mathbf{e}_t$ is the embedding of a \emph{candidate} output the generator proposes (not one already committed), $\Delta N_a(t) = d(\mathbf{e}_{t}, \mathcal{C})$ is that candidate's distance from the existing cultural corpus $\mathcal{C}$ in the aesthetic embedding space $\mathcal{E}_a$ (aesthetic novelty), and $\Delta S(t) = \|\mathbf{e}_t - \bar{\mathbf{e}}_{\text{self}}\|$ is style incoherence---distance from MUSE's own recent output centroid. Empirically calibrated weights $\lambda_1, \lambda_2 > 0$ control the novelty/coherence tradeoff.
 \end{definition}
 
-$\kappa_a > \theta_{\text{create}}$: MUSE creates. $\kappa_a < \theta_{\text{prune}}$: MUSE has nothing new to say and stays silent. Between thresholds: MUSE continues developing existing work. This is the first formal specification of an AI system with a reason to create that is independent of external prompting.
+MUSE proposes candidate continuations and scores each with $\kappa_a$: it commits the best candidate when its $\kappa_a > \theta_{\text{create}}$, stays silent when no candidate exceeds $\theta_{\text{prune}}$ (nothing new to say), and otherwise keeps developing existing work. Because the score ranks \emph{prospective} candidates rather than an already-produced output, the trigger is not circular. This specifies an internal, prompt-independent drive to create.
 
 \subsection{Multi-Modal Aesthetic Embedding}
 
@@ -367,16 +411,16 @@ Consciousness & Creativity requires subjective experience & This is unfalsifiabl
 
 \subsection{The Aesthetic Turing Test (ATT)}
 
-Analogous to TEB for creative domains. The ATT operationalizes ``replacement'' as output indistinguishability by expert judges.
+Analogous to TES for creative domains. The ATT operationalizes ``replacement'' as output indistinguishability by expert judges.
 
 \begin{definition}[Aesthetic Turing Test]
-The ATT presents expert judges (professional musicians, gallerists, choreographers) with pairwise outputs (human vs.\ MUSE) in a blind evaluation. MUSE passes the ATT in domain $d$ if the identification rate $r_d \leq 0.55$ (near chance; $r = 0.50$ is perfect indistinguishability).
+The ATT presents expert judges (professional musicians, gallerists, choreographers) with pairwise outputs (human vs.\ MUSE) in a blind evaluation. MUSE passes the ATT in domain $d$ if the identification rate $r_d \leq 0.55$ (near chance; $r = 0.50$ is perfect indistinguishability). The threshold $0.55$ is provisional: a sound test must pre-specify a sample size, report a confidence interval on $r_d$, frame indistinguishability as an equivalence test against a stated margin rather than a mere failure to reject the null, and model judge and item random effects. We use $r_d \leq 0.55$ as an illustrative target, not a validated criterion.
 \end{definition}
 
 Three tiers:
 \begin{enumerate}
-    \item \textbf{Expert blind}: trained domain experts evaluate labeled pairs; $r \leq 0.55$ required
-    \item \textbf{Audience blind}: untrained audiences in authentic performance contexts (concert hall, gallery, stage); $r \leq 0.55$ required
+    \item \textbf{Expert blind}: trained domain experts evaluate labeled pairs; provisional target $r \leq 0.55$ (subject to the sample-size and equivalence-testing protocol above)
+    \item \textbf{Audience blind}: untrained audiences in authentic performance contexts (concert hall, gallery, stage); provisional target $r \leq 0.55$
     \item \textbf{Cultural impact}: MUSE-generated work achieves industry recognition without disclosure (chart position, gallery representation, dance company premiere)
 \end{enumerate}
 
@@ -386,7 +430,7 @@ Tier 3 is the strongest criterion: cultural impact requires not just indistingui
 
 MUSE draws on all four prior ATLAS layers:
 \begin{itemize}
-    \item \textbf{CES/TEB}: extended to ATT for creative output; CES measures efficiency of the generation process
+    \item \textbf{CES/TES}: extended to ATT for creative output; CES measures efficiency of the generation process
     \item \textbf{ARBOR}: $\mathcal{K}$ is implemented as ARBOR domain specialists; MUSE routes to $\ell_{\text{music}}$, $\ell_{\text{visual}}$, $\ell_{\text{dance}}$ during generation
     \item \textbf{SPECTRUM}: $\Phi$ (embodied output module) runs on morphological computation substrate (L4/physical); $\kappa_a$ runs on analog substrate
     \item \textbf{FLUID}: $\kappa_a$ is an aesthetic variant of compression-progress curiosity; body graph topology adapts via Hebbian coupling
@@ -442,14 +486,16 @@ At each reasoning step, LOGOS adds a new conclusion node, checks consistency wit
 \begin{definition}[Metacognitive Confidence]
 For conclusion $c_i$ with provenance chain $\pi(c_i) = (c_{i_1}, \ldots, c_{i_k}, c_i)$, the metacognitive confidence is:
 \begin{equation}
-u(c_i) = u_{\text{base}}(c_i) \cdot \prod_{j=1}^{k} u(c_{i_j}) \cdot \mathbb{1}[\phi(c_i) \in \mathcal{D}_{\text{train}}]
+u(c_i) = \gamma(c_i)\cdot u_{\text{base}}(c_i)\cdot \min_{p \in \mathrm{PA}(c_i)} u(p),
+\qquad
+\gamma(c_i) = \begin{cases} 1, & \phi(c_i) \in \mathcal{D}_{\text{train}}\\[2pt] \delta, & \text{otherwise},\end{cases}
 \end{equation}
-where $u_{\text{base}}(c_i)$ is the base confidence of the immediate inference step, the product propagates uncertainty through the provenance chain, and $\mathbb{1}[\phi(c_i) \in \mathcal{D}_{\text{train}}]$ is an in-distribution indicator that drops to $\delta < 1$ when $c_i$ asserts something outside the training distribution.
+with $\delta \in (0,1)$. Here $u_{\text{base}}(c_i)$ is the confidence of the immediate inference step; the factor over the \emph{direct} premises $\mathrm{PA}(c_i)$ propagates parent uncertainty without re-multiplying already-aggregated ancestors (each parent's $u$ already summarizes its own chain, so evidence is not double-counted); and $\gamma(c_i)$ discounts an out-of-distribution conclusion by $\delta$ rather than forcing its confidence to zero. For a premise node with no parents, the empty minimum is taken as $\min_{\varnothing} = 1$, so premises carry only $u_{\text{base}}$ and $\gamma$.
 \end{definition}
 
-When $u(c_i) < \theta_{\text{flag}}$, LOGOS flags the conclusion as uncertain and propagates the flag to all nodes derived from $c_i$. This is the first formal mechanism for an AI system to know---not just say---that it does not know something.
+When $u(c_i) < \theta_{\text{flag}}$, LOGOS flags the conclusion as uncertain and propagates the flag to all nodes derived from $c_i$. This gives the system an explicit, propagating signal for \emph{when} it lacks support for a conclusion, rather than only producing fluent text that asserts one.
 
-The in-distribution indicator $\mathbb{1}$ is estimated by embedding $\phi(c_i)$ and measuring distance from the training corpus centroid in the FLUID causal memory space. Conclusions asserting novel facts (not seen in training) are automatically flagged for external verification before propagation.
+The in-distribution factor $\gamma$ is set by embedding $\phi(c_i)$ and measuring its distance from the training-corpus centroid in the FLUID causal memory space: conclusions beyond a distance threshold take the discounted value $\delta$. A single global-centroid distance is only a coarse baseline for out-of-distribution detection---for multimodal embedding distributions a mixture- or local-density-based detector would be more reliable---so we treat it as a placeholder, not a solved component. Conclusions asserting novel facts (not seen in training) are automatically flagged for external verification before propagation.
 
 \subsection{Compositional Inference Engine}
 
@@ -459,18 +505,18 @@ LOGOS's compositional inference engine $\mathcal{I}$ maintains a rule library $\
 
 At each step, $\mathcal{I}$ searches $\Lambda$ for applicable rules given the current $\mathcal{R}_t$, generates candidate conclusions, scores them by $u(c)$, and adds the highest-confidence warranted conclusion. This is explicit rule application, not prediction: the conclusion is accepted because a rule warranted it, not because it is the most probable next token.
 
-\begin{proposition}[Compositional Coverage]
-For rule library $\Lambda$ of size $|\Lambda| = K$ and maximum chain depth $d$, LOGOS can in principle derive any conclusion reachable in at most $d$ inference steps from premises accessible to $\mathcal{I}$, regardless of whether that specific chain appeared in training.
-\end{proposition}
+\medskip
+\noindent\textbf{Coverage intuition (informal, not a theorem).} If every rule a derivation needs is present in $\Lambda$ and the search explores chains up to depth $d$, then a conclusion with such a derivation is in principle reachable whether or not that specific chain appeared in training. This is definitional given a complete-enough $\Lambda$ and an exhaustive-enough search; it is \emph{not} a substantive coverage guarantee. It assumes the rules are sound, that the search actually finds the chain (completeness), and that doing so is tractable---none of which is established here. We state it as the design target that separates rule application from pattern completion.
 
-This is the key guarantee pattern-completion architectures cannot provide: LOGOS can solve problems it has never seen, as long as the individual inference rules are known.
+The intended contrast with pattern-completion architectures is this: given sound rules and adequate search, LOGOS can in principle solve a problem whose specific inference chain it never saw, because it applies rules rather than recalling associations.
 
 \subsection{Consistency Verifier}
 
-The consistency verifier $\mathcal{V}$ checks each new conclusion $c_{\text{new}}$ for contradiction with the existing $\mathcal{R}_t$:
+The consistency verifier $\mathcal{V}$ tests a new conclusion $c_{\text{new}}$ against the \emph{conjunction} of the active theory, not pairwise---pairwise checks miss joint inconsistency ($A$, $B$, $\neg(A\wedge B)$ are pairwise consistent yet jointly unsatisfiable):
 \begin{equation}
-\text{consistent}(c_{\text{new}}, \mathcal{R}_t) = \neg \exists\, c_i \in C_t : \mathcal{V}(\phi(c_{\text{new}}) \wedge \phi(c_i)) = \bot
+\text{consistent}(c_{\text{new}}, \mathcal{R}_t) = \neg\,\mathrm{UNSAT}_{\mathcal{L}}\!\Big( \phi(c_{\text{new}}) \wedge \bigwedge_{c_i \in C_t^{\text{active}}} \phi(c_i) \Big)
 \end{equation}
+where $C_t^{\text{active}} = \{c \in C_t : \mathrm{status}(c) = \text{active}\}$ excludes nodes already marked \emph{contradicted} or \emph{suspended}: those are retained in $C_t$ for provenance but must not enter the consistency test, or every subsequent check would be unsatisfiable. Because first-order satisfiability is undecidable in general, $\mathcal{V}$ operates within a restricted decidable fragment $\mathcal{L}$ (or a bounded solver under a step/time budget); we therefore describe it as \emph{bounded} consistency checking, not a complete general verifier.
 
 If a contradiction is detected, LOGOS does not proceed. It marks the offending node as \textit{contradicted}, traces back through the provenance chain to the branch point, and either revises the lower-confidence premise or flags the problem as requiring external input. This is abductive revision: when the reasoning fails, LOGOS asks which premise is most likely wrong and presents that as the uncertain point.
 
@@ -516,7 +562,7 @@ Activation criterion: LOGOS engages when $u_{\text{System1}}(q) < \theta_{\text{
     \item \textbf{SPECTRUM}: $\mathcal{R}_t$ (reasoning graph) is stored in SPECTRUM's L2 energy-based working memory (Hopfield); hypothesis search in $\mathcal{I}$ delegates combinatorial search to L5 (quantum)
     \item \textbf{ARBOR}: $\Lambda$ (rule library) is populated by ARBOR domain specialists; LOGOS queries $\ell_{\text{math}}$, $\ell_{\text{logic}}$, or any relevant specialist for domain-specific inference rules
     \item \textbf{MUSE}: LOGOS applies to creative reasoning as well as logical reasoning---evaluating whether a musical development is \textit{warranted} by the established harmonic structure, or whether a visual composition satisfies the aesthetic constraints MUSE has set for itself
-    \item \textbf{CES/TEB}: TEB's Tier 3 (expert-level complex tasks) is the primary benchmark for LOGOS; CES measures efficiency of the reasoning graph construction
+    \item \textbf{CES/TES}: TES's Tier 3 (expert-level complex tasks) is the primary benchmark for LOGOS; CES measures efficiency of the reasoning graph construction
 \end{itemize}
 
 %-----------------------------------------------------------
@@ -526,7 +572,7 @@ Activation criterion: LOGOS engages when $u_{\text{System1}}(q) < \theta_{\text{
 
 \subsection{Relational Intelligence Requires Persistence}
 
-Every conversation with a current AI system begins from zero. The system has no memory of the specific person it spoke to yesterday, no evolving model of their fears or goals, and no record of what they revealed in confidence last month. This is not a technical limitation waiting to be fixed by a larger context window. It is an architectural absence: there is no data structure in which a persistent, updating model of a specific individual is maintained across sessions.
+Most deployed AI systems begin each conversation from zero. Recent systems add cross-session memory, but it is typically a store of retrieved facts or summaries, not a structured, continuously updating model of a specific individual---their evolving fears and goals, and what they revealed in confidence last month---maintained as a first-class object and reasoned over. Enlarging the context window does not supply this; what is usually missing is the data structure itself: a persistent, updating model of the individual carried and updated across sessions.
 
 For most applications this is fine. For social work, medicine, education, and pastoral care, it is disqualifying. A social worker who forgot every conversation with a client between sessions would be dangerous. A doctor with no memory of a patient's history would cause harm. A teacher who could not track a student's progress over the year could not teach.
 
@@ -592,12 +638,12 @@ Therapeutic alliance & Treatment efficacy & 0.6 \\
 Legal reporting duty & Mandatory reporting statute & 0.9 \\
 \bottomrule
 \end{tabular}
-\caption{Ethical constraint graph for the Maria case. Child safety and legal duty override confidentiality above threshold $\tau_{\text{safety}} = 0.85$. $\mathcal{E}$ navigates to least-harm decision with full justification chain.}
+\caption{Illustrative ethical constraint graph for the Maria case. The base weights are hand-set for exposition; their source and calibration are an open problem, as is the threshold $\tau_{\text{safety}} = 0.85$ at which child-safety and legal duty would dominate confidentiality---a modelling choice, not a derived value.}
 \end{table}
 
-$\mathcal{E}$ does not look up the answer. It delegates to LOGOS: the competing obligations become nodes in $\mathcal{R}_t$, with their weights as confidence scores. LOGOS's consistency verifier $\mathcal{V}$ detects the conflict, traces back to the branch point, and generates the least-harm path with an explicit justification chain. The output is not just a decision but a reasoned account of why---the same standard expected of a professional ethicist.
+$\mathcal{E}$ does not look up the answer. It passes the competing obligations to LOGOS as nodes in $\mathcal{R}_t$ with their weights as priors; the consistency verifier $\mathcal{V}$ surfaces the conflict and traces it to the branch point, producing an explicit, inspectable justification structure. We stress that this specifies a \emph{representation} of the dilemma, not a decision procedure. Turning it into an action requires components this paper does not provide: an explicit decision rule over obligations (how legal applicability, jurisdiction, uncertainty, rights, and consequences combine into a least-harm choice), a principled source and calibration for the weights, conflict-resolution semantics, mandatory human escalation for high-stakes cases, and hard safety constraints. Those are open problems.
 
-This is the formal resolution of Campbell's social work example: the system navigates the dilemma not because it was trained on similar cases, but because the ethical structure is explicitly represented and reasoned through.
+This is a formal \emph{representation} of Campbell's social-work example, not a resolution of it. Making the ethical structure explicit and inspectable is a prerequisite for principled handling and distinguishes the approach from opaque pattern-matching, but the paper does not claim to output the correct action autonomously.
 
 \subsection{Attunement Calibrator}
 
@@ -612,12 +658,13 @@ where $\text{RET}_{\text{pred}}$ is a learned model of predicted relational effe
 \subsection{The Relational Effectiveness Test}
 
 \begin{definition}[Relational Effectiveness Test]
-RET evaluates SOCIUS interactions across three care domains by measuring outcomes against validated professional baselines. Success criterion: SOCIUS achieves outcomes within one standard deviation of trained human professional baselines in each domain.
+RET evaluates SOCIUS interactions across three care domains by comparing outcomes to trained human professional baselines under a pre-registered \emph{non-inferiority} design. For each primary outcome, SOCIUS is judged non-inferior if the confidence interval on the human-minus-SOCIUS difference excludes a pre-specified, clinically meaningful margin $\Delta$, at a stated sample size and power. Safety and harm outcomes are assessed \emph{separately} as gating criteria, not averaged into the effectiveness measure. A within-one-standard-deviation heuristic is explicitly \emph{not} used: it is not an equivalence test and can pass substantially worse outcomes.
 \end{definition}
 
 \begin{table}[H]
-\centering\small
-\begin{tabular}{llll}
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{1.9cm}p{2.6cm}p{4.2cm}p{3.2cm}@{}}
 \toprule
 \textbf{Domain} & \textbf{Role} & \textbf{Outcome measure} & \textbf{Instrument} \\
 \midrule
@@ -644,7 +691,7 @@ Educational & Teacher / tutor & Learning gain, engagement, sense of being unders
 \label{sec:atlas}
 %-----------------------------------------------------------
 
-ATLAS (Adaptive Topology Living Architecture with Specialists) integrates all seven layers.
+ATLAS (Adaptive Topology Living Architecture with Specialists) is designed to integrate all seven layers.
 
 \begin{figure}[H]
 \centering
@@ -660,7 +707,7 @@ ATLAS (Adaptive Topology Living Architecture with Specialists) integrates all se
 \node[box, fill=teal!20]   (muse)   at (6,6.5)  {MUSE\\music / art / dance};
 \node[box, fill=yellow!30] (logos)  at (-3,4.5) {LOGOS\\reasoning graph $\mathcal{R}_t$\\metacog.\ monitor};
 \node[box, fill=pink!40]   (socius) at (3,4.5)  {SOCIUS\\$\mathcal{P}$: individual memory\\$\mathcal{E}$: ethical nav.};
-\node[box, fill=purple!15] (eval)   at (0,3)    {CES / TEB / ATT / RET\\continuous evaluation};
+\node[box, fill=purple!15] (eval)   at (0,3)    {CES / TES / ATT / RET\\continuous evaluation};
 \node[box, fill=gray!15]   (memory) at (0,1.5)  {Molecular memory (L3)\\shared across all components};
 
 \draw[arrow] (user) -- (bigbr);
@@ -690,7 +737,7 @@ ATLAS (Adaptive Topology Living Architecture with Specialists) integrates all se
 \draw[arrow] (logos) -- (memory);
 \draw[arrow] (socius) -- (memory);
 \end{tikzpicture}
-\caption{ATLAS architecture. Big Brain routes (ARBOR), adapts topology (FLUID), runs on SPECTRUM hardware. LOGOS activates on low-confidence or multi-step queries. MUSE operates via $\kappa_a$. SOCIUS maintains per-individual persistent memory ($\mathcal{P}$) and navigates ethical dilemmas via $\mathcal{E}$. CES/TEB/ATT/RET evaluates continuously. Molecular memory (L3) shared.}
+\caption{ATLAS architecture. Big Brain routes (ARBOR), adapts topology (FLUID), runs on SPECTRUM hardware. LOGOS activates on low-confidence or multi-step queries. MUSE operates via $\kappa_a$. SOCIUS maintains per-individual persistent memory ($\mathcal{P}$) and navigates ethical dilemmas via $\mathcal{E}$. CES/TES/ATT/RET evaluates continuously. Molecular memory (L3) shared.}
 \label{fig:atlas}
 \end{figure}
 
@@ -700,28 +747,29 @@ ATLAS (Adaptive Topology Living Architecture with Specialists) integrates all se
 
 \textbf{Substrate-native specialists.} Each Long Brain runs on the substrate that matches its domain: Physics on analog (differential equations), Medicine on energy-based (constraint satisfaction over symptoms), Code on digital (symbolic manipulation), Mathematics on quantum (proof-space search).
 
-\textbf{TEB-driven growth.} FLUID topology adapts toward structures that improve TEB scores, grounding abstract curiosity in deployment value. Nodes and connections that consistently improve real-task efficiency are preserved; those that do not are pruned.
+\textbf{TES-driven growth.} FLUID topology adapts toward structures that improve TES scores, grounding abstract curiosity in deployment value. Nodes and connections that consistently improve real-task efficiency are preserved; those that do not are pruned.
 
 \textbf{Cross-specialist memory.} Molecular storage (SPECTRUM L3) is shared across all specialists. Physics Long Brain and Mathematics Long Brain share a memory substrate, enabling cross-domain retrieval without explicit routing.
 
 \subsection{ATLAS vs.\ Prior Systems}
 
 \begin{table}[H]
-\centering\small
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{lccccccc}
 \toprule
-\textbf{System} & \textbf{Eff.\ eval} & \textbf{Spec.\ depth} & \textbf{Opt.\ substrate} & \textbf{Fluid topo.} & \textbf{Creates} & \textbf{Deliberates}\\
+\textbf{System} & \textbf{Eff} & \textbf{Depth} & \textbf{Subs} & \textbf{Topo} & \textbf{Create} & \textbf{Reason} & \textbf{Relat}\\
 \midrule
-GPT-4            & No  & No  & No  & No  & No      & No \\
-Gemini Ultra     & No  & No  & No  & No  & No      & No \\
-Mixtral (MoE)    & No  & No  & No  & No  & No      & No \\
-DeepMind AIDE    & No  & No  & No  & No  & No      & Partial \\
-MuseNet/Jukebox  & No  & No  & No  & No  & Partial & No \\
-o1 / o3 (OpenAI) & No  & No  & No  & No  & No      & Partial (CoT, no graph) \\
-\textbf{ATLAS}   & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
+GPT-4            & -- & -- & -- & -- & -- & -- & -- \\
+Gemini Ultra     & -- & -- & -- & -- & -- & -- & -- \\
+Mixtral (MoE)    & -- & -- & -- & -- & -- & -- & -- \\
+DeepMind AIDE    & -- & -- & -- & -- & -- & $\sim$ & -- \\
+MuseNet/Jukebox  & -- & -- & -- & -- & $\sim$ & -- & -- \\
+o1 / o3 (OpenAI) & -- & -- & -- & -- & -- & $\sim$ & -- \\
+\textbf{ATLAS}   & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
 \bottomrule
 \end{tabular}
-\caption{ATLAS satisfies all six properties. OpenAI's o1/o3 systems approximate deliberate reasoning via extended chain-of-thought but have no explicit reasoning graph, no metacognitive confidence propagation, and no consistency verifier---they remain pattern-completion systems generating chains that look like inference.}
+\caption{ATLAS versus prior systems across the seven ATLAS properties: Eff (efficiency evaluation), Depth (specialist depth), Subs (optimal substrate), Topo (fluid topology), Create (autonomous creative agency), Reason (deliberate reasoning), Relat (persistent relational memory). \checkmark~satisfies, $\sim$~partial, --~absent. o1/o3 approximate deliberate reasoning via extended chain-of-thought but have no explicit reasoning graph, metacognitive confidence propagation, or consistency verifier.}
 \end{table}
 
 
@@ -730,7 +778,7 @@ o1 / o3 (OpenAI) & No  & No  & No  & No  & No      & Partial (CoT, no graph) \\
 \label{sec:open}
 %-----------------------------------------------------------
 
-The five components have different maturity levels:
+The seven components (plus the integrated system) have different maturity levels:
 
 \begin{table}[H]
 \centering\small
@@ -738,7 +786,7 @@ The five components have different maturity levels:
 \toprule
 \textbf{Component} & \textbf{Status} & \textbf{Primary open problem} & \textbf{Timeline}\\
 \midrule
-CES / TEB & Empirically validated ($n=4$) & Extend to full rubric tasks, larger model set & Now\\
+CES / TES & Preliminarily evaluated ($n=8$, 100 tasks) & Broader validation: proprietary models, larger $n$, per-category token analysis & Now\\
 ARBOR     & Theoretically specified & Empirical routing accuracy, depth advantage validation & 2--3 years\\
 SPECTRUM  & Theoretically specified & Hardware integration of six substrates & 4--7 years\\
 FLUID     & Partially validated ($n=120$ configs) & Causal memory, node creation, scale & 2--5 years\\
@@ -753,20 +801,20 @@ ATLAS     & Conceptually integrated & All of the above & 10--15 years\\
 
 \textbf{Priority 1: ARBOR empirical validation.} Build a working ARBOR system using Llama-3.3-70B as Big Brain and fine-tuned Llama-3-8B specialists (PubMed for medicine, arXiv for physics). Measure routing accuracy and domain benchmark improvement vs.\ same-size generalist. This is executable now.
 
-\textbf{Priority 2: FLUID at scale.} The Fluid Stability Conjecture has been empirically resolved: stable topology convergence exists within a narrow parameter band ($\theta_{\text{create}} = 0.3$, $\theta_{\text{prune}} \leq 0.01$). The next validation targets are (a) Mechanisms 2--3 (causal memory, temporal hierarchy) in isolation, (b) node creation/deletion stability as a separate open problem, and (c) scale experiments ($n_h \geq 1000$) to check whether the stable parameter band narrows at scale.
+\textbf{Priority 2: FLUID at scale.} The Fluid Stability Conjecture remains open: experiments identified only a narrow \emph{observed} stable-topology band ($\theta_{\text{create}} = 0.3$, $\theta_{\text{prune}} \leq 0.01$), not convergence, and the candidate Lyapunov function failed in every stable case. The next validation targets are (a) Mechanisms 2--3 (causal memory, temporal hierarchy) in isolation, (b) node creation/deletion stability as a separate open problem, and (c) scale experiments ($n_h \geq 1000$) to check whether the stable parameter band narrows at scale.
 
 \textbf{Priority 3: SPECTRUM partial integration.} Neuromorphic + optical perception layer (L1) integrated with a digital reasoning layer (L6 transformer). Intel Loihi and silicon photonics hardware exist and are accessible. Full SPECTRUM requires quantum and molecular components not yet production-ready.
 
-\textbf{Priority 4: LOGOS compositional benchmark.} Construct a test suite of $n=200$ problems designed to require exactly 3-, 5-, and 10-step inference chains, with each individual rule present in training but the specific combination novel. Measure accuracy of LOGOS (explicit reasoning graph) vs.\ chain-of-thought baseline (GPT-4o extended prompting). This is the first controlled test of explicit graph reasoning vs.\ elicited chain reasoning. Executable now with current software.
+\textbf{Priority 4: LOGOS compositional benchmark.} Construct a test suite of $n=200$ problems designed to require exactly 3-, 5-, and 10-step inference chains, with each individual rule present in training but the specific combination novel. Measure accuracy of LOGOS (explicit reasoning graph) vs.\ chain-of-thought baseline (GPT-4o extended prompting). This is, to our knowledge, a controlled test of explicit graph reasoning vs.\ elicited chain reasoning not previously run in this form. Executable now with current software.
 
-\textbf{Priority 5: MUSE ATT pilot.} Calibrate $\kappa_a$ weights $(\lambda_1, \lambda_2)$ on a held-out aesthetic evaluation set. Build $\ell_{\text{music}}$ specialist (fine-tuned on music theory + MIDI corpus) and test ATT Tier 1 (expert blind evaluation) on generated vs.\ human compositions. This is the first falsifiable test of the irreplaceability rebuttal. Dance requires SPECTRUM hardware; music ATT is executable with current software infrastructure.
+\textbf{Priority 5: MUSE ATT pilot.} Calibrate $\kappa_a$ weights $(\lambda_1, \lambda_2)$ on a held-out aesthetic evaluation set. Build $\ell_{\text{music}}$ specialist (fine-tuned on music theory + MIDI corpus) and test ATT Tier 1 (expert blind evaluation) on generated vs.\ human compositions. This is a falsifiable test of the irreplaceability rebuttal. Dance requires SPECTRUM hardware; music ATT is executable with current software infrastructure.
 
 %-----------------------------------------------------------
 \section{Related Work}
 \label{sec:related}
 %-----------------------------------------------------------
 
-\textbf{Evaluation.} MMLU \cite{hendrycks2021} and HumanEval \cite{chen2021} measure accuracy without compute normalization. FLOPs-per-token metrics \cite{kaplan2020} normalize by compute but not by task value. CES combines both; TEB adds deployment grounding.
+\textbf{Evaluation.} MMLU \cite{hendrycks2021} and HumanEval \cite{chen2021} measure accuracy without compute normalization. FLOPs-per-token metrics \cite{kaplan2020} normalize by static compute but not by task value or by tokens actually generated. CES combines accuracy and compute; TES adds token-cost deployment grounding, pricing the chain-of-thought a model spends per query.
 
 \textbf{Mixture of Experts.} \cite{shazeer2017, jiang2024} route tokens to sub-networks within one model. ARBOR uses independent full-model specialists trained on domain-specific corpora---a qualitatively different form of expertise.
 
@@ -780,19 +828,19 @@ ATLAS     & Conceptually integrated & All of the above & 10--15 years\\
 
 \textbf{Neurosymbolic AI.} Garcez et al.\ \cite{garcez2022} survey neural-symbolic integration. LOGOS differs: it does not translate neural representations into symbolic logic for separate processing; it layers an explicit reasoning graph on top of the neural pattern-completion substrate, activating on demand.
 
-\textbf{Computational creativity.} MuseNet \cite{payne2019} and Jukebox \cite{dhariwal2020} generate music from prompts; DALL-E \cite{ramesh2022} and Midjourney generate images from prompts. All are reactive systems with no autonomous creative drive. Briot et al.\ \cite{briot2020} survey deep learning for music generation; none of the surveyed systems includes an aesthetic curiosity signal or cross-modal synthesis. MUSE's ATT provides the first formal evaluation criterion for creative domain replacement. Moravec's paradox \cite{moravec1988} predicts that sensorimotor and perceptual tasks (dance, embodied art) are harder to automate than abstract reasoning; MUSE addresses this through SPECTRUM's morphological substrate rather than attempting to solve it in software alone.
+\textbf{Computational creativity.} MuseNet \cite{payne2019} and Jukebox \cite{dhariwal2020} generate music from prompts; DALL-E \cite{ramesh2022} and Midjourney generate images from prompts. All are reactive systems with no autonomous creative drive. Briot et al.\ \cite{briot2020} survey deep learning for music generation; none of the surveyed systems includes an aesthetic curiosity signal or cross-modal synthesis. MUSE's ATT provides an explicit, falsifiable evaluation criterion for creative-domain replacement (to our knowledge not previously formalized). Moravec's paradox \cite{moravec1988} predicts that sensorimotor and perceptual tasks (dance, embodied art) are harder to automate than abstract reasoning; MUSE addresses this through SPECTRUM's morphological substrate rather than attempting to solve it in software alone.
 
-\textbf{Causal AI.} Pearl \cite{pearl2009} establishes the three-tier causal hierarchy. Current LLMs operate at tier 1 (observation). FLUID's causal memory enables tiers 2--3 natively.
+\textbf{Causal AI.} Pearl \cite{pearl2009} establishes the three-tier causal hierarchy. Standard LLMs operate primarily at tier 1 (observation); causal and tool-augmented systems reach further in narrow settings, but native tier 2--3 reasoning is not a default capability. FLUID's causal memory targets tiers 2--3 natively.
 
 %-----------------------------------------------------------
 \section{Conclusion}
 %-----------------------------------------------------------
 
-This paper has argued that the boundary between AI and human capability is a fact about design, not a fact about nature. The argument: every claimed barrier reduces to an architectural requirement; every requirement is specifiable; every specification is satisfiable. ATLAS is the composition of seven specifications. CES/TEB measures whether the system achieves deployment value; ARBOR achieves domain depth; SPECTRUM achieves physical efficiency; FLUID achieves structural adaptability; MUSE achieves autonomous creative agency; LOGOS achieves deliberate reasoning; SOCIUS achieves relational intelligence---a persistent, evolving model of a specific person that can navigate the ethical complexity genuine care requires.
+This paper has argued that the boundary between AI and human capability is a fact about design, not a fact about nature. The argument: every claimed barrier reduces to an architectural requirement; every requirement is specifiable; every specification is satisfiable. ATLAS is the composition of seven specifications. CES/TES measures deployment value and is implemented; the remaining components are \emph{designed to} achieve their targets---ARBOR domain depth, SPECTRUM physical efficiency, FLUID structural adaptability, MUSE autonomous creative agency, LOGOS deliberate reasoning, and SOCIUS relational intelligence (a persistent, evolving model of a specific person that could navigate the ethical complexity genuine care requires)---but are specified, not yet built.
 
-The honest status of this framework is: CES/TEB empirically validated ($\rho = 0.80$, $n=4$ models); FLUID's core stability question empirically resolved (conjecture holds conditionally, stable band identified, Lyapunov mechanism open); ARBOR, SPECTRUM, MUSE, LOGOS, and SOCIUS theoretically specified with concrete open problems and falsifiable next experiments. The contribution of this paper is the architecture of the argument---what needs to be built and in what order---not the finished system.
+The honest status of this framework is: CES/TES preliminarily evaluated (8 models on one 100-task suite---an initial evaluation, not broad validation---showing a token penalty for reasoning models and a not-yet-significant quality/efficiency divergence); FLUID's core stability question empirically \emph{probed}, with an observed stable regime (12 of 120 configurations) identified but the convergence conjecture unresolved and the candidate Lyapunov function failing in all stable cases; ARBOR, SPECTRUM, MUSE, LOGOS, and SOCIUS theoretically specified with concrete open problems and falsifiable next experiments. The contribution of this paper is the architecture of the argument---what needs to be built and in what order---not the finished system.
 
-Five insights survive any future empirical revision:
+Six insights survive any future empirical revision:
 
 \begin{enumerate}
     \item \textit{Language is the output, not the mind.} The transformer should be the mouth of an intelligence whose brain runs on appropriate physics.
@@ -811,12 +859,14 @@ Five insights survive any future empirical revision:
 The people who build the systems described here have probably not yet finished high school.
 
 \vspace{1em}
-\noindent\textbf{Code and data.} CES implementation, TEB task set, scoring scripts, and CES--TEB comparison tools: \url{https://github.com/WINSTON672/lin-score}
+\noindent\textbf{Code and data.} The token-efficiency (TES) benchmark --- 100-task suite, scoring scripts, full model responses, and the eight-model results --- is released at: \url{https://github.com/WINSTON672/atlas-token-efficiency}
 
 %-----------------------------------------------------------
 \begin{thebibliography}{99}
 
 \bibitem{hendrycks2021} Hendrycks, D., et al.\ (2021). Measuring massive multitask language understanding. \textit{ICLR 2021}.
+
+\bibitem{eskimoz2025} Eskimoz (2025). \textit{The careers most resistant and most at risk from AI}. Study reported in Digital Journal. \url{https://www.digitaljournal.com/article/the-careers-most-resistant-and-most-at-risk-from-ai/}
 
 \bibitem{chen2021} Chen, M., et al.\ (2021). Evaluating large language models trained on code. \textit{arXiv:2107.03374}.
 
@@ -832,7 +882,7 @@ The people who build the systems described here have probably not yet finished h
 
 \bibitem{zoph2017} Zoph, B., \& Le, Q.V.\ (2017). Neural architecture search with reinforcement learning. \textit{ICLR 2017}.
 
-\bibitem{lin2026fluid_empirical} Lin, W.Z.\ (2026). Testing the Fluid Stability Conjecture: Empirical evidence for convergent self-structuring in dynamic neural topologies. \textit{arXiv preprint}.
+\bibitem{lin2026fluid_empirical} Lin, W.Z.\ (2026). Testing the Fluid Stability Conjecture: Empirical evidence for convergent self-structuring in dynamic neural topologies. Manuscript in preparation.
 
 \bibitem{stanley2002} Stanley, K.O., \& Miikkulainen, R.\ (2002). Evolving neural networks through augmenting topologies. \textit{Evolutionary Computation}, 10(2), 99--127.
 
