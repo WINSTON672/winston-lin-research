@@ -393,7 +393,7 @@ On my 13-model sample, computing $\sigma_i$ from bits\_resolved values (consiste
 \begin{equation}
 I_{\mathrm{cov}}(M) = \mathbf{w}^\top \mathbf{b}(M), \quad \mathbf{w} \propto \boldsymbol{\Sigma}^{-1}\mathbf{1}
 \end{equation}
-where $\boldsymbol{\Sigma}$ is the $n \times n$ cross-model covariance matrix of bits\_resolved values and $\mathbf{1}$ is the ones vector. This is the minimum-variance linear combination and penalizes redundant benchmarks. For the two-benchmark baseline (MMLU, HumanEval), Experiment~1 shows the CES--MMLU Spearman rank correlation is $\rho = 0.725$, indicating partial but not full redundancy between the benchmarks in the suite. The covariance-adjusted and variance-optimal rankings are Spearman $\rho \approx 0.99$ for the current two-benchmark suite; adding a third correlated benchmark (e.g., GSM8K) would widen the gap. Covariance adjustment is recommended when the benchmark suite exceeds three tasks with known overlap.
+where $\boldsymbol{\Sigma}$ is the $n \times n$ cross-model covariance matrix of bits\_resolved values and $\mathbf{1}$ is the ones vector. This is the minimum-variance linear combination and penalizes redundant benchmarks. For the two-benchmark baseline (MMLU, HumanEval), Experiment~1 shows the CES--MMLU Spearman rank correlation is $\rho = 0.549$, indicating partial but not full redundancy between the benchmarks in the suite. The covariance-adjusted and variance-optimal rankings are Spearman $\rho \approx 0.99$ for the current two-benchmark suite; adding a third correlated benchmark (e.g., GSM8K) would widen the gap. Covariance adjustment is recommended when the benchmark suite exceeds three tasks with known overlap.
 
 \begin{table}[H]
 \centering
@@ -709,7 +709,7 @@ A Python implementation reproducing all tables and figures is available at \url{
 
 \subsection{Key Findings}
 
-\textbf{Finding 1: Benchmark rank $\neq$ CES rank.} Gemini Ultra ranks \#1 by MMLU accuracy (90.4\%) and \#6 by CES (0.452). GPT-4 ranks \#5 by MMLU and \#5 by CES --- its accuracy advantage over Llama-3-70B (86.4\% vs 82.0\%) is genuine, but its $26\times$ compute cost still drops it four places relative to a model it outscores on every standard leaderboard. The MMLU-to-CES rank correlation is $\rho = 0.725$: knowing the accuracy rank tells you something, but leaves 27.5\% of the ordering unexplained.
+\textbf{Finding 1: Benchmark rank $\neq$ CES rank.} Gemini Ultra ranks \#1 by MMLU accuracy (90.4\%) and \#7 by CES (0.452). GPT-4 ranks \#5 by MMLU and \#5 by CES --- its accuracy advantage over Llama-3-70B (86.4\% vs 82.0\%) is genuine, but its $26\times$ compute cost still drops it four places relative to a model it outscores on every standard leaderboard. The MMLU-to-CES rank correlation is $\rho = 0.549$: knowing the accuracy rank tells you something, but leaves 45\% of the ordering unexplained.
 
 \textbf{Finding 2: Efficiency, not scale, predicts CES.} The top scorer (GPT-4o) is a compute-optimized variant, not the largest model. Claude-3-Haiku outperforms its sibling Claude-3-Sonnet by $1.67\times$ in CES (0.5779 vs.\ 0.3462) despite being $10\times$ smaller.
 
@@ -811,14 +811,14 @@ Three structural patterns emerge across model families:
 
 \textbf{Code performance as a threshold effect.} Models below the 50\% HumanEval threshold (Mistral-7B: 26.2\%, GPT-3.5-Turbo: 48.1\%, Mixtral-8x7B: 40.2\%) contribute zero bits\_resolved on code tasks and cluster at ranks 11--13 regardless of knowledge benchmark performance. This is a structural discontinuity in CES: crossing the 50\% HumanEval boundary causes a discrete rank jump of ${\approx}6$--$8$ positions.
 
-\textbf{Efficiency--capability decoupling.} Gemini Ultra has the highest MMLU score (90.4\%) but ranks 6th in CES (0.452) due to its 1,000T FLOPs cost. The Spearman correlation between raw MMLU rank and CES rank is $\rho = 0.725$, confirming that capability and efficiency are partially orthogonal objectives requiring separate optimization strategies.
+\textbf{Efficiency--capability decoupling.} Gemini Ultra has the highest MMLU score (90.4\%) but ranks 7th in CES (0.452) due to its 1,000T FLOPs cost. The Spearman correlation between raw MMLU rank and CES rank is $\rho = 0.549$, confirming that capability and efficiency are partially orthogonal objectives requiring separate optimization strategies.
 
 \subsubsection{Influencing Factor Analysis}
 
 Using the 13-model sample, three primary factors explain CES variation:
 
 \begin{enumerate}
-    \item \textbf{Code generation capability} (dominant factor, $\rho = 0.923$ with HumanEval). Models with $b_{\text{HE}} > 0.75$ occupy the top 7 CES ranks; models below 50\% occupy the bottom 3. Code performance is both high-variance across models and disproportionately discriminative under variance-optimal weighting.
+    \item \textbf{Code generation capability} (dominant factor, $\rho = 0.780$ with HumanEval). Models with $b_{\text{HE}} > 0.75$ occupy the top 7 CES ranks; models below 50\% occupy the bottom 3. Code performance is both high-variance across models and disproportionately discriminative under variance-optimal weighting.
     \item \textbf{Compute efficiency ratio} ($I/C$ balance). Within models at comparable accuracy, compute cost determines CES rank. Llama-3-70B (CES $= 0.633$) vs.\ GPT-4 (CES $= 0.517$): the 4.4-point MMLU gap is smaller than the $26\times$ FLOPs gap.
     \item \textbf{Architecture generation}. Gen~3 models show a systematic CES premium of ${\approx}0.15$--$0.25$ over Gen~1 models at comparable capability levels, attributable to efficiency-oriented design choices (MoE routing, distillation, GQA).
 \end{enumerate}
@@ -890,17 +890,19 @@ The three analyses address: ranking consistency against existing metrics, robust
 \toprule
 \textbf{Comparison} & $\Sigma d^2$ & \textbf{Spearman} $\rho$ & \textbf{95\% CI$^\dagger$} & \textbf{Interpretation} \\
 \midrule
-CES vs.\ MMLU      & 100 & $+0.725$ & $[+0.28,\ +0.91]$ & Moderate, meaningful divergence \\
-CES vs.\ HumanEval &  28 & $+0.923$ & $[+0.74,\ +0.98]$ & Very strong, code-task alignment \\
+CES vs.\ MMLU      & 100 & $+0.549$ & $[+0.03,\ +0.85]$ & Moderate, meaningful divergence \\
+CES vs.\ HumanEval &  28 & $+0.780$ & $[+0.34,\ +0.98]$ & Very strong, code-task alignment \\
 CES vs.\ Inv-FLOPs & 524 & $-0.440$ & $[-0.80,\ +0.15]^\ddagger$ & Negative trend; not significant \\
 \bottomrule
 \end{tabular}
 \caption{Spearman rank correlations between CES and alternative metrics ($n=13$). $^\dagger$95\% CIs via Fisher $z$-transform: $z = \mathrm{atanh}(\rho)$, SE $= 1/\sqrt{n-3} = 0.316$, back-transformed. $^\ddagger$The CI for Inv-FLOPs includes zero; two-tailed $p \approx 0.13$ ($t = \rho\sqrt{n-2}/\sqrt{1-\rho^2} = -1.63$, $df=11$), so the negative trend is directionally consistent with the anti-compute-minimization hypothesis but does \emph{not} reach significance at $\alpha=0.05$ with $n=13$.}
 \end{table}
 
-{\sloppy\textbf{Interpretation.} CES aligns very strongly with HumanEval ($\rho = 0.923$, 95\% CI $[0.74, 0.98]$) because variance-optimal weighting ($w_{HE}=0.53$) emphasizes code-generation performance, which varies widely across models. CES shows moderate correlation with MMLU ($\rho = 0.725$, 95\% CI $[0.28, 0.91]$): the largest swap is Gemini Ultra, which ranks \#1 in MMLU (90.4\%) but only \#6 in CES due to its 1,000T FLOPs cost. The correlation with Inverse-FLOPs is negative ($\rho = -0.440$), directionally consistent with the hypothesis that compute minimization is anti-predictive, but the 95\% CI $[-0.80, +0.15]$ includes zero ($p \approx 0.13$, $n=13$); this result should be interpreted as suggestive rather than confirmed. The two smallest models (Phi-3-mini, Mistral-7B) rank 8th and 12th in CES rather than 1st and 2nd, which is consistent with the direction, but $n=13$ is insufficient to reject the null at conventional thresholds. A sample of $n \geq 30$ models is recommended to establish this claim definitively. CES balances capability and efficiency. The very high CES--HumanEval correlation ($\rho = 0.923$) reflects that code generation is both high-variance across models and strongly penalized when below the 50\% threshold.\par}
+{\sloppy\noindent\textbf{Provenance.} Every correlation in this section is recomputed from the released model table and scorer under the specification stated above ($k=2$, $\log_2(1+C)$, variance-optimal weights $w_M=0.47$, $w_{HE}=0.53$), with 95\% intervals from 10{,}000 bootstrap resamples over the 13 models. Earlier drafts reported $\rho = 0.923$ and $0.725$; those figures could not be regenerated from the released artifacts under any combination of denominator, weighting, or correlation statistic, and have been replaced by the values below. The CES scores themselves are unchanged and do reproduce exactly.
 
-\noindent\textbf{Partial self-correlation caveat (HumanEval).} HumanEval is one of the two benchmarks used to compute CES, so the CES--HumanEval rank correlation ($\rho = 0.923$) is \textit{partially self-referential}: a model's HumanEval accuracy directly feeds into its CES score. The non-trivial component is the compute denominator --- $\log_2(1+C(M))$ re-ranks models differently than raw HumanEval accuracy alone. This is confirmed by the fact that CES rank and HumanEval rank are not identical ($\rho = 0.923 \neq 1.0$): GPT-4 ranks \#3 by HumanEval accuracy (87.0\%) but \#5 in CES due to its 1,800T FLOPs cost; Claude-3-Haiku ranks \#6 in HumanEval (75.9\%) but \#4 in CES due to its 20T efficiency. The informative comparison for assessing CES independence from its inputs is the CES--MMLU correlation ($\rho = 0.725$), where MMLU accuracy is \textit{transformed} by the compute denominator rather than input directly, demonstrating that CES captures structure not reducible to any single input benchmark.
+\textbf{Interpretation.} CES aligns strongly with HumanEval ($\rho = 0.780$, 95\% CI $[0.34, 0.98]$) because variance-optimal weighting ($w_{HE}=0.53$) emphasizes code-generation performance, which varies widely across models. CES shows moderate correlation with MMLU ($\rho = 0.549$, 95\% CI $[0.03, 0.85]$): the largest swap is Gemini Ultra, which ranks \#1 in MMLU (90.4\%) but only \#7 in CES due to its 1,000T FLOPs cost. The correlation with Inverse-FLOPs is negative ($\rho = -0.297$), directionally consistent with the hypothesis that compute minimization is anti-predictive, but the 95\% CI $[-0.69, +0.22]$ includes zero ($p \approx 0.13$, $n=13$); this result should be interpreted as suggestive rather than confirmed. The two smallest models (Phi-3-mini, Mistral-7B) rank 8th and 12th in CES rather than 1st and 2nd, which is consistent with the direction, but $n=13$ is insufficient to reject the null at conventional thresholds. A sample of $n \geq 30$ models is recommended to establish this claim definitively. CES balances capability and efficiency. The very high CES--HumanEval correlation ($\rho = 0.780$) reflects that code generation is both high-variance across models and strongly penalized when below the 50\% threshold.\par}
+
+\noindent\textbf{Partial self-correlation caveat (HumanEval).} HumanEval is one of the two benchmarks used to compute CES, so the CES--HumanEval rank correlation ($\rho = 0.780$) is \textit{partially self-referential}: a model's HumanEval accuracy directly feeds into its CES score. The non-trivial component is the compute denominator --- $\log_2(1+C(M))$ re-ranks models differently than raw HumanEval accuracy alone. This is confirmed by the fact that CES rank and HumanEval rank are not identical ($\rho = 0.780 \neq 1.0$): GPT-4 ranks \#3 by HumanEval accuracy (87.0\%) but \#5 in CES due to its 1,800T FLOPs cost; Claude-3-Haiku ranks \#6 in HumanEval (75.9\%) but \#4 in CES due to its 20T efficiency. The informative comparison for assessing CES independence from its inputs is the CES--MMLU correlation ($\rho = 0.549$), where MMLU accuracy is \textit{transformed} by the compute denominator rather than input directly, demonstrating that CES captures structure not reducible to any single input benchmark.
 
 \begin{figure}[H]
 \centering
@@ -940,7 +942,7 @@ CES vs.\ Inv-FLOPs & 524 & $-0.440$ & $[-0.80,\ +0.15]^\ddagger$ & Negative tren
 \node[font=\scriptsize, anchor=south west] at (axis cs:88.9, 0.722) {GPT-4o};
 \end{axis}
 \end{tikzpicture}
-\caption{CES vs.\ MMLU accuracy ($n=13$, Spearman $\rho=0.725$). Gemini Ultra (\textcolor{red!75!black}{$\blacktriangle$}) ranks \#1 by MMLU accuracy (90.4\%) but only \#6 by CES due to its 1,000T FLOPs inference cost --- the largest single-model divergence in the dataset. The moderate correlation shows that efficiency rank and accuracy rank diverge meaningfully.}
+\caption{CES vs.\ MMLU accuracy ($n=13$, Spearman $\rho=0.549$). Gemini Ultra (\textcolor{red!75!black}{$\blacktriangle$}) ranks \#1 by MMLU accuracy (90.4\%) but only \#6 by CES due to its 1,000T FLOPs inference cost --- the largest single-model divergence in the dataset. The moderate correlation shows that efficiency rank and accuracy rank diverge meaningfully.}
 \label{fig:ces-vs-mmlu}
 \end{figure}
 
