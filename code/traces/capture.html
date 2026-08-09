@@ -1,0 +1,116 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Trace capture</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#6b6b6b; --line:#e2e2e2; --bg:#faf9f7; --accent:#a83c1d; }
+  * { box-sizing:border-box; margin:0; padding:0 }
+  body { font:15px/1.5 ui-sans-serif,system-ui,sans-serif; color:var(--ink);
+         background:var(--bg); padding:28px; max-width:820px; margin:0 auto }
+  h1 { font-size:19px; font-weight:650; margin-bottom:4px }
+  p.sub { color:var(--muted); font-size:13px; margin-bottom:20px }
+  label { display:block; font-size:12px; font-weight:650; text-transform:uppercase;
+          letter-spacing:.04em; color:var(--muted); margin:16px 0 6px }
+  input, textarea { width:100%; padding:10px 12px; border:1px solid var(--line);
+                    border-radius:7px; background:#fff; font:inherit; color:inherit }
+  textarea { min-height:280px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+             font-size:14px; line-height:1.6; resize:vertical }
+  input:focus, textarea:focus { outline:2px solid color-mix(in srgb,var(--accent) 30%,transparent);
+                                outline-offset:1px; border-color:var(--accent) }
+  .row { display:flex; gap:10px; align-items:center; margin-top:16px; flex-wrap:wrap }
+  button { padding:10px 16px; border:0; border-radius:7px; background:var(--accent);
+           color:#fff; font:inherit; font-weight:600; cursor:pointer }
+  button.ghost { background:transparent; color:var(--ink); border:1px solid var(--line) }
+  button:disabled { opacity:.45; cursor:default }
+  .stat { margin-left:auto; color:var(--muted); font-size:12px;
+          font-variant-numeric:tabular-nums }
+  .note { margin-top:22px; padding:12px 14px; border-left:3px solid var(--line);
+          color:var(--muted); font-size:12.5px }
+  kbd { font:inherit; background:#efeee9; padding:1px 5px; border-radius:4px }
+</style>
+
+<h1>Trace capture</h1>
+<p class="sub">Records the whole solve, including what you delete. Work normally —
+don't tidy up, and don't retype a clean version at the end.</p>
+
+<label for="pid">Problem</label>
+<input id="pid" placeholder="e.g. amc12-2024-p13" autocomplete="off">
+
+<label for="work">Working</label>
+<textarea id="work" placeholder="Start typing. Everything is recorded from the first keystroke." spellcheck="false"></textarea>
+
+<div class="row">
+  <button id="save" disabled>Download trace</button>
+  <button id="reset" class="ghost">Reset</button>
+  <span class="stat" id="stat">0 events · 0.0 s</span>
+</div>
+
+<div class="note">
+  Nothing leaves this page — the file saves to your machine and there is no network
+  request. Timestamps are milliseconds from your first keystroke, so no wall-clock
+  time is stored. Put an anonymous participant code in the Problem field if you are
+  running this with other people; don't use names.
+</div>
+
+<script>
+(function () {
+  const work = document.getElementById('work');
+  const pid  = document.getElementById('pid');
+  const save = document.getElementById('save');
+  const stat = document.getElementById('stat');
+
+  let events = [];   // {t, text} -- full document state, not diffs
+  let t0 = null;
+  let pending = null;
+
+  // Snapshot the whole document rather than keystrokes. Diffing is the
+  // labeller's job, and full states survive paste, undo, and multi-cursor
+  // edits that a keystroke log would misrepresent.
+  function snapshot() {
+    const now = performance.now();
+    if (t0 === null) t0 = now;
+    const text = work.value;
+    const last = events[events.length - 1];
+    if (last && last.text === text) return;      // nothing actually changed
+    events.push({ t: Math.round(now - t0), text });
+    save.disabled = events.length === 0;
+    stat.textContent =
+      `${events.length} events · ${((now - t0) / 1000).toFixed(1)} s`;
+  }
+
+  // Coalesce within a typing burst: one snapshot per ~120 ms of activity keeps
+  // the file small without losing any pause longer than the segmenter cares
+  // about (its shortest threshold is 400 ms).
+  function onEdit() {
+    if (pending) clearTimeout(pending);
+    pending = setTimeout(snapshot, 120);
+  }
+
+  work.addEventListener('input', onEdit);
+  work.addEventListener('blur', snapshot);
+
+  save.addEventListener('click', function () {
+    snapshot();
+    const blob = new Blob([JSON.stringify({
+      problem_id: pid.value.trim() || 'untitled',
+      captured_ms: events.length ? events[events.length - 1].t : 0,
+      events: events,
+      final_text: work.value
+    }, null, 2)], { type: 'application/json' });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (pid.value.trim() || 'trace').replace(/[^a-z0-9._-]+/gi, '-') + '.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    if (events.length && !confirm('Discard this trace?')) return;
+    events = []; t0 = null; work.value = '';
+    save.disabled = true; stat.textContent = '0 events · 0.0 s';
+    work.focus();
+  });
+
+  work.focus();
+})();
+</script>
