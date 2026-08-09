@@ -1,0 +1,418 @@
+[
+  {
+    "id": 1114756236,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 7422.6,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114666218,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 2061.3,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113764405,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 1700.8,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 628794613,
+    "name": null,
+    "kind": "school",
+    "area_m2": 1155.1,
+    "height_m": 10.5,
+    "height_source": "osm:levels"
+  },
+  {
+    "id": 1113737656,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 1085.3,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113474397,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 1080.0,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 906818205,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 967.1,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114722138,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 922.8,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113774439,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 899.1,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320896,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 825.7,
+    "height_m": 13.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113764398,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 590.1,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113031025,
+    "name": null,
+    "kind": "house",
+    "area_m2": 560.8,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113723886,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 555.9,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114756256,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 472.5,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113764386,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 404.9,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114756259,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 398.3,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113723892,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 352.7,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113031022,
+    "name": null,
+    "kind": "house",
+    "area_m2": 333.9,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113011201,
+    "name": null,
+    "kind": "house",
+    "area_m2": 310.8,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114748780,
+    "name": null,
+    "kind": "house",
+    "area_m2": 308.6,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113723887,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 278.1,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320897,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 274.9,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113031021,
+    "name": null,
+    "kind": "house",
+    "area_m2": 260.0,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1112530432,
+    "name": null,
+    "kind": "house",
+    "area_m2": 240.5,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114748775,
+    "name": null,
+    "kind": "house",
+    "area_m2": 223.6,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320925,
+    "name": null,
+    "kind": "house",
+    "area_m2": 206.1,
+    "height_m": 9.5,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113179393,
+    "name": null,
+    "kind": "house",
+    "area_m2": 197.6,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114748769,
+    "name": null,
+    "kind": "house",
+    "area_m2": 184.0,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113011204,
+    "name": null,
+    "kind": "house",
+    "area_m2": 163.7,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320930,
+    "name": null,
+    "kind": "garage",
+    "area_m2": 156.6,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320931,
+    "name": null,
+    "kind": "house",
+    "area_m2": 138.1,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320927,
+    "name": null,
+    "kind": "house",
+    "area_m2": 134.5,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320900,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 132.6,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320899,
+    "name": null,
+    "kind": "house",
+    "area_m2": 124.2,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320923,
+    "name": null,
+    "kind": "garage",
+    "area_m2": 115.7,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320898,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 106.0,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320933,
+    "name": null,
+    "kind": "house",
+    "area_m2": 96.4,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1115070177,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 69.1,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114748746,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 64.9,
+    "height_m": 6.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113011202,
+    "name": null,
+    "kind": "shed",
+    "area_m2": 52.0,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1271256534,
+    "name": null,
+    "kind": "roof",
+    "area_m2": 45.2,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113011205,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 42.6,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113737663,
+    "name": null,
+    "kind": "roof",
+    "area_m2": 40.3,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1271256533,
+    "name": null,
+    "kind": "roof",
+    "area_m2": 36.0,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320918,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 32.5,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1271256536,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 22.4,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114748748,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 21.4,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 971320906,
+    "name": null,
+    "kind": "roof",
+    "area_m2": 19.0,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1113764396,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 18.1,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1114748747,
+    "name": null,
+    "kind": "yes",
+    "area_m2": 15.6,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1136049215,
+    "name": null,
+    "kind": "roof",
+    "area_m2": 15.2,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  },
+  {
+    "id": 1136049214,
+    "name": null,
+    "kind": "roof",
+    "area_m2": 13.5,
+    "height_m": 3.0,
+    "height_source": "guessed"
+  }
+]
