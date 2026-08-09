@@ -1,51 +1,61 @@
 [
   {
     "id": 1114756236,
-    "name": null,
+    "name": "Tracy Hall: Squash Courts & Golf Pro Shop",
     "kind": "yes",
     "area_m2": 7422.6,
     "height_m": 13.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "also_houses": [
+      "Hardwick Hall: Field House, Performance Gymnasium, Jeffrey P. Buxton Wrestling Room, Fitness Center & Wallace Pool",
+      "Hardwick Hall: Blair Commons, School Store, The Black Canteen & College Counseling"
+    ],
+    "name_source": "osm:inside"
   },
   {
     "id": 1114666218,
-    "name": null,
+    "name": "Armstrong-Hipkins Center for the Arts",
     "kind": "yes",
     "area_m2": 2061.3,
     "height_m": 13.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113764405,
-    "name": null,
+    "name": "Insley Hall & Flight Deck: Romano Dining Hall & Dormitory",
     "kind": "yes",
     "area_m2": 1700.8,
     "height_m": 13.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 628794613,
-    "name": null,
+    "name": "Bogle Hall (Science Center)",
     "kind": "school",
     "area_m2": 1155.1,
     "height_m": 10.5,
-    "height_source": "osm:levels"
+    "height_source": "osm:levels",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113737656,
-    "name": null,
+    "name": "Locke Hall: Dormitory & Head of School/Admission Offices",
     "kind": "yes",
     "area_m2": 1085.3,
     "height_m": 13.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113474397,
-    "name": null,
+    "name": "Clinton Hall: Classrooms & Student Life/Academic Offices)",
     "kind": "yes",
     "area_m2": 1080.0,
     "height_m": 13.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 906818205,
@@ -57,19 +67,21 @@
   },
   {
     "id": 1114722138,
-    "name": null,
+    "name": "Anne L. Siegel \u201cAnnie\u201d Hall: Dormitory",
     "kind": "yes",
     "area_m2": 922.8,
     "height_m": 13.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113774439,
-    "name": null,
+    "name": "Chiang-Elghanayan Center for Innovation & Collaboration",
     "kind": "yes",
     "area_m2": 899.1,
     "height_m": 13.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 971320896,
@@ -81,91 +93,102 @@
   },
   {
     "id": 1113764398,
-    "name": null,
+    "name": "J. Brooks Hoffman \u201936 Health Center",
     "kind": "yes",
     "area_m2": 590.1,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113031025,
-    "name": null,
+    "name": "Steckel & Miller House (Faculty Residence)",
     "kind": "house",
     "area_m2": 560.8,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113723886,
-    "name": null,
+    "name": "Timken Library: Technology Office & Archives",
     "kind": "yes",
     "area_m2": 555.9,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1114756256,
-    "name": null,
+    "name": "Mason Hall: Dormitory",
     "kind": "yes",
     "area_m2": 472.5,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113764386,
-    "name": null,
+    "name": "Boiler House: Communications Office & Heating Plant",
     "kind": "yes",
     "area_m2": 404.9,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1114756259,
-    "name": null,
+    "name": "Freeman Hall: Dormitory",
     "kind": "yes",
     "area_m2": 398.3,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113723892,
-    "name": null,
+    "name": "West Hall: Dormitory",
     "kind": "yes",
     "area_m2": 352.7,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113031022,
-    "name": null,
+    "name": "Rea House (Faculty Residence)",
     "kind": "house",
     "area_m2": 333.9,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113011201,
-    "name": null,
+    "name": "Sharpe House (Head of School Residence)",
     "kind": "house",
     "area_m2": 310.8,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1114748780,
-    "name": null,
+    "name": "Howard House (Faculty Residence)",
     "kind": "house",
     "area_m2": 308.6,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113723887,
-    "name": null,
+    "name": "Ivy Hall: Dormitory, Advancement & Business Offices",
     "kind": "yes",
     "area_m2": 278.1,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 971320897,
@@ -177,11 +200,12 @@
   },
   {
     "id": 1113031021,
-    "name": null,
+    "name": "Siegel House (Faculty Residence)",
     "kind": "house",
     "area_m2": 260.0,
     "height_m": 9.5,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1112530432,
@@ -209,27 +233,30 @@
   },
   {
     "id": 1113179393,
-    "name": null,
+    "name": "J Li Golf Training Center & Blair Golf Course",
     "kind": "house",
     "area_m2": 197.6,
     "height_m": 6.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1114748769,
-    "name": null,
+    "name": "Jenkins House (Faculty Residence)",
     "kind": "house",
     "area_m2": 184.0,
     "height_m": 6.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1113011204,
-    "name": null,
+    "name": "Peachey House (Faculty Residence)",
     "kind": "house",
     "area_m2": 163.7,
     "height_m": 6.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 971320930,
@@ -265,11 +292,12 @@
   },
   {
     "id": 971320899,
-    "name": null,
+    "name": "Cook Farm House (Faculty Residence)",
     "kind": "house",
     "area_m2": 124.2,
     "height_m": 6.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 971320923,
@@ -297,11 +325,12 @@
   },
   {
     "id": 1115070177,
-    "name": null,
+    "name": "Sloane Tennis House",
     "kind": "yes",
     "area_m2": 69.1,
     "height_m": 6.0,
-    "height_source": "guessed"
+    "height_source": "guessed",
+    "name_source": "osm:inside"
   },
   {
     "id": 1114748746,
