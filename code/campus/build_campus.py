@@ -284,6 +284,30 @@ def main():
     buildings, paths = build(data, args.radius)
     buildings.sort(key=lambda b: -b['area_m2'])
 
+    # Names, scene links and corrected heights live in campus.json and are the
+    # only things here a person made. Rebuilding from OSM must not destroy
+    # them, so they are merged back over the freshly derived records.
+    KEEP = ('name', 'also_houses', 'name_source', 'scene', 'status')
+    prior = {}
+    jpath = os.path.join(HERE, 'campus.json')
+    if os.path.exists(jpath):
+        with open(jpath) as fh:
+            for r in json.load(fh):
+                prior[r['id']] = {k: r[k] for k in KEEP if r.get(k) is not None}
+        # A height edited by hand outranks anything guessed from area.
+        for b in buildings:
+            was = prior.get(b['id'], {})
+            if was.get('height_source') in ('measured',):
+                b['height_m'] = was['height_m']
+                b['height_source'] = 'measured'
+
+    for b in buildings:
+        b.update(prior.get(b['id'], {}))
+    kept = sum(1 for b in buildings if b.get('name'))
+    if prior:
+        print(f'carried {kept} names forward from the existing campus.json')
+
+
     print(f'{len(buildings)} buildings, {len(paths)} paths')
     real = sum(1 for b in buildings if b['height_source'] != 'guessed')
     print(f'heights: {real} from OSM, {len(buildings) - real} estimated')
@@ -296,12 +320,14 @@ def main():
               f"{b['name'] or '(unnamed — id ' + str(b['id']) + ')'}")
 
     write_preview(buildings, paths, os.path.join(HERE, 'campus.png'))
+    written = ['campus.png']
     if not args.preview_only:
         write_obj(buildings, os.path.join(HERE, 'campus.obj'))
-        with open(os.path.join(HERE, 'campus.json'), 'w') as fh:
+        with open(jpath, 'w') as fh:
             json.dump([{k: v for k, v in b.items() if k != 'poly'}
                        for b in buildings], fh, indent=2)
-    print('\nwrote campus.png, campus.obj, campus.json')
+        written += ['campus.obj', 'campus.json']
+    print('\nwrote ' + ', '.join(written))
 
 
 if __name__ == '__main__':
