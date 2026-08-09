@@ -1,0 +1,178 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Room viewer — 360</title>
+<style>
+  :root{--bg:#14130f;--panel:#1d1b16;--line:#2f2c24;--ink:#e8e2d4;--muted:#8b8577;--hot:#e08a3c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  /* An id selector setting display beats the UA rule for [hidden], so the
+     attribute silently stops working. Restore it explicitly. */
+  [hidden]{display:none!important}
+  body{font:14px/1.5 ui-sans-serif,system-ui,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
+  #view{position:fixed;inset:0}
+  canvas{display:block;cursor:grab}canvas:active{cursor:grabbing}
+
+  #drop{position:fixed;inset:0;z-index:10;display:grid;place-items:center;
+        background:var(--bg);transition:background .15s}
+  #drop.over{background:#1c1a14}
+  #drop .inner{text-align:center;max-width:440px;padding:40px;border:1px dashed var(--line);
+        border-radius:14px}
+  #drop h1{font-size:17px;font-weight:650;margin-bottom:6px}
+  #drop p{color:var(--muted);font-size:13px;line-height:1.65}
+  #drop button{margin-top:18px;padding:10px 20px;border:0;border-radius:7px;background:var(--hot);
+        color:#14130f;font:inherit;font-weight:650;cursor:pointer}
+  .warn{margin-top:16px;padding:10px 12px;border-left:2px solid var(--hot);text-align:left;
+        color:var(--muted);font-size:12px;line-height:1.6}
+
+  #bar{position:fixed;left:0;right:0;bottom:0;z-index:8;display:flex;align-items:center;gap:14px;
+       padding:10px 16px;background:linear-gradient(transparent,#14130fdd 40%);
+       font-size:12px;color:var(--muted)}
+  #bar b{color:var(--ink);font-weight:600}
+  #bar .sp{margin-left:auto;display:flex;gap:8px}
+  #bar button{padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:#00000044;
+        color:var(--ink);font:inherit;font-size:12px;cursor:pointer}
+  #bar select{padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:#100f0c;
+        color:var(--ink);font:inherit;font-size:12px}
+  .pill{padding:3px 8px;border-radius:99px;background:#00000055;border:1px solid var(--line)}
+</style>
+
+<div id="view"></div>
+
+<div id="bar" hidden>
+  <span id="meta"></span>
+  <span class="sp">
+    <select id="building"><option value="">— attach to building —</option></select>
+    <button id="another">Load another</button>
+  </span>
+</div>
+
+<div id="drop">
+  <div class="inner">
+    <h1>Room viewer</h1>
+    <p>Drop a 360 photo here, or pick one.<br>Nothing uploads — it renders locally.</p>
+    <button id="pick">Choose photo</button>
+    <input id="file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+    <div class="warn">
+      A full sphere is <b>2:1</b> — twice as wide as it is tall. iPhone
+      <i>Panorama</i> mode does not make one; it makes a wide strip, and it will
+      render as a band with grey above and below. For a real photosphere use a
+      360 camera, or Google Street View's app, which stitches one from a guided
+      capture.
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x14130f);
+
+// The camera sits at the centre of the sphere, so the near plane must be tiny
+// and the sphere radius is arbitrary -- only the ratio matters.
+const camera = new THREE.PerspectiveCamera(72, 1, 0.1, 1100);
+camera.position.set(0, 0, 0.01);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.getElementById('view').appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableZoom = false;      // zoom would move the eye off centre
+controls.enablePan = false;
+controls.enableDamping = true;
+controls.rotateSpeed = -0.32;     // negative: drag left, world goes left
+controls.target.set(0, 0, 0);
+
+let sphere = null;
+
+function show(texture, meta) {
+  if (sphere) { sphere.geometry.dispose(); sphere.material.map.dispose();
+                sphere.material.dispose(); scene.remove(sphere); }
+
+  const {width, height} = texture.image;
+  const ratio = width / height;
+  const full = Math.abs(ratio - 2) < 0.12;      // 2:1 within tolerance
+
+  // A partial panorama is not a sphere. Rendering one as if it were smears the
+  // image over the whole view; instead it covers only the vertical wedge it
+  // actually spans, and the rest stays empty rather than invented.
+  const phiLength   = Math.PI * 2;
+  const thetaLength = full ? Math.PI : Math.PI * (2 / ratio);
+  const thetaStart  = (Math.PI - thetaLength) / 2;
+
+  const geo = new THREE.SphereGeometry(500, 90, 60, 0, phiLength,
+                                       thetaStart, thetaLength);
+  geo.scale(-1, 1, 1);            // flip inside-out so we see the inner face
+
+  texture.colorSpace = THREE.SRGBColorSpace;
+  sphere = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: texture}));
+  scene.add(sphere);
+
+  document.getElementById('drop').hidden = true;
+  document.getElementById('bar').hidden = false;
+  document.getElementById('meta').innerHTML =
+    `<b>${meta.name}</b> &nbsp; <span class="pill">${width}×${height}</span> ` +
+    `<span class="pill">${ratio.toFixed(2)}:1</span> ` +
+    (full ? '<span class="pill">full sphere</span>'
+          : `<span class="pill" style="color:#e08a3c">partial — ${Math.round(thetaLength*180/Math.PI)}° tall</span>`);
+}
+
+function loadFile(file) {
+  const url = URL.createObjectURL(file);
+  new THREE.TextureLoader().load(url, tex => {
+    URL.revokeObjectURL(url);
+    show(tex, {name: file.name});
+  }, undefined, () => {
+    URL.revokeObjectURL(url);
+    alert('Could not read that image.');
+  });
+}
+
+// ── file input, drag and drop ──────────────────────────────────────────────
+const fileInput = document.getElementById('file');
+document.getElementById('pick').onclick = () => fileInput.click();
+document.getElementById('another').onclick = () => fileInput.click();
+fileInput.onchange = e => { if (e.target.files[0]) loadFile(e.target.files[0]); };
+
+const drop = document.getElementById('drop');
+for (const ev of ['dragenter','dragover']) {
+  addEventListener(ev, e => { e.preventDefault(); drop.hidden = false; drop.classList.add('over'); });
+}
+addEventListener('dragleave', e => { if (e.relatedTarget === null) drop.classList.remove('over'); });
+addEventListener('drop', e => {
+  e.preventDefault(); drop.classList.remove('over');
+  const f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
+  if (f) loadFile(f); else if (sphere) drop.hidden = true;
+});
+
+// ── ?src=file.jpg — so a room has a shareable link, and the campus map has
+//    something to point at ────────────────────────────────────────────────
+const src = new URLSearchParams(location.search).get('src');
+if (src) {
+  new THREE.TextureLoader().load(src,
+    tex => show(tex, {name: src.split('/').pop()}),
+    undefined,
+    () => { document.querySelector('#drop p').innerHTML =
+              `Could not load <b>${src}</b>.<br>Drop a file instead.`; });
+}
+
+// ── attach the room to a building ──────────────────────────────────────────
+fetch('campus.json').then(r => r.json()).then(recs => {
+  const sel = document.getElementById('building');
+  recs.filter(r => r.name).sort((a,b) => a.name.localeCompare(b.name))
+      .forEach(r => sel.add(new Option(r.name.split(':')[0], r.id)));
+}).catch(() => {});   // viewer works standalone; the list is a convenience
+
+function resize() {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+}
+addEventListener('resize', resize); resize();
+
+(function loop(){ requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+</script>

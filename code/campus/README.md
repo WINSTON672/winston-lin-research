@@ -72,3 +72,33 @@ model is inferred rather than known.
 three.js is vendored in `vendor/` rather than loaded from a CDN. The CDN import
 failed here even though the CDN answered HEAD with 200, and the editor has to
 work on a machine with no internet.
+
+## room.html — 360 photo viewer
+
+```
+http://localhost:8000/room.html                    drop a photo
+http://localhost:8000/room.html?src=my-room.jpg    or link one directly
+```
+
+Drop an equirectangular JPG and look around. **No processing at all** — the
+image is mapped onto the inside of a sphere by the browser. No COLMAP, no
+training, no GPU.
+
+**A full sphere is 2:1.** The viewer measures the aspect ratio and says which
+you gave it. iPhone *Panorama* mode does **not** produce one — it makes a wide
+strip, and the viewer renders it as the vertical wedge it actually covers
+rather than smearing it over the whole sphere and inventing a ceiling. For a
+real photosphere: a 360 camera, or Google Street View's app, which stitches one
+from a guided capture.
+
+`pano_test.jpg` is a generated test pattern with compass letters and coloured
+poles — if the sphere is mapped wrong the letters come out mirrored.
+
+### What 360 photos cannot do
+
+They have **no geometry**. You are pinned to the point the camera stood at:
+you cannot walk, and nothing can be measured. That is the trade for costing
+nothing. Splats give geometry for ~30 min of GPU per room; iPhone Pro LiDAR
+gives true metric dimensions with no reconstruction at all. They answer
+different questions and can coexist — 360 for what a room looks like, LiDAR
+for how big it is.
