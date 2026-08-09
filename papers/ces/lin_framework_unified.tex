@@ -52,14 +52,23 @@ formula is computable from publicly available model cards, and its log-scaled de
 is designed to compress FLOPs estimation noise. As an illustrative analysis, we apply CES
 to 13 models using published benchmark scores and estimated FLOPs, finding that CES
 rankings diverge substantially from accuracy rankings---Gemini Ultra ranks \#1 by MMLU
-(90.4\%) but \#6 by CES due to its 1{,}000T FLOPs cost. We also introduce the \textbf{Task
-Efficiency Benchmark} (TEB), which measures the quantity CES approximates directly: human
-time saved per task, adjusted for output quality. TEB v3.1 (100 auto-scorable tasks, 8
-open-weight models) yields $\rho(\mathrm{quality}, \mathrm{TEB}) = 0.476$ ($p = 0.233$,
-$n = 8$): a moderate but non-significant correlation in which five of eight models change
-rank between quality and deployment-efficiency orderings. DeepSeek-V3 leads quality
-($0.866$) but ranks sixth by TEB ($0.326$); Llama-3.3-70B is third on quality but first
-on TEB. Reaching a power-adequate estimate ($n \geq 20$ models, including proprietary
+(90.4\%) but \#6 by CES due to its 1{,}000T FLOPs cost. We also introduce the \textbf{Token
+Efficiency Score} (TES), which measures the quantity CES approximates directly at the
+point of deployment: quality per 1{,}000 generated tokens. TES v3.1 (100 auto-scorable
+tasks, 8 open-weight models) yields $\rho(\mathrm{quality}, \mathrm{TES}) = -0.333$
+($p \approx 0.42$, $n = 8$): a \emph{negative}, non-significant association, in which the
+highest-quality models are among the least token-efficient. DeepSeek-V3 leads on quality
+($0.885$) but reaches only TES $4.43$, while Qwen2.5-72B tops TES at $6.46$ on quality
+$0.780$. The two reasoning models pay a token tax of roughly $15\times$ over the dense
+models for comparable quality (2{,}259 vs.\ 149 tokens per task on average).
+
+An earlier version of this benchmark measured wall-clock latency rather than tokens and
+reported $\rho = 0.476$. Those figures are withdrawn. Latency proved unreproducible
+across runs, and the reasoning models in that run were truncated at
+\texttt{max\_tokens}~$=1024$, cutting off chains of thought mid-generation and collapsing
+their measured quality --- Qwen3-8B scored $0.38$ truncated against $0.867$ when re-run
+at $8192$. Tokens are deterministic at temperature~0 and provider-reported, so the
+replacement metric reproduces exactly. Reaching a power-adequate estimate ($n \geq 20$ models, including proprietary
 systems) remains future work. Open-source implementation:
 \url{https://github.com/WINSTON672/lin-score}.
 \end{abstract}
@@ -112,10 +121,11 @@ conditions.
 
 \textbf{Contributions.} (1)~Three conditions for a legitimate AI efficiency unit
 (Section~\ref{sec:conditions}). (2)~CES---the Turing unit definition and measurement
-pipeline satisfying all three (Sections~\ref{sec:turing}--\ref{sec:results}). (3)~TEB---the
-first formalization of direct deployment efficiency measurement, run at v3.1 scale (100
-auto-scorable tasks, 8 models) with $\rho(\mathrm{quality}, \mathrm{TEB}) = 0.476$ and
-rank divergence on 5 of 8 models (Section~\ref{sec:teb}).
+pipeline satisfying all three (Sections~\ref{sec:turing}--\ref{sec:results}). (3)~TES---a
+direct deployment-efficiency measurement in generated tokens, run at v3.1 scale (100
+auto-scorable tasks, 8 models) with $\rho(\mathrm{quality}, \mathrm{TES}) = -0.333$
+($n = 8$, non-significant), the highest-quality models being among the least
+token-efficient (Section~\ref{sec:teb}).
 
 %-----------------------------------------------------------
 \section{Related Work}
@@ -1098,7 +1108,7 @@ Qwen2.5-72B   & 10/10 = 1.000 & 10/10 = 1.000 & 0.999$^\dagger$ & 2.073 \\
 
 \textbf{Motivation.} CES is a proxy: it approximates deployment efficiency from benchmark accuracy and estimated FLOPs. The ground truth is simpler and more direct --- \textit{did using this model save a human meaningful time?} TEB measures that directly. Where CES asks ``how many bits did the model resolve per FLOP?'', TEB asks ``how much faster did the user complete the task, and was the output good enough to use?''
 
-TEB measures a quantity a product team would directly care about: human time saved per task, adjusted for output quality. CES approximates this from benchmark accuracy and estimated FLOPs when direct time measurements are unavailable. The two should agree only insofar as benchmark quality predicts deployment quality; TEB v3.1 (Table~\ref{tab:teb-results}) finds $\rho(\text{quality}, \text{TEB}) = 0.476$ with five of eight models changing rank between the two orderings. A model with high benchmark quality but low TEB is efficient on aggregate accuracy but fails to deliver proportionate value on real, latency-sensitive tasks --- a divergence invisible to CES alone.
+TES measures a quantity a product team would directly care about: quality per token billed. CES approximates this from benchmark accuracy and estimated FLOPs when direct time measurements are unavailable. The two should agree only insofar as benchmark quality predicts deployment quality; TES v3.1 (Table~\ref{tab:teb-results}) finds $\rho(\text{quality}, \text{TES}) = -0.333$, the highest-quality models being among the least token-efficient. A model with high benchmark quality but low TEB is efficient on aggregate accuracy but fails to deliver proportionate value on real, latency-sensitive tasks --- a divergence invisible to CES alone.
 
 Experiment~4 also revealed a structural limitation of accuracy-based question sets: when all models achieve near-ceiling performance, CES degrades into a pure compute comparison. TEB avoids this by using open-ended tasks where quality differences between model sizes remain large.
 
@@ -1197,7 +1207,7 @@ Qwen3-8B       & 8B   & 0.380 & 0.161 & 8 \\
 
 \textbf{Reasoning model penalty.} DeepSeek-R1 vs.\ DeepSeek-V3 is a controlled comparison: same parameter count (671B), same training data, different inference mode. R1's chain-of-thought raises average latency from 5--7\,s (V3) to 13--15\,s (R1) per task. The result is TEB = 0.170 for R1 vs.\ 0.326 for V3 --- a $1.9\times$ efficiency penalty purely from reasoning overhead. Notably, R1 quality also drops (0.528 vs.\ 0.866): chain-of-thought reasoning on structured benchmarks produces verbose outputs that fail automated scoring even after tag stripping, and over-extended reasoning chains introduce errors on straightforward classification tasks.
 
-\textbf{Quality--TEB Spearman correlation.} Spearman $\rho(\text{quality},\, \text{TEB}) = 0.476$ ($p = 0.233$, $n = 8$) --- a moderate positive but statistically non-significant correlation. The moderate value (not near 0, not near 1) is precisely what the framework predicts: quality and deployment efficiency are related (both require correct outputs) but not interchangeable. With $n = 8$, the $p$-value does not support strong inference; the finding is directional. Five of eight models change rank between quality ordering and TEB ordering, including the largest swap (DeepSeek-V3: quality rank 1, TEB rank 6). A sample of $n \geq 20$ models is required to estimate the correlation reliably.
+\textbf{Quality--TEB Spearman correlation.} Spearman $\rho(\text{quality},\, \text{TES}) = -0.333$ ($p \approx 0.42$, $n = 8$) --- a negative, statistically non-significant association. The sign is the finding: quality and token efficiency do not merely fail to coincide, they pull against each other in this sample, because the models that answer best do so by generating far more. With $n = 8$, the $p$-value does not support strong inference; the finding is directional. Five of eight models change rank between quality ordering and TEB ordering, including the largest swap (DeepSeek-V3: quality rank 1, TEB rank 6). A sample of $n \geq 20$ models is required to estimate the correlation reliably.
 
 \textbf{Scope and limitations.} TEB v3.1 covers 100 auto-scorable tasks across four structured categories. All tasks have deterministic correct answers, which is required for automated scoring but limits coverage of open-ended judgment, ambiguous instructions, and multi-step dependent tasks. The 8-model sample spans 7B--671B parameters but does not include proprietary API models. A minimum of $n=20$ models across diverse size tiers is needed before the Spearman correlation estimate stabilizes. Full task definitions, responses, and scored results are available at the repository.
 
@@ -1265,7 +1275,7 @@ For any capability level $c$, the efficiency frontier is:
 
 A model's CES measures its distance from the frontier. The current data suggests the frontier advanced substantially between 2022--2024 via MoE routing (Mixtral), grouped-query attention (Llama-3), and speculative decoding (Claude-3-Haiku).
 
-\noindent\textbf{Paper structure and contribution types.} This paper makes two empirical contributions. The \textit{formula contribution} (Sections~\ref{sec:turing}--\ref{sec:results}): the Turing unit definition, CES measurement pipeline, and three validation experiments on 13 models yielding Spearman correlations and stability bounds. The \textit{benchmark contribution} (TEB v3.1, Section~\ref{sec:teb}): 100 auto-scorable tasks run on 8 open-weight models, with the central finding that deployment efficiency diverges from benchmark quality (5-of-8 rank changes, $\rho = 0.476$ at $n = 8$). Extensions to human cognitive impact and data valuation are left to future work.
+\noindent\textbf{Paper structure and contribution types.} This paper makes two empirical contributions. The \textit{formula contribution} (Sections~\ref{sec:turing}--\ref{sec:results}): the Turing unit definition, CES measurement pipeline, and three validation experiments on 13 models yielding Spearman correlations and stability bounds. The \textit{benchmark contribution} (TEB v3.1, Section~\ref{sec:teb}): 100 auto-scorable tasks run on 8 open-weight models, with the central finding that deployment efficiency diverges from benchmark quality ($\rho = -0.333$ at $n = 8$, the best-quality models being among the least token-efficient). Extensions to human cognitive impact and data valuation are left to future work.
 
 \subsection{Intuitive Framing}
 
@@ -1354,7 +1364,7 @@ This section documents scope boundaries, design decisions, and open validation q
 
 \begin{itemize}
 
-\item \textbf{TEB at scale.} TEB v3.1 has been run on 8 open-weight models across 100 auto-scorable tasks, yielding $\rho(\mathrm{quality}, \mathrm{TEB}) = 0.476$ ($p=0.233$, $n=8$) and a 5-of-8 rank divergence between quality and TEB orderings. The directional finding---that deployment efficiency is not collapsible to benchmark quality---is established; the correlation estimate itself is underpowered. The central open question is whether this divergence pattern, and a stable $\rho$ estimate, holds at $n \geq 20$ models including proprietary API systems (GPT-4-class, Claude-class, Gemini-class). A well-powered study would also test whether the same divergence appears on rubric-scored open-ended tasks, which TEB v3.1 deliberately excludes.
+\item \textbf{TEB at scale.} TEB v3.1 has been run on 8 open-weight models across 100 auto-scorable tasks, yielding $\rho(\mathrm{quality}, \mathrm{TES}) = -0.333$ ($p \approx 0.42$, $n=8$), with the best-quality model (DeepSeek-V3, $0.885$) reaching only TES $4.43$ against Qwen2.5-72B's $6.46$. The directional finding---that deployment efficiency is not collapsible to benchmark quality---is established; the correlation estimate itself is underpowered. The central open question is whether this divergence pattern, and a stable $\rho$ estimate, holds at $n \geq 20$ models including proprietary API systems (GPT-4-class, Claude-class, Gemini-class). A well-powered study would also test whether the same divergence appears on rubric-scored open-ended tasks, which TEB v3.1 deliberately excludes.
 
 \item \textbf{Benchmark marginal contribution.} Experiment~3 shows HumanEval adds $+0.126$ Spearman points of discriminating signal given MMLU, while GSM8K subtracts $0.033$. Confirming that this ordering generalizes to other model populations requires a pre-registered replication with a held-out model set.
 
@@ -1383,7 +1393,7 @@ This paper makes two contributions: a framework proposal (CES) and an executed b
 
 \textbf{CES: a framework proposal.} The Cognitive Efficiency Score defines a standardized protocol for compute-adjusted model comparison---bits of benchmark uncertainty resolved per unit of log-scaled inference compute, normalized to a human expert baseline. The contribution is the definition and the specification, not an empirically validated unit. An illustrative analysis on 13 models using published benchmark data shows that CES rankings diverge from accuracy rankings in practically meaningful ways (Gemini Ultra: \#1 by MMLU, \#6 by CES). Sensitivity analyses confirm the formula is mathematically well-behaved: rankings are stable under $\pm30\%$ FLOPs perturbation ($\rho \geq 0.989$) and insensitive to benchmark weight choices ($\rho = 0.994$). These are properties of the formula, not empirical validation of CES against real deployment outcomes.
 
-\textbf{TEB v3.1: deployment efficiency, measured.} The Task Efficiency Benchmark measures the quantity CES approximates---human time saved per task, adjusted for quality---directly from wall-clock latency and auto-scored output quality. TEB v3.1 reports results on 8 open-weight models across 100 auto-scorable tasks. The central finding: deployment efficiency does not collapse to quality. DeepSeek-V3 leads quality ($0.866$) but ranks sixth by TEB ($0.326$); Llama-3.3-70B is third on quality but first on TEB ($0.500$); five of eight models change rank between the two orderings. The Spearman correlation $\rho(\mathrm{quality}, \mathrm{TEB}) = 0.476$ ($p = 0.233$, $n = 8$) is directional --- the rank-divergence pattern is the load-bearing result; the correlation estimate itself is underpowered and a reliable value requires $n \geq 20$ models including proprietary API systems.
+\textbf{TEB v3.1: deployment efficiency, measured.} The Token Efficiency Score measures the quantity CES approximates---useful output per unit of generation cost---directly, as auto-scored quality per 1{,}000 generated tokens. Tokens replace the wall-clock latency used in earlier drafts: latency varied between runs on identical inputs, whereas completion tokens are deterministic at temperature~0 and reported by the provider. TEB v3.1 reports results on 8 open-weight models across 100 auto-scorable tasks. The central finding: deployment efficiency does not collapse to quality. DeepSeek-V3 leads quality ($0.885$) but reaches only TES $4.43$; Qwen2.5-72B tops TES at $6.46$ on quality $0.780$ . The Spearman correlation $\rho(\mathrm{quality}, \mathrm{TES}) = -0.333$ ($p \approx 0.42$, $n = 8$) is directional --- the rank-divergence pattern is the load-bearing result; the correlation estimate itself is underpowered and a reliable value requires $n \geq 20$ models including proprietary API systems.
 
 CES should be treated as a structured heuristic with a transparent protocol, not a validated efficiency unit; TEB v3.1 establishes that the quantity CES tries to approximate is empirically distinct from benchmark quality, which is the precondition any such proxy needs to be useful. Closing the loop --- a power-adequate $\rho(\mathrm{CES}, \mathrm{TEB})$ estimate including closed models --- is the next step.
 
