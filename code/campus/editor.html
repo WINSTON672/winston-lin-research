@@ -1,0 +1,236 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Campus editor</title>
+<style>
+  :root{--bg:#14130f;--panel:#1d1b16;--line:#2f2c24;--ink:#e8e2d4;--muted:#8b8577;--hot:#e08a3c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:14px/1.5 ui-sans-serif,system-ui,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden}
+  #view{position:fixed;inset:0}
+  #side{position:fixed;top:0;right:0;width:310px;height:100%;background:var(--panel);
+        border-left:1px solid var(--line);padding:16px;overflow-y:auto;z-index:5}
+  h2{font-size:14px;font-weight:650;margin-bottom:2px}
+  .sub{color:var(--muted);font-size:11.5px;margin-bottom:14px}
+  label{display:block;font-size:10.5px;font-weight:650;letter-spacing:.05em;
+        text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
+  input,select{width:100%;padding:7px 9px;background:#100f0c;border:1px solid var(--line);
+        border-radius:5px;color:var(--ink);font:inherit;font-size:13px}
+  input:focus,select:focus{outline:none;border-color:var(--hot)}
+  button{width:100%;padding:9px;margin-top:14px;border:0;border-radius:6px;background:var(--hot);
+         color:#14130f;font:inherit;font-weight:650;cursor:pointer}
+  button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);margin-top:7px}
+  .none{color:var(--muted);font-size:12.5px;padding:24px 0;text-align:center;line-height:1.7}
+  .row{display:flex;gap:7px}.row>*{flex:1}
+  .meta{font-size:11px;color:var(--muted);margin-top:9px;line-height:1.6}
+  .guess{color:var(--hot)}
+  #hud{position:fixed;left:14px;bottom:12px;color:var(--muted);font-size:11.5px;z-index:5;
+       line-height:1.7;pointer-events:none}
+  #count{position:fixed;left:14px;top:12px;color:var(--muted);font-size:11.5px;z-index:5}
+</style>
+
+<div id="view"></div>
+<div id="count"></div>
+<div id="hud">drag orbit · scroll zoom · right-drag pan · click a building</div>
+
+<div id="side">
+  <h2>Campus editor</h2>
+  <div class="sub">Edits save to campus.json</div>
+  <div id="panel"><div class="none">Click a building.<br>Orange = height is a guess.</div></div>
+</div>
+
+<!-- three.js is vendored into ./vendor rather than pulled from a CDN: the
+     import failed here even though the CDN answered HEAD with 200, and the
+     editor has to run on a PC that may have no internet during a demo. -->
+<script type="importmap">
+{"imports":{"three":"./vendor/three.module.js",
+            "three/addons/":"./vendor/addons/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x14130f);
+scene.fog = new THREE.Fog(0x14130f, 600, 1600);
+
+const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 5000);
+camera.position.set(240, 200, 240);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.getElementById('view').appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI * 0.49;   // never go under the ground
+
+scene.add(new THREE.HemisphereLight(0xfff2dd, 0x25211a, 1.5));
+const sun = new THREE.DirectionalLight(0xffe9c9, 1.5);
+sun.position.set(120, 260, 90);
+scene.add(sun);
+scene.add(new THREE.GridHelper(1400, 70, 0x2a2721, 0x1e1c17));
+
+// Two materials: a guessed height is a claim the data does not support, so it
+// is coloured differently rather than being silently drawn as if it were known.
+const MAT_KNOWN   = new THREE.MeshLambertMaterial({color:0x9a9384});
+const MAT_GUESSED = new THREE.MeshLambertMaterial({color:0xc9762f});
+const MAT_PICKED  = new THREE.MeshLambertMaterial({color:0xffd28a});
+
+let records = {};        // osm id -> record from campus.json
+let meshes  = [];
+let picked  = null;
+
+async function load() {
+  const recs = await (await fetch('campus.json')).json();
+  for (const r of recs) records[r.id] = r;
+
+  const root = await new OBJLoader().loadAsync('campus.obj');
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    const id = Number((o.name.match(/building_(\d+)/) || [])[1]);
+    o.userData.id = id;
+    const rec = records[id];
+    o.material = rec && rec.height_source !== 'guessed' ? MAT_KNOWN : MAT_GUESSED;
+    // Store the height the geometry was built at, so scaling stays honest.
+    o.userData.baseHeight = rec ? rec.height_m : 1;
+    meshes.push(o);
+  });
+  scene.add(root);
+
+  // Frame the whole campus. The default camera position sits inside it, so
+  // the distance is computed from the bounding sphere and the field of view
+  // rather than guessed.
+  const box = new THREE.Box3().setFromObject(root);
+  const centre = box.getCenter(new THREE.Vector3());
+  const radius = box.getBoundingSphere(new THREE.Sphere()).radius;
+  const dist = radius / Math.sin((camera.fov * Math.PI / 180) / 2) * 0.65;
+  controls.target.copy(centre);
+  camera.position.set(centre.x + dist * 0.7, centre.y + dist * 0.55, centre.z + dist * 0.7);
+  camera.far = dist * 6;
+  camera.updateProjectionMatrix();
+  scene.fog.near = dist * 0.9;
+  scene.fog.far = dist * 3.2;
+  controls.update();
+
+  const guessed = Object.values(records).filter(r => r.height_source === 'guessed').length;
+  document.getElementById('count').textContent =
+    `${meshes.length} buildings · ${guessed} heights are guesses · ` +
+    `${Object.values(records).filter(r => r.name).length} named`;
+}
+
+// ── picking ────────────────────────────────────────────────────────────────
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+let downAt = null;
+renderer.domElement.addEventListener('pointerdown', e => downAt = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener('pointerup', e => {
+  if (!downAt) return;
+  // A drag is an orbit, not a click. Anything under 4px counts as a click.
+  if (Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 4) return;
+  ptr.x = (e.clientX / innerWidth) * 2 - 1;
+  ptr.y = -(e.clientY / innerHeight) * 2 + 1;
+  ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(meshes, false)[0];
+  select(hit ? hit.object : null);
+});
+
+function restore(m) {
+  const rec = records[m.userData.id];
+  m.material = rec && rec.height_source !== 'guessed' ? MAT_KNOWN : MAT_GUESSED;
+}
+
+function select(mesh) {
+  if (picked) restore(picked);
+  picked = mesh;
+  if (!picked) { renderPanel(null); return; }
+  picked.material = MAT_PICKED;
+  renderPanel(records[picked.userData.id]);
+}
+
+// ── panel ──────────────────────────────────────────────────────────────────
+function renderPanel(rec) {
+  const el = document.getElementById('panel');
+  if (!rec) {
+    el.innerHTML = '<div class="none">Click a building.<br>Orange = height is a guess.</div>';
+    return;
+  }
+  el.innerHTML = `
+    <label>Name</label>
+    <input id="f-name" value="${rec.name ? esc(rec.name) : ''}" placeholder="e.g. Timken Library">
+    <label>Height (m)</label>
+    <div class="row">
+      <input id="f-height" type="number" step="0.5" min="2" value="${rec.height_m}">
+      <select id="f-src">
+        <option value="measured"${rec.height_source==='measured'?' selected':''}>measured</option>
+        <option value="guessed"${rec.height_source==='guessed'?' selected':''}>guess</option>
+        <option value="osm:levels"${rec.height_source==='osm:levels'?' selected':''}>from OSM</option>
+      </select>
+    </div>
+    <label>Interior scene</label>
+    <input id="f-scene" value="${rec.scene ? esc(rec.scene) : ''}" placeholder="dorm-101.splat">
+    <label>Tour status</label>
+    <select id="f-status">
+      ${['none','wanted','captured','published'].map(s =>
+        `<option value="${s}"${(rec.status||'none')===s?' selected':''}>${s}</option>`).join('')}
+    </select>
+    <button id="f-apply">Apply</button>
+    <button class="ghost" id="f-save">Download campus.json</button>
+    <div class="meta">
+      OSM way ${rec.id}<br>footprint ${rec.area_m2} m²<br>
+      height source: <span class="${rec.height_source==='guessed'?'guess':''}">${rec.height_source}</span>
+    </div>`;
+
+  document.getElementById('f-apply').onclick = apply;
+  document.getElementById('f-save').onclick = save;
+  document.getElementById('f-height').addEventListener('input', e => {
+    // Live preview: scale about the base, since the mesh sits on y=0.
+    const h = parseFloat(e.target.value);
+    if (picked && h > 0) picked.scale.y = h / picked.userData.baseHeight;
+  });
+}
+
+function apply() {
+  const rec = records[picked.userData.id];
+  rec.name   = document.getElementById('f-name').value.trim() || null;
+  rec.height_m = parseFloat(document.getElementById('f-height').value);
+  rec.height_source = document.getElementById('f-src').value;
+  rec.scene  = document.getElementById('f-scene').value.trim() || null;
+  rec.status = document.getElementById('f-status').value;
+  picked.userData.baseHeight = rec.height_m;
+  picked.scale.y = 1;
+  // Rebuild geometry-free: the mesh keeps its new scale baked into baseHeight.
+  const g = new THREE.Box3().setFromObject(picked);
+  picked.geometry.computeBoundingBox();
+  renderPanel(rec);
+  document.getElementById('count').textContent =
+    `${meshes.length} buildings · ` +
+    `${Object.values(records).filter(r=>r.height_source==='guessed').length} heights are guesses · ` +
+    `${Object.values(records).filter(r=>r.name).length} named`;
+}
+
+function save() {
+  const blob = new Blob([JSON.stringify(Object.values(records), null, 2)],
+                        {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'campus.json'; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+const esc = s => String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+function resize() {
+  const w = innerWidth - 310, h = innerHeight;
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+addEventListener('resize', resize); resize();
+
+(function loop(){ requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+
+load().catch(e => {
+  document.getElementById('panel').innerHTML =
+    `<div class="none">Could not load campus.obj / campus.json.<br><br>
+     Serve this folder over HTTP:<br><code>python3 -m http.server</code><br>
+     then open localhost:8000/editor.html<br><br>
+     <span style="color:#c9762f">${esc(e.message)}</span></div>`;
+});
+</script>

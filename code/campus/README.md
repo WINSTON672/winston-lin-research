@@ -49,3 +49,26 @@ Open `campus.png`, compare against the school map, and fill in `name` in
 ## Attribution
 
 OSM data © OpenStreetMap contributors, ODbL. Any published map must say so.
+
+## editor.html — the 3D editor
+
+```bash
+python3 -m http.server 8000
+# open http://localhost:8000/editor.html
+```
+
+Must be served over HTTP; opening the file directly fails because the browser
+blocks `fetch` on `file://`.
+
+Orbit with drag, zoom with scroll, pan with right-drag, click a building to
+edit it. Set the name, correct the height (live preview while you type), point
+it at an interior scene file, and mark tour status. **Download campus.json**
+writes the edits back — replace the file in this folder.
+
+**Orange means the height is a guess, grey means it came from OSM.** Right now
+that is 51 orange and 1 grey, which is an honest picture of how much of this
+model is inferred rather than known.
+
+three.js is vendored in `vendor/` rather than loaded from a CDN. The CDN import
+failed here even though the CDN answered HEAD with 200, and the editor has to
+work on a machine with no internet.
