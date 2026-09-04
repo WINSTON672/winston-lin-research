@@ -1,0 +1,231 @@
+{
+  "master_seed": 20260904,
+  "school_sizes": [
+    200,
+    500,
+    1000
+  ],
+  "replicates_per_size": 30,
+  "narratives_per_replicate": 500,
+  "hidden_clue_probabilities": [
+    0.0,
+    0.25,
+    0.5
+  ],
+  "total_synthetic_narratives": 135000,
+  "primary_school_size": 500,
+  "primary_hidden_clue_probability": 0.25,
+  "primary_narratives": 15000,
+  "policies": {
+    "direct_redaction": {
+      "unique_rate": 0.2511333333333334,
+      "unique_rate_ci95": [
+        0.24240000000000003,
+        0.2604666666666667
+      ],
+      "below_5_rate": 0.4771333333333334,
+      "below_5_rate_ci95": [
+        0.46746666666666675,
+        0.4882
+      ],
+      "below_10_rate": 0.6113999999999999,
+      "below_10_rate_ci95": [
+        0.6012666666666668,
+        0.6221333333333334
+      ],
+      "mean_guess_success": 0.3800696831687634,
+      "mean_guess_success_ci95": [
+        0.37176580820018507,
+        0.3888929273089085
+      ],
+      "median_candidate_count": 5.2,
+      "median_candidate_count_ci95": [
+        4.933333333333334,
+        5.467083333333328
+      ],
+      "mean_utility": 1.0,
+      "mean_utility_ci95": [
+        1.0,
+        1.0
+      ],
+      "median_release_window": 1.0,
+      "median_release_window_ci95": [
+        1.0,
+        1.0
+      ],
+      "target_met_rate": 1.0,
+      "target_met_rate_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    "date_mask_immediate": {
+      "unique_rate": 0.2511333333333334,
+      "unique_rate_ci95": [
+        0.2424,
+        0.2602666666666667
+      ],
+      "below_5_rate": 0.4771333333333334,
+      "below_5_rate_ci95": [
+        0.4675333333333333,
+        0.48800166666666667
+      ],
+      "below_10_rate": 0.6113999999999999,
+      "below_10_rate_ci95": [
+        0.6012649999999998,
+        0.6217333333333332
+      ],
+      "mean_guess_success": 0.3800696831687634,
+      "mean_guess_success_ci95": [
+        0.37193889529573715,
+        0.3889062831746135
+      ],
+      "median_candidate_count": 5.2,
+      "median_candidate_count_ci95": [
+        4.916666666666667,
+        5.483333333333333
+      ],
+      "mean_utility": 1.0,
+      "mean_utility_ci95": [
+        1.0,
+        1.0
+      ],
+      "median_release_window": 1.0,
+      "median_release_window_ci95": [
+        1.0,
+        1.0
+      ],
+      "target_met_rate": 1.0,
+      "target_met_rate_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    "date_mask_term": {
+      "unique_rate": 0.1868666666666667,
+      "unique_rate_ci95": [
+        0.1802,
+        0.19406666666666667
+      ],
+      "below_5_rate": 0.37353333333333333,
+      "below_5_rate_ci95": [
+        0.3628666666666666,
+        0.3842016666666666
+      ],
+      "below_10_rate": 0.4818666666666666,
+      "below_10_rate_ci95": [
+        0.4718666666666667,
+        0.4931333333333333
+      ],
+      "mean_guess_success": 0.2972783747374304,
+      "mean_guess_success_ci95": [
+        0.290139047260085,
+        0.30490831525124623
+      ],
+      "median_candidate_count": 10.566666666666666,
+      "median_candidate_count_ci95": [
+        10.033333333333333,
+        11.033333333333333
+      ],
+      "mean_utility": 0.5873341558441558,
+      "mean_utility_ci95": [
+        0.5851193080808079,
+        0.5895858537157286
+      ],
+      "median_release_window": 120.0,
+      "median_release_window_ci95": [
+        120.0,
+        120.0
+      ],
+      "target_met_rate": 1.0,
+      "target_met_rate_ci95": [
+        1.0,
+        1.0
+      ]
+    },
+    "cohortshield_k10": {
+      "unique_rate": 0.11699999999999998,
+      "unique_rate_ci95": [
+        0.11099999999999999,
+        0.12326666666666666
+      ],
+      "below_5_rate": 0.2382,
+      "below_5_rate_ci95": [
+        0.22946666666666668,
+        0.247135
+      ],
+      "below_10_rate": 0.24746666666666667,
+      "below_10_rate_ci95": [
+        0.23900000000000002,
+        0.25639999999999996
+      ],
+      "mean_guess_success": 0.20980171112474935,
+      "mean_guess_success_ci95": [
+        0.2032295135376527,
+        0.2164094470754858
+      ],
+      "median_candidate_count": 14.95,
+      "median_candidate_count_ci95": [
+        14.566666666666666,
+        15.333333333333334
+      ],
+      "mean_utility": 0.8753953932178932,
+      "mean_utility_ci95": [
+        0.8720057215307842,
+        0.8787077642195767
+      ],
+      "median_release_window": 1.0,
+      "median_release_window_ci95": [
+        1.0,
+        1.0
+      ],
+      "target_met_rate": 0.7525333333333333,
+      "target_met_rate_ci95": [
+        0.7435999999999999,
+        0.7611333333333332
+      ]
+    },
+    "cohortshield_k20": {
+      "unique_rate": 0.07559999999999999,
+      "unique_rate_ci95": [
+        0.07026666666666667,
+        0.08099999999999997
+      ],
+      "below_5_rate": 0.21980000000000005,
+      "below_5_rate_ci95": [
+        0.21113333333333337,
+        0.22846666666666668
+      ],
+      "below_10_rate": 0.24726666666666666,
+      "below_10_rate_ci95": [
+        0.23879999999999998,
+        0.2562
+      ],
+      "mean_guess_success": 0.16148016840196583,
+      "mean_guess_success_ci95": [
+        0.15581933165079442,
+        0.16742127565264572
+      ],
+      "median_candidate_count": 26.516666666666666,
+      "median_candidate_count_ci95": [
+        25.9,
+        27.166666666666668
+      ],
+      "mean_utility": 0.7760425120250122,
+      "mean_utility_ci95": [
+        0.7705152698112075,
+        0.7816303341149591
+      ],
+      "median_release_window": 1.0,
+      "median_release_window_ci95": [
+        1.0,
+        1.0
+      ],
+      "target_met_rate": 0.7525333333333333,
+      "target_met_rate_ci95": [
+        0.7436,
+        0.7609999999999999
+      ]
+    }
+  }
+}

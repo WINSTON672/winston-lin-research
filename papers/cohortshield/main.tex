@@ -1,0 +1,413 @@
+% Springer Nature submission-format manuscript
+% Generated from the verified CohortShield simulation artifacts in this directory.
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xurl}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+
+\raggedbottom
+\emergencystretch=2em
+
+\begin{document}
+
+\title[Release Timing as a Quasi-Identifier]{Release Timing as a Quasi-Identifier: Event-Aware Disclosure Control for Anonymous Narratives in Small Communities}
+
+\author*[1]{\fnm{Winston Zai} \sur{Lin}}\email{linzaiwinston413@gmail.com}
+
+\affil*[1]{\orgname{Blair Academy}, \orgaddress{\city{Blairstown}, \postcode{07825}, \state{New Jersey}, \country{USA}}}
+
+\abstract{Anonymous narrative systems often remove names and mask dates while publishing immediately. In a small community, publication time can reveal the source event and combine with ordinary details to expose the author. We formalize this timing channel and introduce CohortShield, which selects retained quasi-identifiers and release granularity to maximize declared utility subject to a candidate-set target. We evaluate five policies across 135,000 synthetic narratives, spanning three community sizes, 30 independent replicates per condition, and three levels of unmodelled information. In the primary scenario (500 people; a hidden group clue in 25\% of narratives), direct-identifier removal left 25.11\% uniquely re-identifiable (95\% bootstrap confidence interval 24.24--26.05\%). Masking an in-text date while releasing immediately gave the identical result. Term-level release reduced uniqueness to 18.69\%; CohortShield reduced it to 11.70\% at $k=10$ and 7.56\% at $k=20$, retaining 87.54\% and 77.60\% of declared utility. Under the declared threat model, both settings met their target for every narrative and produced no unique sets. With the hidden clue, actual target attainment was 75.25\%. Release timing must be treated as data, but any candidate-set guarantee remains conditional on the threat model.}
+
+\keywords{text anonymization, re-identification, quasi-identifiers, release timing, $k$-anonymity, disclosure control, small communities}
+
+\maketitle
+
+\section{Introduction}\label{sec:introduction}
+
+Anonymous narratives can make otherwise hidden experiences visible: students can describe school life, employees can report workplace conditions, and members of small organizations can document events without attaching a name. The intuitive protection strategy is to remove direct identifiers and mask explicit dates. That strategy is incomplete when a narrative is published soon after the event it describes. The release itself supplies a timestamp. If an observer knows the local event calendar and approximate attendance, timing becomes a join key between the narrative and a roster.
+
+This risk is distinct from identifying an author by literary style. It arises even when prose is perfectly standardized. A statement such as ``a tenth-grade day student on the debate team described an event today'' can expose a small candidate set because grade, residence, activity, attendance, and time intersect. Each attribute may be common in isolation while their conjunction is rare. This is the classical quasi-identifier problem in a dynamic institutional setting.
+
+Text-anonymization research has increasingly moved beyond named-entity removal toward explicit disclosure-risk evaluation. Lison et al.~\cite{lison2021} argued that anonymization should account for semantic inference and privacy--utility trade-offs, while the Text Anonymization Benchmark (TAB) formalized privacy-oriented annotation and evaluation beyond predefined entity classes~\cite{pilan2022}. Recent work evaluates anonymizers through automated re-identification attacks~\cite{manzanares2024}, adversarial language-model inference~\cite{staab2025}, and population-based synthetic benchmarks~\cite{krco2026}. These advances concern what remains inferable from text. The operational metadata created by the publication workflow, especially release timing, receives less attention.
+
+The central claim of this paper is narrow: in event-rich small communities, release time should be included in the disclosure model rather than treated as harmless platform metadata. We make four contributions:
+
+\begin{enumerate}
+\item We formalize event and release timing as quasi-identifying evidence that intersects with narrative attributes and attendance records.
+\item We introduce CohortShield, an auditable optimizer that jointly chooses field suppression and a release window to meet a candidate-set target while preserving declared utility.
+\item We report a reproducible synthetic simulation across community size and auxiliary-information mismatch, with uncertainty estimated across independent community replicates rather than across correlated narratives.
+\item We demonstrate the method's boundary: its nominal guarantee holds exactly under its declared threat model but degrades when a contextual group clue is omitted from that model.
+\end{enumerate}
+
+This is a simulation study, not evidence that any deployed platform is anonymous or that a particular real person can be identified. No student record, submission, or other personal datum is used.
+
+\section{Related work}\label{sec:related}
+
+\subsection{From direct identifiers to disclosure risk}
+
+Removing names does not eliminate linkability. The $k$-anonymity model requires each released record to be indistinguishable from at least $k-1$ others with respect to specified quasi-identifiers~\cite{sweeney2002}. NIST guidance likewise distinguishes direct identifiers from quasi-identifiers and recommends measurable performance criteria and re-identification studies rather than relying on masking alone~\cite{nist2023}. Candidate-set size is therefore a natural, interpretable risk measure when a roster and the attacker's linking information can be specified.
+
+Free text complicates this model because identifying evidence is contextual and compositional. TAB labels direct and quasi-identifiers at the entity level and evaluates both privacy and retained information~\cite{pilan2022}. Manzanares-Salor et al.~\cite{manzanares2024} showed why recall of masked terms is not itself a disclosure-risk metric and evaluated anonymized documents using machine-learning re-identification. Staab et al.~\cite{staab2025} used strong language models both as adversaries and as components of iterative anonymization. RAT-Bench uses synthetic text and demographic statistics to estimate population-level re-identification risk from direct and indirect identifiers~\cite{krco2026}. Subject-level evaluation has also been proposed to capture contextual inference that span-level metrics miss~\cite{oh2026}.
+
+Our work does not compete with a text detector or rewriting model. It assumes that direct identifiers have already been removed and asks a complementary systems question: given a set of structured clues extracted from or associated with a narrative, when may the platform release the text, and which clues may it retain?
+
+\subsection{Temporal cloaking}
+
+The use of time generalization to create anonymity sets has precedent in location privacy. Gruteser and Grunwald~\cite{gruteser2003} adaptively reduced spatial or temporal resolution until a requested anonymity constraint was satisfied. CohortShield transfers that operational idea to narrative publication, where candidate authors are defined by institutional rosters, event schedules, and attendance. The transfer is not automatic: narrative utility depends on retaining meaning-bearing attributes, and the attacker may possess contextual knowledge absent from the platform's model.
+
+\section{Threat model and definitions}\label{sec:threat}
+
+Let $P$ be the finite population of a small community. A narrative $r$ has a true author $a(r)\in P$, a source event $e(r)$ occurring on day $t_e$, and a set $X(r)$ of exposed quasi-identifiers. In this study, possible fields are activity, grade, residence status, and leadership role. Direct identifiers are assumed removed before the policy studied here is applied.
+
+The platform selects a retained field set $S\subseteq X(r)$ and a release window $w$. For $w<120$ days, a narrative is released after a deterministic pseudorandom delay $d\in\{0,\ldots,w-1\}$ fixed by the simulated record, and an attacker considers source events in the preceding $w$-day interval. A 120-day window is term-level publication: the public record reveals no within-term timing. If an exact event date remains in the text, the attacker's temporal evidence is that date regardless of the nominal release window.
+
+Let $A$ denote the auxiliary information available to an attacker: a roster containing the released fields, the event calendar, and event attendance. The candidate set is
+
+\begin{equation}
+\begin{aligned}
+C_A(r,S,w)=\{p\in P:\;&p\text{ matches }S\text{ and attended an event}\\
+&\text{temporally consistent with }w\}.
+\end{aligned}
+\label{eq:candidates}
+\end{equation}
+
+The realized candidate count is $c=|C_A|$. We report the fraction of narratives with $c=1$, $c<5$, and $c<10$. We also report $1/c$, the success probability of a single guess under an explicitly limited equal-prior attacker. This is not a calibrated probability for a strategic real-world adversary.
+
+The declared threat model is the information set $A_0$ used by the policy. Robustness is evaluated against an augmented attacker $A_1$ who may additionally observe a small group-membership clue (for example, an advisory or class cohort) omitted from $A_0$.
+
+\begin{proposition}[Conditional candidate-set guarantee]\label{prop:guarantee}
+If a release configuration $(S,w)$ satisfies $|C_{A_0}(r,S,w)|\geq k$, then an attacker restricted to $A_0$ cannot uniquely re-identify the author from the modeled evidence. Under equal priors over the candidate set, the success probability of one guess is at most $1/k$.
+\end{proposition}
+
+\begin{proof}
+The true author is included in $C_{A_0}$ by construction. A set of cardinality at least $k$ contains at least $k$ records consistent with the same released evidence, so the evidence does not select a unique author. With equal prior mass on those records, each has probability at most $1/k$.
+\end{proof}
+
+Proposition~\ref{prop:guarantee} is deliberately conditional. It does not hold for information omitted from $A_0$, for non-uniform priors, or for evidence such as writing style that the candidate-set construction does not represent.
+
+\section{CohortShield}\label{sec:method}
+
+CohortShield searches a small, auditable transformation space. For each narrative it enumerates all subsets of exposed fields and release windows
+
+\begin{equation}
+W=\{1,3,7,14,30,60,120\}\text{ days}.
+\end{equation}
+
+It assigns activity, grade, residence, and role weights of 3, 2, 2, and 1. Time utility for the seven windows is 4, 3.5, 3, 2.5, 2, 1.5, and 1, respectively. For exposed fields $X$, retained fields $S$, and window $w$, declared utility is
+
+\begin{equation}
+U(S,w\mid X)=
+\frac{\sum_{f\in S}q_f+q_t(w)}{\sum_{f\in X}q_f+q_t(1)}.
+\label{eq:utility}
+\end{equation}
+
+These weights encode one plausible platform preference; they are not learned and are not presented as universal measures of narrative meaning. Privacy outcomes for a chosen transformation do not depend on the utility scale, but the optimizer's choice among feasible transformations does.
+
+The policy selects
+
+\begin{equation}
+(S^*,w^*)=\arg\max_{S\subseteq X,\,w\in W}U(S,w\mid X)
+\quad\text{subject to}\quad |C_{A_0}(r,S,w)|\geq k.
+\label{eq:optimization}
+\end{equation}
+
+Ties prefer a shorter release window, then more retained fields, then a larger nominal candidate set; remaining ties follow deterministic enumeration order. Algorithm~\ref{alg:cohortshield} shows the complete decision rule.
+
+\begin{algorithm}[t]
+\caption{CohortShield release selection}\label{alg:cohortshield}
+\begin{algorithmic}[1]
+\Require Narrative $r$, exposed fields $X$, roster/calendar information $A_0$, target $k$
+\State $F\gets\varnothing$
+\ForAll{$w\in\{1,3,7,14,30,60,120\}$}
+  \ForAll{$S\subseteq X$}
+    \State $c\gets|C_{A_0}(r,S,w)|$
+    \If{$c\geq k$}
+      \State add $(U(S,w\mid X),-w,|S|,c,S,w)$ to $F$
+    \EndIf
+  \EndFor
+\EndFor
+\If{$F\neq\varnothing$}
+  \State \Return configuration in $F$ maximal in the first four entries
+\Else
+  \State \Return $(\varnothing,120)$ and flag the target as infeasible
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\section{Simulation study}\label{sec:simulation}
+
+\subsection{Synthetic communities}
+
+All data are synthetic. Community sizes were $N\in\{200,500,1000\}$. For each size, 30 independent replicates were generated from a master seed of 20260904. Grades 9--12 were balanced and shuffled. The number of activities was $\max(12,\operatorname{round}(N/25))$; activity membership followed a truncated rank distribution proportional to $j^{-0.8}$. The number of residences was $\max(6,\lceil N/28\rceil)$, with uniform assignment. One member of each non-empty activity was labeled as its publicly identifiable leader.
+
+Each activity received a first event day sampled uniformly from integers 0--7 and a cadence sampled uniformly from 7--14 days over a 120-day term. Members independently attended each event with probability 0.68. Empty events were repaired by adding one member, and any member with no event was added to one randomly chosen activity event. These repairs ensure that every simulated author belongs to at least one valid event--attendance pair.
+
+To test threat-model mismatch, people were also placed into grade-specific hidden groups of at most 12 after within-grade shuffling. This variable did not enter CohortShield's candidate calculation. A narrative could expose the author's group to the augmented attacker with probability $h\in\{0,0.25,0.50\}$.
+
+\subsection{Narratives}
+
+For each replicate and mismatch level, 500 author--event pairs were sampled with replacement from true attendance pairs. A narrative exposed activity with probability 0.80, grade with probability 0.45, and residence with probability 0.22. A leader exposed their role with probability 0.65; non-leaders did not expose a role value. All Bernoulli draws were independent conditional on the generated community and author. Direct identifiers were absent.
+
+The complete design contains $3$ community sizes $\times$ $3$ mismatch levels $\times$ $30$ replicates $\times$ $500$ narratives = 135,000 synthetic narratives. Because five policies are evaluated on the same narrative in each scenario, the number of unique narratives is 135,000, not 675,000.
+
+\subsection{Policies}
+
+We compared five policies:
+
+\begin{enumerate}
+\item \textbf{Direct-identifier redaction}: retain all generated quasi-identifiers and an exact event date; publish immediately.
+\item \textbf{Date masking, immediate release}: remove the in-text date, retain all other quasi-identifiers, and publish in a one-day window.
+\item \textbf{Date masking, term-level release}: remove the in-text date, retain all other quasi-identifiers, and suppress within-term release timing.
+\item \textbf{CohortShield $k=10$}: optimize Eq.~\eqref{eq:optimization} under $A_0$ with target 10.
+\item \textbf{CohortShield $k=20$}: optimize Eq.~\eqref{eq:optimization} under $A_0$ with target 20.
+\end{enumerate}
+
+The first two policies are mathematically identical in this simulation because both reveal the same source day: the first through text and the second through immediate release. Their equality is a falsifiable implementation check, not an empirical coincidence.
+
+\subsection{Outcomes and uncertainty}
+
+The prespecified primary scenario uses $N=500$ and $h=0.25$. Primary outcomes are unique-candidate rate and the rate below 10 candidates. Secondary outcomes are the rate below five candidates, mean equal-prior guess success, the median candidate count within each replicate, mean declared utility, median release window, and target attainment for CohortShield.
+
+Each replicate is the unit of uncertainty. We first summarized its 500 narratives, then computed means across 30 independently generated communities. Reported 95\% confidence intervals are percentile intervals from 10,000 non-parametric bootstrap resamples of those 30 replicate-level summaries. Consequently, the intervals do not incorrectly treat narratives from the same synthetic community as independent observations. No hypothesis-test threshold was used and no multiplicity-adjusted significance claims are made.
+
+\section{Results}\label{sec:results}
+
+\subsection{Primary scenario}
+
+Table~\ref{tab:primary} reports the primary scenario. Direct-identifier redaction left 25.11\% of narratives uniquely re-identifiable and 61.14\% with fewer than 10 candidates. Date masking with immediate release was identical to direct-identifier redaction for every metric. Suppressing within-term timing reduced unique candidate sets to 18.69\% but retained only 58.73\% of declared utility.
+
+CohortShield at $k=10$ reduced unique candidate sets to 11.70\% while retaining 87.54\% utility; $k=20$ reduced uniqueness to 7.56\% while retaining 77.60\% utility. Relative to direct-identifier redaction, these point estimates are descriptive reductions of 53.41\% and 69.90\%, respectively. The mean equal-prior guess-success measure fell from 38.01\% to 20.98\% and 16.15\%.
+
+\begin{table*}[t]
+\caption{Primary simulation outcomes ($N=500$, hidden-clue probability $h=0.25$, 30 replicates and 15,000 narratives). Values are means of replicate-level summaries; brackets contain 95\% bootstrap confidence intervals across replicates. Candidate count is the mean of the 30 within-replicate medians. Utility is a declared score, not a validated semantic metric.}\label{tab:primary}
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Policy & Unique (\%) & $c<10$ (\%) & Guess success (\%) & Median $c$ & Utility (\%)\\
+\midrule
+Direct identifiers removed & 25.11 [24.24, 26.05] & 61.14 [60.13, 62.21] & 38.01 [37.18, 38.89] & 5.20 [4.93, 5.47] & 100.00\\
+Date masked; immediate & 25.11 [24.24, 26.03] & 61.14 [60.13, 62.17] & 38.01 [37.19, 38.89] & 5.20 [4.92, 5.48] & 100.00\\
+Date masked; term-level & 18.69 [18.02, 19.41] & 48.19 [47.19, 49.31] & 29.73 [29.01, 30.49] & 10.57 [10.03, 11.03] & 58.73\\
+CohortShield $k=10$ & 11.70 [11.10, 12.33] & 24.75 [23.90, 25.64] & 20.98 [20.32, 21.64] & 14.95 [14.57, 15.33] & 87.54\\
+CohortShield $k=20$ & 7.56 [7.03, 8.10] & 24.73 [23.88, 25.62] & 16.15 [15.58, 16.74] & 26.52 [25.90, 27.17] & 77.60\\
+\botrule
+\end{tabular}
+}
+\end{table*}
+
+Figure~\ref{fig:risk} visualizes unique-candidate risk. Figure~\ref{fig:tradeoff} shows that term-level release obtains less privacy at lower declared utility than either adaptive setting in the primary scenario. This comparison is conditional on the chosen utility weights.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{risk_by_policy.pdf}
+\caption{Unique-candidate rates in the primary scenario. Error bars are 95\% bootstrap confidence intervals over 30 independently generated communities. Date masking without release delay is identical to direct-identifier removal because public timing still exposes the source day.}\label{fig:risk}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{privacy_utility.pdf}
+\caption{Mean equal-prior guess-success measure against declared retained utility in the primary scenario. Both axes are simulation-defined quantities; the plot is an operating-point comparison, not a universal utility frontier.}\label{fig:tradeoff}
+\end{figure}
+
+\subsection{Declared guarantee and model mismatch}
+
+When $h=0$, the augmented attacker has no clue absent from $A_0$. Both CohortShield settings met their target for every narrative in all community sizes, and neither produced a unique candidate set. In the primary scenario, where the hidden clue occurred in 25\% of narratives, the actual target-attainment rate was 75.25\% for both $k=10$ and $k=20$ (95\% intervals 74.36--76.11\% and 74.36--76.10\%). At $h=0.50$ for $N=500$, the rates were 50.32\% and 50.31\%.
+
+The near-complementarity between hidden-clue probability and target attainment is expected. A narrative without the omitted clue is evaluated under the same evidence the optimizer modeled and therefore satisfies the target. A narrative with the clue may or may not fail, depending on how the group intersects with the nominal candidate set. At $N=500$, increasing $h$ from 0 to 0.50 raised the $k=10$ unique-candidate rate from 0 to 23.91\% and the $k=20$ rate from 0 to 15.83\% (Table~\ref{tab:mismatch}). This is evidence against treating the nominal constraint as an unconditional anonymity guarantee.
+
+\begin{table}[t]
+\caption{Sensitivity to an unmodelled group clue at $N=500$. Values are means across 30 replicates.}\label{tab:mismatch}
+\centering
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Policy and outcome & $h=0$ & $h=0.25$ & $h=0.50$\\
+\midrule
+Direct: unique (\%) & 12.82 & 25.11 & 37.54\\
+Direct: $c<10$ (\%) & 48.47 & 61.14 & 74.00\\
+Term-level: unique (\%) & 9.04 & 18.69 & 28.59\\
+Term-level: $c<10$ (\%) & 35.75 & 48.19 & 60.59\\
+CohortShield $k=10$: unique (\%) & 0.00 & 11.70 & 23.91\\
+CohortShield $k=10$: target met (\%) & 100.00 & 75.25 & 50.32\\
+CohortShield $k=20$: unique (\%) & 0.00 & 7.56 & 15.83\\
+CohortShield $k=20$: target met (\%) & 100.00 & 75.25 & 50.31\\
+\botrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:mismatch} shows fewer-than-10-candidate risk across mismatch levels. Direct redaction and immediate date masking overlap exactly; CohortShield's residual risk grows sharply when the attacker sees information excluded from the candidate model.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{model_mismatch_sensitivity.pdf}
+\caption{Sensitivity to threat-model mismatch at $N=500$. The horizontal axis is the probability that a narrative exposes a group-membership clue omitted from the optimizer; the vertical axis is the mean rate of fewer than 10 actual candidates.}\label{fig:mismatch}
+\end{figure}
+
+\subsection{Community-size sensitivity}
+
+At $h=0.25$, unique-candidate rates under direct redaction were 24.34\%, 25.11\%, and 28.70\% for $N=200$, 500, and 1,000. The corresponding values were 7.35\%, 11.70\%, and 14.53\% for CohortShield $k=10$, and 3.93\%, 7.56\%, and 10.81\% for $k=20$ (Fig.~\ref{fig:size}). The increase with nominal population size is not paradoxical: the generator also increases the number of activities and residences, producing more granular combinations. Population size alone is therefore not a sufficient proxy for anonymity; the structure and sparsity of community attributes matter.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{school_size_sensitivity.pdf}
+\caption{Unique-candidate rates by generated community size at hidden-clue probability 0.25. Each point is the mean of 30 independent replicate-level rates. The generator scales the numbers of activities and residences with population size.}\label{fig:size}
+\end{figure}
+
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Release timing is part of the record}
+
+The equality of direct redaction and immediate date masking is the clearest result. Deleting ``Tuesday'' from a narrative changes nothing when an immediate timestamp still says the narrative followed Tuesday's event. Date masking is effective only if all timing channels available to the modeled attacker are coarsened. A production system should therefore treat scheduled publication time, feed order, notifications, moderation acknowledgements, public counters, and cache-visible timestamps as parts of the released record.
+
+The term-level baseline confirms that temporal generalization can reduce risk, but blunt delay sacrifices utility even for narratives whose other attributes already produce a large candidate set. CohortShield performs per-record adaptation: a common narrative may be released quickly with most fields retained, while a rare combination is delayed or suppressed more aggressively. This accounts for the primary scenario's higher declared utility and lower modeled risk than a uniform term-level policy.
+
+\subsection{A deployment architecture}
+
+A practical system would place CohortShield after direct-identifier detection and before publication. A structured extractor---rules, a reviewed language model, or both---would map text to possible quasi-identifiers. A privacy service would query protected roster, event, and attendance indexes; enumerate transformations; and return a release plan rather than candidate identities. Candidate sets should not be exposed to moderators unless required, and every decision should log the threat-model version, utility weights, target $k$, selected transformation, and target feasibility.
+
+The simulation suggests four safeguards. First, default to conservative delayed batching when the extractor is uncertain. Second, red-team the system with auxiliary sources not used by the optimizer. Third, recalculate risk when rosters, calendars, or public information change. Fourth, provide a non-publication option: if no feasible release exists, suppressing the record is safer than presenting $k$ as met.
+
+\subsection{Why k is not a certificate of anonymity}
+
+The hidden-group experiment is not a corner case; it represents the ordinary incompleteness of an institutional threat model. Real readers may know friendship groups, seating, travel, injuries, distinctive phrases, or prior disclosures. $k$-anonymity also does not prevent attribute disclosure, composition attacks, or inference from unequal priors. The $k$ in CohortShield should therefore be read as a testable minimum under named data sources, not a legal or absolute anonymity label. This interpretation is consistent with guidance to assess re-identification risk and governance at the release level rather than equating identifier removal with de-identification~\cite{nist2023}.
+
+\section{Limitations}\label{sec:limitations}
+
+The study has six principal limitations. First, all populations, calendars, and narratives are synthetic. Their parameters are transparent but are not estimates of any specific school or workplace. The numeric rates therefore characterize this generator, not real institutions.
+
+Second, narratives are represented as structured exposed fields rather than natural language. The simulation does not measure extraction errors, paraphrase quality, stylometric leakage, embeddings, image metadata, or language-model inference. It tests the policy layer after clues have been identified.
+
+Third, the augmented attacker adds only one kind of omitted clue. Real auxiliary information is richer, correlated, and adaptive. The mismatch results should be viewed as a stress test, not a bound on real-world risk.
+
+Fourth, $1/c$ assumes equal priors over candidates. A knowledgeable attacker may assign highly unequal probabilities, while an external attacker may lack the exact attendance data assumed here. Candidate-set metrics are interpretable but incomplete.
+
+Fifth, the utility weights are subjective and the reported score does not measure whether a human reader finds the transformed narrative useful. Alternative weights can change the selected release plan. Human evaluation and sensitivity analysis over stakeholder-chosen weights are needed before deployment.
+
+Sixth, repeated narratives by the same author, cross-post linkage, malicious platform insiders, and changes in auxiliary data over time are outside the model. CohortShield provides neither differential privacy nor protection against database compromise. It must not be represented as establishing that a deployed service is anonymous.
+
+\section{Conclusion}\label{sec:conclusion}
+
+An anonymous narrative has two contents: what the text says and what its publication reveals. In the simulated small communities studied here, masking a date while publishing immediately left re-identification risk unchanged because release timing recovered the event. Jointly adapting retained quasi-identifiers and publication granularity improved the simulated privacy--utility trade-off. Yet the same experiments show why a candidate-set target must remain conditional: an omitted group clue erased roughly one quarter of nominal target attainment when it appeared in one quarter of narratives. Event-aware disclosure control is therefore useful as a measurable policy layer, provided that platforms name its threat model, test it against auxiliary information, and never market the resulting $k$ as unconditional anonymity.
+
+\backmatter
+
+\bmhead{Supplementary information}
+
+The reproducibility package contains the complete simulation source, an independent result verifier, aggregate seed-level results, machine-readable headline statistics, and vector figures. No person-level or raw narrative file is required because all data are generated in memory from the stated seed.
+
+\bmhead{Acknowledgements}
+
+No external funding or data contribution supported this work.
+
+\section*{Declarations}
+
+\textbf{Funding} No funding was received for this study.
+
+\textbf{Competing interests} The author develops \url{https://meigao.school}, a school-information platform that motivated the threat model and may implement a version of the proposed approach. No commercial product or paid service based on CohortShield was evaluated in this study.
+
+\textbf{Ethics approval and consent to participate} Not applicable. The study used only programmatically generated synthetic communities and did not involve human participants, student records, personal data, or interaction with individuals.
+
+\textbf{Consent for publication} Not applicable.
+
+\textbf{Data availability} Aggregate seed-level results and machine-readable headline statistics are included in the accompanying repository at \url{https://github.com/WINSTON672/winston-lin-research/tree/main/papers/cohortshield}. All underlying narrative-level observations are reproducible from the public source code and master seed; no real-world personal data exist.
+
+\textbf{Code availability} The complete Python simulation and independent integrity checks are available in the same repository. The verification script checks scenario coverage, bounds, key invariants, zero-mismatch guarantees, primary-scenario statistics, and SHA-256 hashes of the result files.
+
+\textbf{Author contributions} W.Z.L. conceived the application context, is the sole named author, and is responsible for final verification and approval of the submitted version.
+
+\textbf{Use of generative AI} An LLM-based coding assistant was used to assist with software implementation, literature discovery, numerical cross-checking, and language drafting. Numerical observations were produced by deterministic Python simulation rather than generated by the language model. The named author remains responsible for reviewing the code, references, claims, and final manuscript before submission.
+
+\begin{appendices}
+
+\section{Reproducibility specification}\label{app:repro}
+
+The reference implementation uses Python, NumPy, pandas, and Matplotlib. The master seed is 20260904. A scenario seed is the unsigned integer encoded by the first eight bytes of
+
+\begin{equation}
+\operatorname{SHA256}(\texttt{20260904:community\_size:replicate}).
+\end{equation}
+
+The saved aggregate file contains 1,350 rows: $3$ sizes $\times$ $3$ mismatch levels $\times$ $30$ replicates $\times$ $5$ policies. Its SHA-256 checksum is
+
+\begin{quote}
+\small\texttt{c70a65b78d4d865c593e8be9e13b39aa4704e7e9670eb83d5ef8a1a833c66a9d}.
+\end{quote}
+
+The headline-statistics JSON checksum is
+
+\begin{quote}
+\small\texttt{3624807faf1104085e85321c48ce875442d5b7c809069bc0ab621bc73c7d790e}.
+\end{quote}
+
+The verifier requires exact equality between direct redaction and immediate date masking; verifies that both CohortShield policies achieve 100\% nominal target attainment and zero unique sets when $h=0$; recomputes every headline mean from the seed-level CSV to tolerance $10^{-14}$; and checks the prespecified ordering of primary unique-candidate rates. These checks validate internal consistency, not external validity.
+
+\section{Simulation parameters}\label{app:parameters}
+
+\noindent\textbf{Table B1}\quad Fixed simulation parameters.
+
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Parameter & Value\\
+\midrule
+Community sizes & 200, 500, 1,000\\
+Replicates per size and mismatch level & 30\\
+Narratives per replicate & 500\\
+Term length & 120 days\\
+Release windows & 1, 3, 7, 14, 30, 60, 120 days\\
+Hidden-clue probabilities & 0, 0.25, 0.50\\
+Activity exposure probability & 0.80\\
+Grade exposure probability & 0.45\\
+Residence exposure probability & 0.22\\
+Leader-role exposure probability & 0.65 for leaders\\
+Per-event member attendance probability & 0.68\\
+Bootstrap resamples & 10,000\\
+\botrule
+\end{tabular}
+\end{center}
+
+\end{appendices}
+
+\begin{thebibliography}{99}
+
+\bibitem{sweeney2002}
+Sweeney L (2002) $k$-anonymity: a model for protecting privacy. Int J Uncertain Fuzziness Knowl-Based Syst 10(5):557--570. \url{https://doi.org/10.1142/S0218488502001648}
+
+\bibitem{gruteser2003}
+Gruteser M, Grunwald D (2003) Anonymous usage of location-based services through spatial and temporal cloaking. In: Proceedings of the First International Conference on Mobile Systems, Applications, and Services, pp 31--42. \url{https://doi.org/10.1145/1066116.1189037}
+
+\bibitem{lison2021}
+Lison P, Pil\'{a}n I, S\'{a}nchez D, Batet M, \O vrelid L (2021) Anonymisation models for text data: state of the art, challenges and future directions. In: Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing, pp 4188--4203. \url{https://doi.org/10.18653/v1/2021.acl-long.323}
+
+\bibitem{pilan2022}
+Pil\'{a}n I, Lison P, \O vrelid L, Papadopoulou A, S\'{a}nchez D, Batet M (2022) The Text Anonymization Benchmark (TAB): a dedicated corpus and evaluation framework for text anonymization. Comput Linguist 48(4):1053--1101. \url{https://doi.org/10.1162/coli\_a\_00458}
+
+\bibitem{nist2023}
+Garfinkel S, Guttman B, Near J, Dajani A, Singer P (2023) De-Identifying Government Datasets: Techniques and Governance. NIST Special Publication 800-188. National Institute of Standards and Technology. \url{https://doi.org/10.6028/NIST.SP.800-188}
+
+\bibitem{manzanares2024}
+Manzanares-Salor B, S\'{a}nchez D, Lison P (2024) Evaluating the disclosure risk of anonymized documents via a machine learning-based re-identification attack. Data Min Knowl Disc 38:4040--4075. \url{https://doi.org/10.1007/s10618-024-01066-3}
+
+\bibitem{staab2025}
+Staab R, Vero M, Balunovi\'{c} M, Vechev M (2025) Language models are advanced anonymizers. In: The Thirteenth International Conference on Learning Representations. \url{https://openreview.net/forum?id=82p8VHRsaK}
+
+\bibitem{krco2026}
+Kr\v{c}o N, Yao Z, Meeus M, de Montjoye Y-A (2026) RAT-Bench: a comprehensive benchmark for text anonymization. arXiv:2602.12806. \url{https://doi.org/10.48550/arXiv.2602.12806}
+
+\bibitem{oh2026}
+Oh MS, Kim D-Y, Oh H, Kang C, Kang J, Wang X, Park H, Jung YC, Kim H (2026) Subject-level inference for realistic text anonymization evaluation. arXiv:2604.21211. \url{https://doi.org/10.48550/arXiv.2604.21211}
+
+\end{thebibliography}
+
+\end{document}
