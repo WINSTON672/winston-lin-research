@@ -4,6 +4,7 @@ A research note by Winston Zai Lin answering when a dataset can be valued reprod
 
 **Status:** Version 1.0, October 22, 2026. Not peer reviewed. Synthetic demonstration and reporting protocol, not a new pricing algorithm or a validated market appraisal. Substantial AI assistance is disclosed in the paper.
 
+- [Published record and DOI](https://doi.org/10.5281/zenodo.23571723) (CC BY 4.0)
 - [Read the paper](paper.pdf)
 - [Editable manuscript](paper.md)
 - [Experiment](experiment.py)
